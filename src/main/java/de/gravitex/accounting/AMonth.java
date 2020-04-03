@@ -26,7 +26,6 @@ public class AMonth {
 	}
 
 	public void printSorted(boolean showObjects) {
-		
 		System.out.println(" ------ "+monthKey+" ------ ");
 		BigDecimal totalPlusMinusAmount = new BigDecimal(0);
 		HashMap<String, List<RowObject>> sortedByWhat = getSortedByWhat();
