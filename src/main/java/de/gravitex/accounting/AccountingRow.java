@@ -13,6 +13,9 @@ public class AccountingRow {
 	private BigDecimal amount;
 	private BigDecimal saldo;
 	private String text;
-	
 	private String category;
+
+	public boolean hasCategory(String aCategory) {
+		return (category.equals(aCategory));
+	}
 }

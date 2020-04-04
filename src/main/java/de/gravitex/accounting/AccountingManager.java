@@ -125,6 +125,12 @@ public class AccountingManager {
 	}
 
 	public void printCategory(String category) {
-		result.values();
+		List<AccountingRow> resultsByCategory = new ArrayList<AccountingRow>();
+		for (AccountingMonth month : result.values()) {
+			resultsByCategory.addAll(month.getRowObjectsByCategory(category));
+		}
+		for (AccountingRow accountingRow : resultsByCategory) {
+			System.out.println(accountingRow);
+		}
 	}
 }

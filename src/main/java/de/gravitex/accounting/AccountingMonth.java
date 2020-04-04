@@ -30,17 +30,14 @@ public class AccountingMonth {
 		BigDecimal totalPlusMinusAmount = new BigDecimal(0);
 		HashMap<String, List<AccountingRow>> sortedByWhat = getSortedByWhat();
 		for (String whatKey : sortedByWhat.keySet()) {
-			BigDecimal totalWHATAmount = new BigDecimal(0);
-			System.out.println(" ###### "+whatKey+" ###### ");
+			ResultPrinter printer = ResultPrinter.fromCategory(whatKey);
 			for (AccountingRow obj : sortedByWhat.get(whatKey)) {
 				if (showObjects) {
-					System.out.println(obj.getAmount() + " [" + obj.getCategory() + "] (" + obj.getDate() + ") ["
-							+ AccountingUtil.getMonthKey(obj.getDate()) + "]");	
+					printer.addRow(obj);
 				}
-				totalWHATAmount = totalWHATAmount.add(obj.getAmount());
 			}
-			System.out.println(" ---------------> total WHAT : " + totalWHATAmount);
-			totalPlusMinusAmount = totalPlusMinusAmount.add(totalWHATAmount);
+			printer.print();
+			totalPlusMinusAmount = totalPlusMinusAmount.add(printer.getTotalAmount());
 		}
 		System.out.println(" ---------------> total +/- : " + totalPlusMinusAmount );
 	}
@@ -52,6 +49,16 @@ public class AccountingMonth {
 				result.put(rowObject.getCategory(), new ArrayList());
 			}
 			result.get(rowObject.getCategory()).add(rowObject);
+		}
+		return result;
+	}
+
+	public List<AccountingRow> getRowObjectsByCategory(String category) {
+		List<AccountingRow> result = new ArrayList<AccountingRow>();
+		for (AccountingRow accountingRow : rowObjects) {
+			if (accountingRow.hasCategory(category)) {
+				result.add(accountingRow);
+			}
 		}
 		return result;
 	}

@@ -6,7 +6,7 @@ public class AccountingMain {
 		
 		AccountingManager manager = AccountingManager.instance();
 		
-		// manager.printMonth("4/2020", true);
+		manager.printMonth("1/2020", true);
 		
 		/*
 		for (AMonth aMonth : k.values()) {
@@ -14,6 +14,7 @@ public class AccountingMain {
 		}
 		*/
 		
-		manager.printCategory("Nebenkosten");
+		// manager.printCategory("Nebenkosten");
+		// manager.printCategory("Paypal");
 	}
 }
