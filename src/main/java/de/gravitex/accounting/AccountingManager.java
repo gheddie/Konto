@@ -113,7 +113,7 @@ public class AccountingManager {
 				rowObject.setMonth(cell.getStringCellValue());
 				break;
 			case COL_DATUM:
-				rowObject.setDate(AccountingUtil.toLocalDate(cell.getDateCellValue()));
+				rowObject.setDate(AccountingUtil.getLocalDate(cell));
 				break;
 			case COL_BETRAG:
 				rowObject.setAmount(AccountingUtil.getBigDecimal(cell));
