@@ -1,5 +1,7 @@
-package de.gravitex.accounting;
+package de.gravitex.accounting.exception;
 
+import de.gravitex.accounting.AccountingError;
+import de.gravitex.accounting.AccountingRow;
 import lombok.Data;
 
 @Data
@@ -18,6 +20,7 @@ public class AccountingException extends RuntimeException {
 	}
 	
 	public String toString() {
-		return getClass().getSimpleName() + " [ERROR:" + accountingError + "] in {" + accountingRow + "}!!";
+		return getClass().getSimpleName() + " (" + getMessage() + ") [ERROR:" + accountingError + "] in {"
+				+ accountingRow + "}!!";
 	}
 }

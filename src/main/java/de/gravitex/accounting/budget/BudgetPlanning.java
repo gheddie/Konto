@@ -1,4 +1,4 @@
-package de.gravitex.accounting;
+package de.gravitex.accounting.budget;
 
 import java.math.BigDecimal;
 
@@ -20,7 +20,6 @@ public class BudgetPlanning {
 	}
 
 	public boolean amountExceeded(BigDecimal totalAmount) {
-		boolean compared = limit.compareTo(totalAmount.abs()) < 0;
-		return compared;
+		return limit.compareTo(totalAmount.abs()) < 0;
 	}
 }

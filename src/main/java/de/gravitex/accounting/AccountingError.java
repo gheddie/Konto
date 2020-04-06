@@ -10,5 +10,7 @@ public enum AccountingError {
 	NO_CATEGORY,
 	
 	// more than one category read in  a row...
-	MULTIPLE_CATEGORIES
+	MULTIPLE_CATEGORIES,
+	
+	NO_BUDGET_FOR_CATEGORY
 }

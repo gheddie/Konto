@@ -1,10 +1,12 @@
-package de.gravitex.accounting;
+package de.gravitex.accounting.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.gravitex.accounting.AccountingRow;
+import de.gravitex.accounting.budget.BudgetPlanning;
 import lombok.Data;
 
 @Data

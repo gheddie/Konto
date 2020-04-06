@@ -14,6 +14,7 @@ import de.gravitex.accounting.resolver.StringCellValueResolver;
 
 public class AccountingUtil {
 	
+	@SuppressWarnings("rawtypes")
 	private static final HashMap<Class, CellValueResolver> cellValueResolvers = new HashMap<Class, CellValueResolver>();
 	static {
 		cellValueResolvers.put(Boolean.class, new BooleanCellValueResolver());
@@ -26,6 +27,7 @@ public class AccountingUtil {
 		return datum.getMonth().getValue() + "/" + datum.getYear();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static <T> T getCellValue(Class<T> clazz, Cell cell) {
 		return (T) cellValueResolvers.get(clazz).resolveCellValue(cell);
 	}

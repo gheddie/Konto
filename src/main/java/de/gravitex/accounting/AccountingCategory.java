@@ -9,5 +9,20 @@ public enum AccountingCategory {
 	Sportverein,
 	Auto,
 	Undefiniert,
-	Kreditkarte
+	Kreditkarte,
+	Paypal,
+	Krankengeld,
+	Nahverkehr,
+	Telekommunikation,
+	Sonstiges,
+	Abo,
+	Lebensversicherung,
+	Miete,
+	Unterhalt,
+	Fahrrad,
+	Einrichtung,
+	AbhebungEC,
+	Kippen,
+	Fitnessstudio,
+	Rundfunk
 }
