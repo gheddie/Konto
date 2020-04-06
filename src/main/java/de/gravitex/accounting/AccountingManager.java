@@ -26,6 +26,8 @@ public class AccountingManager {
 	private static final int COL_SALDO = 3;
 	private static final int COL_TEXT = 4;
 
+	private static List<String> header;
+
 	private HashMap<String, AccountingMonth> result;
 
 	private static AccountingManager fromData(HashMap<String, AccountingMonth> data) {
@@ -33,10 +35,10 @@ public class AccountingManager {
 		accountingManager.setResult(data);
 		return accountingManager;
 	}
-	
+
 	public void printAll(boolean showObjects) {
 		for (String monthKey : result.keySet()) {
-			result.get(monthKey).print(showObjects);	
+			result.get(monthKey).print(showObjects);
 		}
 	}
 
@@ -65,19 +67,18 @@ public class AccountingManager {
 			XSSFSheet sheet = wb.getSheetAt(0);
 			Iterator<Row> itr = sheet.iterator();
 			BigDecimal completeAmount = new BigDecimal(0);
-			List<String> header = null;
 			HashMap<String, List<AccountingRow>> puh = new HashMap<String, List<AccountingRow>>();
 			while (itr.hasNext()) {
 				Row row = itr.next();
 				if (row.getRowNum() > 0) {
-					AccountingRow obj = readLine(row, sheet, header);
+					AccountingRow obj = readLine(row);
 					if (puh.get(AccountingUtil.getMonthKey(obj.getDate())) == null) {
 						puh.put(AccountingUtil.getMonthKey(obj.getDate()), new ArrayList<AccountingRow>());
 					}
 					puh.get(AccountingUtil.getMonthKey(obj.getDate())).add(obj);
 					completeAmount = completeAmount.add(obj.getAmount());
 				} else {
-					header = getHeaderRow(row);
+					readHeaderRow(row);
 				}
 			}
 			System.out.println("completeAmount: " + completeAmount);
@@ -89,20 +90,21 @@ public class AccountingManager {
 		}
 	}
 
-	private static List<String> getHeaderRow(Row row) {
+	private static void readHeaderRow(Row row) {
 		List<String> result = new ArrayList<String>();
 		Iterator<Cell> cellIterator = row.cellIterator();
 		while (cellIterator.hasNext()) {
 			Cell cell = cellIterator.next();
 			result.add(cell.getStringCellValue());
 		}
-		return result;
+		header = result;
 	}
 
-	private static AccountingRow readLine(Row row, XSSFSheet sheet, List<String> header) {
+	private static AccountingRow readLine(Row row) {
 
 		AccountingRow rowObject = new AccountingRow();
 		Iterator<Cell> cellIterator = row.cellIterator();
+		rowObject.setCategory(resolveRowCategory(row));
 		while (cellIterator.hasNext()) {
 			Cell cell = cellIterator.next();
 			int columnIndex = cell.getColumnIndex();
@@ -123,11 +125,10 @@ public class AccountingManager {
 				rowObject.setText(cell.getStringCellValue());
 				break;
 			default:
-				// all yes/nos
-				if (AccountingUtil.getBoolean(cell)) {
-					rowObject.setCategory(resolveCategory(header, cell));
-				}
-				break;
+				/*
+				 * // all yes/nos if (AccountingUtil.getBoolean(cell)) {
+				 * rowObject.setCategory(resolveCategory(header, cell)); } break;
+				 */
 			}
 		}
 		AccountingError error = rowObject.getError();
@@ -137,8 +138,26 @@ public class AccountingManager {
 		return rowObject;
 	}
 
-	private static String resolveCategory(List<String> header, Cell cell) {
-		return header.get(cell.getColumnIndex());
+	private static String resolveRowCategory(Row accountingRow) {
+		List<String> categorys = new ArrayList<String>();
+		Iterator<Cell> cellIterator = accountingRow.cellIterator();
+		Cell cell = null;
+		while (cellIterator.hasNext()) {
+			cell = cellIterator.next();
+			if (cell.getColumnIndex() > COL_TEXT) {
+				if (AccountingUtil.getBoolean(cell)) {
+					categorys.add(header.get(cell.getColumnIndex()));
+				}
+			}
+		}
+		if (categorys.size() == 0) {
+			throw new AccountingException("no category found for row!!", AccountingError.NO_CATEGORY, null);
+		}
+		if (categorys.size() > 1) {
+			throw new AccountingException("more than one category found for row!!", AccountingError.MULTIPLE_CATEGORIES,
+					null);
+		}
+		return categorys.get(0);
 	}
 
 	public void printCategory(String category) {

@@ -28,6 +28,9 @@ public class AccountingRow implements Comparable<AccountingRow> {
 		if (date == null) {
 			return AccountingError.NO_DATE;
 		}
+		if (category == null) {
+			return AccountingError.NO_CATEGORY;
+		}
 		// undefined without without a text
 		if (category.equals(AccountingCategory.Undefiniert.toString()) && (text == null || text.length() == 0)) {
 			return AccountingError.UNDEF_NO_TEXT;
