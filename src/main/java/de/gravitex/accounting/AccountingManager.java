@@ -3,6 +3,7 @@ package de.gravitex.accounting;
 import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -113,22 +114,17 @@ public class AccountingManager {
 				rowObject.setMonth(cell.getStringCellValue());
 				break;
 			case COL_DATUM:
-				rowObject.setDate(AccountingUtil.getLocalDate(cell));
+				rowObject.setDate(AccountingUtil.getCellValue(LocalDate.class, cell));
 				break;
 			case COL_BETRAG:
-				rowObject.setAmount(AccountingUtil.getBigDecimal(cell));
+				rowObject.setAmount(AccountingUtil.getCellValue(BigDecimal.class, cell));
 				break;
 			case COL_SALDO:
-				rowObject.setSaldo(AccountingUtil.getBigDecimal(cell));
+				rowObject.setSaldo(AccountingUtil.getCellValue(BigDecimal.class, cell));
 				break;
 			case COL_TEXT:
 				rowObject.setText(cell.getStringCellValue());
 				break;
-			default:
-				/*
-				 * // all yes/nos if (AccountingUtil.getBoolean(cell)) {
-				 * rowObject.setCategory(resolveCategory(header, cell)); } break;
-				 */
 			}
 		}
 		AccountingError error = rowObject.getError();
@@ -145,7 +141,7 @@ public class AccountingManager {
 		while (cellIterator.hasNext()) {
 			cell = cellIterator.next();
 			if (cell.getColumnIndex() > COL_TEXT) {
-				if (AccountingUtil.getBoolean(cell)) {
+				if (AccountingUtil.getCellValue(Boolean.class, cell)) {
 					categorys.add(header.get(cell.getColumnIndex()));
 				}
 			}

@@ -22,6 +22,11 @@ public class AccountingUtil {
 		return datum.getMonth().getValue() + "/" + datum.getYear();
 	}
 	
+	public static <T> T getCellValue(Class<T> clazz, Cell cell) {
+		return (T) cellValueResolvers.get(clazz).resolveCellValue(cell);
+	}
+
+	/*
 	public static boolean getBoolean(Cell cell) {
 		return (Boolean) cellValueResolvers.get(Boolean.class).resolveCellValue(cell);
 	}
@@ -33,4 +38,5 @@ public class AccountingUtil {
 	public static LocalDate getLocalDate(Cell cell) {
 		return (LocalDate) cellValueResolvers.get(LocalDate.class).resolveCellValue(cell);
 	}
+	*/
 }
