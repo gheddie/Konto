@@ -2,6 +2,7 @@ package de.gravitex.accounting;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.Data;
@@ -14,14 +15,17 @@ public class ResultPrinter {
 	private BigDecimal totalAmount = new BigDecimal(0);
 	
 	private String category;
+	
+	private BudgetPlanning budgetPlanning;
 
 	private ResultPrinter() {
 		// ...
 	}
 
-	public static ResultPrinter fromCategory(String aCategory) {
+	public static ResultPrinter fromValues(String aCategory, BudgetPlanning aBudgetPlanning) {
 		ResultPrinter resultPrinter = new ResultPrinter();
 		resultPrinter.setCategory(aCategory);
+		resultPrinter.setBudgetPlanning(aBudgetPlanning);
 		return resultPrinter;
 	}
 
@@ -32,17 +36,29 @@ public class ResultPrinter {
 
 	public void print() {
 		System.out.println(" ------------------------------------ " + category + " ------------------------------------ ");
+		// sort by date
+		
+		Collections.sort(accountingRows);
 		for (AccountingRow accountingRow : accountingRows) {
 			System.out.println(formatRow(accountingRow));
 		}
-		System.out.println("SUMME ------> " + totalAmount);
+		if (budgetPlanning == null) {
+			System.out.println("SUMME ------> " + totalAmount);			
+		} else {
+			if (budgetPlanning.amountExceeded(totalAmount)) {
+				System.out.println(
+						"SUMME ------> " + totalAmount + " [BUDGET EXCEEDED (" + budgetPlanning.getLimit() + ")]");	
+			} else {
+				System.out.println("SUMME ------> " + totalAmount + " [IN BUDGET (" + budgetPlanning.getLimit() + ")]");
+			}
+		}
 	}
 
 	private String formatRow(AccountingRow accountingRow) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(inflate(accountingRow.getAmount(), 25));
 		buffer.append(inflate(accountingRow.getDate(), 25));
-		buffer.append(inflate(accountingRow.getText(), 25));
+		buffer.append(inflate(accountingRow.getText() != null ? accountingRow.getText() : "", 25));
 		return buffer.toString();
 	}
 

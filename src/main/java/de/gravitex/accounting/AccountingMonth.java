@@ -25,21 +25,21 @@ public class AccountingMonth {
 		return aMonth;
 	}
 
-	public void printSortedRows(boolean showObjects) {
-		System.out.println(" ------ "+monthKey+" ------ ");
-		BigDecimal totalPlusMinusAmount = new BigDecimal(0);
-		HashMap<String, List<AccountingRow>> sortedByWhat = getSortedByWhat();
-		for (String whatKey : sortedByWhat.keySet()) {
-			ResultPrinter printer = ResultPrinter.fromCategory(whatKey);
-			for (AccountingRow obj : sortedByWhat.get(whatKey)) {
+	public void print(boolean showObjects) {
+		System.out.println(" ######################## "+monthKey+" ######################## ");
+		BigDecimal totalPlusMinusAmountOfMonth = new BigDecimal(0);
+		HashMap<String, List<AccountingRow>> sortedByCategory = getSortedByWhat();
+		for (String categoryKey : sortedByCategory.keySet()) {
+			ResultPrinter printer = ResultPrinter.fromValues(categoryKey, BudgetPlanningFactory.getBudgetPlanning(categoryKey));
+			for (AccountingRow obj : sortedByCategory.get(categoryKey)) {
 				if (showObjects) {
 					printer.addRow(obj);
 				}
 			}
 			printer.print();
-			totalPlusMinusAmount = totalPlusMinusAmount.add(printer.getTotalAmount());
+			totalPlusMinusAmountOfMonth = totalPlusMinusAmountOfMonth.add(printer.getTotalAmount());
 		}
-		System.out.println(" ---------------> total +/- : " + totalPlusMinusAmount );
+		System.out.println(" ---------------> total +/- : " + totalPlusMinusAmountOfMonth );
 	}
 
 	private HashMap<String, List<AccountingRow>> getSortedByWhat() {

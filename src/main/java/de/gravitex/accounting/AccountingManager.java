@@ -33,15 +33,24 @@ public class AccountingManager {
 		accountingManager.setResult(data);
 		return accountingManager;
 	}
+	
+	public void printAll(boolean showObjects) {
+		for (String monthKey : result.keySet()) {
+			result.get(monthKey).print(showObjects);	
+		}
+	}
 
 	public void printMonth(String monthKey, boolean showObjects) {
-		result.get(monthKey).printSortedRows(showObjects);
+		result.get(monthKey).print(showObjects);
 	}
 
 	public static AccountingManager instance() {
 
 		HashMap<String, AccountingMonth> result = new HashMap<String, AccountingMonth>();
 		HashMap<String, List<AccountingRow>> fileData = readFileData();
+		if (fileData == null) {
+			return null;
+		}
 		for (String key : fileData.keySet()) {
 			result.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
 		}
@@ -116,12 +125,20 @@ public class AccountingManager {
 			default:
 				// all yes/nos
 				if (AccountingUtil.getBoolean(cell)) {
-					rowObject.setCategory(header.get(cell.getColumnIndex()));
+					rowObject.setCategory(resolveCategory(header, cell));
 				}
 				break;
 			}
 		}
+		AccountingError error = rowObject.getError();
+		if (error != null) {
+			throw new AccountingException("row [" + rowObject + "] is not valid!!", error, rowObject);
+		}
 		return rowObject;
+	}
+
+	private static String resolveCategory(List<String> header, Cell cell) {
+		return header.get(cell.getColumnIndex());
 	}
 
 	public void printCategory(String category) {
