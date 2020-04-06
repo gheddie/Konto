@@ -1,4 +1,4 @@
-package de.gravitex.accounting;
+package de.gravitex.accounting.resolver;
 
 import org.apache.poi.ss.usermodel.Cell;
 

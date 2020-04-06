@@ -6,8 +6,11 @@ import java.util.HashMap;
 
 import org.apache.poi.ss.usermodel.Cell;
 
+import de.gravitex.accounting.resolver.BigDecimalCellValueResolver;
 import de.gravitex.accounting.resolver.BooleanCellValueResolver;
+import de.gravitex.accounting.resolver.CellValueResolver;
 import de.gravitex.accounting.resolver.LocalDateCellValueResolver;
+import de.gravitex.accounting.resolver.StringCellValueResolver;
 
 public class AccountingUtil {
 	
@@ -16,6 +19,7 @@ public class AccountingUtil {
 		cellValueResolvers.put(Boolean.class, new BooleanCellValueResolver());
 		cellValueResolvers.put(LocalDate.class, new LocalDateCellValueResolver());
 		cellValueResolvers.put(BigDecimal.class, new BigDecimalCellValueResolver());
+		cellValueResolvers.put(String.class, new StringCellValueResolver());
 	}
 
 	public static String getMonthKey(LocalDate datum) {
@@ -25,18 +29,4 @@ public class AccountingUtil {
 	public static <T> T getCellValue(Class<T> clazz, Cell cell) {
 		return (T) cellValueResolvers.get(clazz).resolveCellValue(cell);
 	}
-
-	/*
-	public static boolean getBoolean(Cell cell) {
-		return (Boolean) cellValueResolvers.get(Boolean.class).resolveCellValue(cell);
-	}
-
-	public static BigDecimal getBigDecimal(Cell cell) {
-		return (BigDecimal) cellValueResolvers.get(BigDecimal.class).resolveCellValue(cell);
-	}
-
-	public static LocalDate getLocalDate(Cell cell) {
-		return (LocalDate) cellValueResolvers.get(LocalDate.class).resolveCellValue(cell);
-	}
-	*/
 }

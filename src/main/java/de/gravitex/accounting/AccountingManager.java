@@ -111,7 +111,7 @@ public class AccountingManager {
 			int columnIndex = cell.getColumnIndex();
 			switch (columnIndex) {
 			case COL_MONAT:
-				rowObject.setMonth(cell.getStringCellValue());
+				rowObject.setMonth(AccountingUtil.getCellValue(String.class, cell));
 				break;
 			case COL_DATUM:
 				rowObject.setDate(AccountingUtil.getCellValue(LocalDate.class, cell));
@@ -123,7 +123,7 @@ public class AccountingManager {
 				rowObject.setSaldo(AccountingUtil.getCellValue(BigDecimal.class, cell));
 				break;
 			case COL_TEXT:
-				rowObject.setText(cell.getStringCellValue());
+				rowObject.setText(AccountingUtil.getCellValue(String.class, cell));
 				break;
 			}
 		}

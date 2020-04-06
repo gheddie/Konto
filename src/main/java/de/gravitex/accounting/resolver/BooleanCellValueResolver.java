@@ -2,8 +2,6 @@ package de.gravitex.accounting.resolver;
 
 import org.apache.poi.ss.usermodel.Cell;
 
-import de.gravitex.accounting.CellValueResolver;
-
 public class BooleanCellValueResolver implements CellValueResolver<Boolean> {
 	
 	private static final String CHECKED_CATEGORY = "X";
