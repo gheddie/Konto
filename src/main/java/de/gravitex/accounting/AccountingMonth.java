@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.gravitex.accounting.budget.BudgetPlanningFactory;
+import de.gravitex.accounting.modality.PaymentModalityFactory;
 import de.gravitex.accounting.util.ResultPrinter;
 import lombok.Data;
 
@@ -32,7 +32,7 @@ public class AccountingMonth {
 		BigDecimal totalPlusMinusAmountOfMonth = new BigDecimal(0);
 		HashMap<String, List<AccountingRow>> sortedByCategory = getSortedByWhat();
 		for (String categoryKey : sortedByCategory.keySet()) {
-			ResultPrinter printer = ResultPrinter.fromValues(categoryKey, BudgetPlanningFactory.getBudgetPlanning(categoryKey));
+			ResultPrinter printer = ResultPrinter.fromValues(categoryKey, PaymentModalityFactory.getPaymentModality(categoryKey));
 			for (AccountingRow obj : sortedByCategory.get(categoryKey)) {
 				if (showObjects) {
 					printer.addRow(obj);

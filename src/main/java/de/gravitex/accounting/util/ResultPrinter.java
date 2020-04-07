@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.gravitex.accounting.AccountingRow;
-import de.gravitex.accounting.budget.BudgetPlanning;
+import de.gravitex.accounting.modality.PaymentModality;
 import lombok.Data;
 
 @Data
@@ -18,13 +18,13 @@ public class ResultPrinter {
 	
 	private String category;
 	
-	private BudgetPlanning budgetPlanning;
+	private PaymentModality budgetPlanning;
 
 	private ResultPrinter() {
 		// ...
 	}
 
-	public static ResultPrinter fromValues(String aCategory, BudgetPlanning aBudgetPlanning) {
+	public static ResultPrinter fromValues(String aCategory, PaymentModality aBudgetPlanning) {
 		ResultPrinter resultPrinter = new ResultPrinter();
 		resultPrinter.setCategory(aCategory);
 		resultPrinter.setBudgetPlanning(aBudgetPlanning);

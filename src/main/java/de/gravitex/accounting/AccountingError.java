@@ -12,5 +12,5 @@ public enum AccountingError {
 	// more than one category read in  a row...
 	MULTIPLE_CATEGORIES,
 	
-	NO_BUDGET_FOR_CATEGORY
+	NO_PM_FOR_CATEGORY
 }
