@@ -69,23 +69,23 @@ public class AccountingManager {
 			XSSFSheet sheet = wb.getSheetAt(0);
 			Iterator<Row> itr = sheet.iterator();
 			BigDecimal completeAmount = new BigDecimal(0);
-			HashMap<String, List<AccountingRow>> puh = new HashMap<String, List<AccountingRow>>();
+			HashMap<String, List<AccountingRow>> fileRows = new HashMap<String, List<AccountingRow>>();
 			while (itr.hasNext()) {
 				Row row = itr.next();
 				if (row.getRowNum() > 0) {
-					AccountingRow obj = readLine(row);
-					if (puh.get(AccountingUtil.getMonthKey(obj.getDate())) == null) {
-						puh.put(AccountingUtil.getMonthKey(obj.getDate()), new ArrayList<AccountingRow>());
+					AccountingRow accountingRow = readLine(row);
+					if (fileRows.get(AccountingUtil.getMonthKey(accountingRow.getDate())) == null) {
+						fileRows.put(AccountingUtil.getMonthKey(accountingRow.getDate()), new ArrayList<AccountingRow>());
 					}
-					puh.get(AccountingUtil.getMonthKey(obj.getDate())).add(obj);
-					completeAmount = completeAmount.add(obj.getAmount());
+					fileRows.get(AccountingUtil.getMonthKey(accountingRow.getDate())).add(accountingRow);
+					completeAmount = completeAmount.add(accountingRow.getAmount());
 				} else {
 					readHeaderRow(row);
 				}
 			}
 			System.out.println("completeAmount: " + completeAmount);
 			wb.close();
-			return puh;
+			return fileRows;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -165,5 +165,9 @@ public class AccountingManager {
 		for (AccountingRow accountingRow : resultsByCategory) {
 			System.out.println(accountingRow);
 		}
+	}
+
+	public void saldoCheck() {
+		
 	}
 }

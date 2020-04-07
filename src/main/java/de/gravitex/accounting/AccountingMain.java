@@ -4,9 +4,9 @@ public class AccountingMain {
 
 	public static void main(String[] args) {
 		
-		AccountingManager manager = AccountingManager.instance();
+		// AccountingManager.instance().printMonth("4/2020", true);
 		
-		manager.printMonth("4/2020", true);
+		AccountingManager.instance().saldoCheck();
 		
 		// manager.printAll(true);
 		
