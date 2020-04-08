@@ -17,6 +17,7 @@ public class AccountingUtil {
 	@SuppressWarnings("rawtypes")
 	private static final HashMap<Class, CellValueResolver> cellValueResolvers = new HashMap<Class, CellValueResolver>();
 	static {
+		cellValueResolvers.put(Integer.class, new IntegerCellValueResolver());
 		cellValueResolvers.put(Boolean.class, new BooleanCellValueResolver());
 		cellValueResolvers.put(LocalDate.class, new LocalDateCellValueResolver());
 		cellValueResolvers.put(BigDecimal.class, new BigDecimalCellValueResolver());

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,7 @@ public class AccountingManager {
 
 	private static final String FILE = "C:\\work\\eclipseWorkspaces\\2019\\konto2\\accounting-excel\\src\\main\\resources\\Konto.xlsx";
 
-	private static final int COL_MONAT = 0;
+	private static final int COL_RUNNING_INDEX = 0;
 	private static final int COL_DATUM = 1;
 	private static final int COL_BETRAG = 2;
 	private static final int COL_SALDO = 3;
@@ -30,6 +31,7 @@ public class AccountingManager {
 
 	private static List<String> header;
 
+	// hashmap month to rows...
 	private HashMap<String, AccountingMonth> result;
 
 	private static AccountingManager fromData(HashMap<String, AccountingMonth> data) {
@@ -111,8 +113,8 @@ public class AccountingManager {
 			Cell cell = cellIterator.next();
 			int columnIndex = cell.getColumnIndex();
 			switch (columnIndex) {
-			case COL_MONAT:
-				rowObject.setMonth(AccountingUtil.getCellValue(String.class, cell));
+			case COL_RUNNING_INDEX:
+				rowObject.setRunningIndex(AccountingUtil.getCellValue(Integer.class, cell));
 				break;
 			case COL_DATUM:
 				rowObject.setDate(AccountingUtil.getCellValue(LocalDate.class, cell));
@@ -168,6 +170,53 @@ public class AccountingManager {
 	}
 
 	public void saldoCheck() {
-		
+		List<AccountingRow> results = new ArrayList<AccountingRow>();
+		for (AccountingMonth month : result.values()) {
+			results.addAll(month.getRowObjects());
+		}
+		Collections.sort(results);
+		BigDecimal referenceSaldo = null;
+		for (AccountingRow accountingRow : results) {
+			if (referenceSaldo == null && accountingRow.getSaldo() != null) {
+				referenceSaldo = accountingRow.getSaldo();
+				System.out.println("setting reference saldo to: " + referenceSaldo);				
+			} else {
+				if (referenceSaldo != null) {
+					referenceSaldo = referenceSaldo.add(accountingRow.getAmount());
+					if (accountingRow.getSaldo() != null) {
+						System.out.println(" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: "
+								+ referenceSaldo + " [CHECK against row saldo '" + accountingRow.getSaldo() + "']");
+						
+						if (!(accountingRow.getSaldo().equals(referenceSaldo))) {
+							throw new AccountingException(
+									"invalid reference saldo [reference value: " + referenceSaldo + " <-> row value: "
+											+ accountingRow.getSaldo() + "]!!",
+									AccountingError.INVALID_SALDO_REF, accountingRow);
+						}
+						
+					} else {
+						System.out.println(
+								" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: " + referenceSaldo);
+					}
+				}
+			}
+			/*
+			if (referenceSaldo != null) {
+				referenceSaldo = referenceSaldo.add(accountingRow.getAmount()); 
+				System.out.println(
+						" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: " + referenceSaldo);
+				if (accountingRow.getSaldo() != null) {
+					System.out.println("comparing ref to row saldo: [reference value: " + referenceSaldo
+							+ " <-> row value: " + accountingRow.getSaldo() + "]");
+					if (!(accountingRow.getSaldo().equals(referenceSaldo))) {
+						throw new AccountingException(
+								"invalid reference saldo [reference value: " + referenceSaldo + " <-> row value: "
+										+ accountingRow.getSaldo() + "]!!",
+								AccountingError.INVALID_SALDO_REF, accountingRow);
+					}
+				}
+			}
+			*/
+		}
 	}
 }

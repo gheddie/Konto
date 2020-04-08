@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class AccountingRow implements Comparable<AccountingRow> {
 
-	private String month;
+	private Integer runningIndex;
 	private LocalDate date;
 	private BigDecimal amount;
 	private BigDecimal saldo;
@@ -20,10 +20,14 @@ public class AccountingRow implements Comparable<AccountingRow> {
 	}
 
 	public int compareTo(AccountingRow accountingRow) {
-		return date.compareTo(accountingRow.getDate());
+		return runningIndex.compareTo(accountingRow.getRunningIndex());
 	}
 
 	public AccountingError getError() {
+		// no running index
+		if (runningIndex == null) {
+			return AccountingError.NO_RUNNING_INDEX;
+		}
 		// no date
 		if (date == null) {
 			return AccountingError.NO_DATE;
