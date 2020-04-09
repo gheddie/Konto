@@ -10,10 +10,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -36,6 +38,8 @@ public class AccountingManager {
 	private static final int COL_TEXT = 4;
 
 	private static List<String> header;
+
+	private static HashMap<String, Properties> budgetPlannings = new HashMap<String, Properties>();
 
 	// hashmap month to rows...
 	private HashMap<String, AccountingMonth> result;
@@ -72,10 +76,10 @@ public class AccountingManager {
 	private static void readBudgetPlannings() {
 		for (File resourcePlanningFile : getResourceFolderFiles(RESOURCE_PLANNING_FOLDER)) {
 			System.out.println("reading resource planning: " + resourcePlanningFile.getName());
-			Properties resourcePlanningForMonth = new Properties();
+			Properties budgetPlanningForMonth = new Properties();
 			try {
-				resourcePlanningForMonth.load(new FileInputStream(resourcePlanningFile.getAbsolutePath()));
-				int werner = 5;
+				budgetPlanningForMonth.load(new FileInputStream(resourcePlanningFile.getAbsolutePath()));
+				applyBudgetPlanningForMonth(budgetPlanningForMonth, resourcePlanningFile.getName());
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -84,6 +88,12 @@ public class AccountingManager {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private static void applyBudgetPlanningForMonth(Properties budgetPlanningForMonth, String fileName) {
+		String[] spl = FilenameUtils.removeExtension(fileName).split("_");
+		String monthKey = AccountingUtil.getMonthKey(Integer.parseInt(spl[1]), Integer.parseInt(spl[2]));
+		budgetPlannings.put(monthKey, budgetPlanningForMonth);
 	}
 
 	private static File[] getResourceFolderFiles(String folder) {

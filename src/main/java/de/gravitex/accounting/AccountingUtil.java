@@ -24,10 +24,14 @@ public class AccountingUtil {
 		cellValueResolvers.put(String.class, new StringCellValueResolver());
 	}
 
-	public static String getMonthKey(LocalDate datum) {
-		return datum.getMonth().getValue() + "/" + datum.getYear();
+	public static String getMonthKey(LocalDate localDate) {
+		return getMonthKey(localDate.getMonth().getValue(), localDate.getYear());
 	}
-	
+
+	public static String getMonthKey(int month, int year) {
+		return month + "/" + year;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <T> T getCellValue(Class<T> clazz, Cell cell) {
 		return (T) cellValueResolvers.get(clazz).resolveCellValue(cell);

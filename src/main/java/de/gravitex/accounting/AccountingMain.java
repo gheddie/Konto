@@ -6,11 +6,12 @@ public class AccountingMain {
 		
 		AccountingManager.getInstance().printMonth("4/2020", false);
 		
-		// AccountingManager.instance().saldoCheck();
+		AccountingManager.getInstance().saldoCheck();
 		
 		// AccountingManager.instance().printAll(true);
 		
 		// AccountingManager.instance().printCategory("Nebenkosten");
 		// AccountingManager.instance().printCategory("Paypal");
+		// AccountingManager.getInstance().printCategory("Abo");
 	}
 }
