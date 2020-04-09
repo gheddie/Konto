@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -41,13 +40,18 @@ public class AccountingManager {
 
 	private static HashMap<String, Properties> budgetPlannings = new HashMap<String, Properties>();
 
+	private static AccountingManager instance;
+
 	// hashmap month to rows...
 	private HashMap<String, AccountingMonth> result;
-
-	private static AccountingManager fromData(HashMap<String, AccountingMonth> data) {
-		AccountingManager accountingManager = new AccountingManager();
-		accountingManager.setResult(data);
-		return accountingManager;
+	
+	private AccountingManager() {
+		result = new HashMap<String, AccountingMonth>();
+		HashMap<String, List<AccountingRow>> fileData = readFileData();
+		readBudgetPlannings();
+		for (String key : fileData.keySet()) {
+			result.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
+		}
 	}
 
 	public void printAll(boolean showObjects) {
@@ -61,16 +65,12 @@ public class AccountingManager {
 	}
 
 	public static AccountingManager getInstance() {
-		HashMap<String, AccountingMonth> result = new HashMap<String, AccountingMonth>();
-		HashMap<String, List<AccountingRow>> fileData = readFileData();
-		readBudgetPlannings();
-		if (fileData == null) {
-			return null;
+		if (instance == null) {
+			instance = new AccountingManager();
 		}
-		for (String key : fileData.keySet()) {
-			result.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
-		}
-		return AccountingManager.fromData(result);
+		return instance;
+		
+		// ---
 	}
 
 	private static void readBudgetPlannings() {
@@ -244,5 +244,30 @@ public class AccountingManager {
 			}
 		}
 		System.out.println("saldo check ok...");
+	}
+
+	public int requestLimit(String monthKey, String category) {
+		if (monthKey == null || category == null) {
+			throw new AccountingException("request limit --> both month key and category must be set!!", null, null);
+		}
+		Properties properties = budgetPlannings.get(monthKey);
+		if (properties == null) {
+			throw new AccountingException("request limit --> no budget planning available for month key ["+monthKey+"]!!", null, null);
+		}
+		Object entry = properties.get(category);
+		if (entry == null) {
+			throw new AccountingException("request limit --> no budget planning available for category ["+category+"] in month key ["+monthKey+"]!!", null, null);
+		}
+		String value = String.valueOf(properties.get(category));
+		if (value == null || value.length() == 0) {
+			throw new AccountingException("request limit --> no value set for budget planning for month ["+monthKey+"] available and category ["+category+"]!!", null, null);
+		}
+		int limit = 0;
+		try {
+			limit = Integer.parseInt(String.valueOf(value));			
+		} catch (Exception e) {
+			throw new AccountingException("request limit --> unparsable numeric value ["+value+"] set for budget planning for month ["+monthKey+"] available and category ["+category+"]!!", null, null);
+		}
+		return limit;
 	}
 }

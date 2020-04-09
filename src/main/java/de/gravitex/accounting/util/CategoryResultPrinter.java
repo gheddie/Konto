@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.gravitex.accounting.AccountingRow;
-import de.gravitex.accounting.modality.PaymentModalityDefinition;
+import de.gravitex.accounting.modality.PaymentModality;
 import lombok.Data;
 
 @Data
@@ -15,17 +15,20 @@ public class CategoryResultPrinter {
 	private List<AccountingRow> accountingRows = new ArrayList<AccountingRow>();
 
 	private String category;
+	
+	private String monthKey;
 
-	private PaymentModalityDefinition paymentModalityDefinition;
+	private PaymentModality paymentModalityDefinition;
 
 	private CategoryResultPrinter() {
 		// ...
 	}
 
-	public static CategoryResultPrinter fromValues(String aCategory, PaymentModalityDefinition aPaymentModalityDefinition) {
+	public static CategoryResultPrinter fromValues(String aCategory, PaymentModality aPaymentModalityDefinition, String aMonthKey) {
 		CategoryResultPrinter resultPrinter = new CategoryResultPrinter();
 		resultPrinter.setCategory(aCategory);
 		resultPrinter.setPaymentModalityDefinition(aPaymentModalityDefinition);
+		resultPrinter.setMonthKey(aMonthKey);
 		return resultPrinter;
 	}
 

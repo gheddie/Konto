@@ -1,8 +1,8 @@
 package de.gravitex.accounting.modality;
 
-public abstract class IncomingPaymentModalityDefinition extends PaymentModalityDefinition {
+public abstract class IncomingPaymentModality extends PaymentModality {
 
-	public IncomingPaymentModalityDefinition(PaymentPeriod aPaymentPeriod) {
+	public IncomingPaymentModality(PaymentPeriod aPaymentPeriod) {
 		super(aPaymentPeriod);
 	}
 
@@ -14,5 +14,10 @@ public abstract class IncomingPaymentModalityDefinition extends PaymentModalityD
 	@Override
 	public StringBuffer getCalculationFooter() {
 		return new StringBuffer().append("SUMME ------> " + getTotalAmount());
+	}
+	
+	@Override
+	public void prepare() {
+		// TODO Auto-generated method stub
 	}
 }

@@ -1,15 +1,15 @@
 package de.gravitex.accounting.modality;
 
+import de.gravitex.accounting.AccountingManager;
 import lombok.Data;
 
 @Data
-public abstract class OutgoingPaymentModalityDefinition extends PaymentModalityDefinition {
+public abstract class OutgoingPaymentModality extends PaymentModality {
 	
 	private int limit;
 
-	public OutgoingPaymentModalityDefinition(PaymentPeriod aPaymentPeriod, int aLimit) {
+	public OutgoingPaymentModality(PaymentPeriod aPaymentPeriod) {
 		super(aPaymentPeriod);
-		this.limit = aLimit;
 	}
 
 	@Override
@@ -29,6 +29,12 @@ public abstract class OutgoingPaymentModalityDefinition extends PaymentModalityD
 	}
 
 	private boolean amountExceeded() {
-		return getTotalAmount().intValue() > limit;
+		return Math.abs(getTotalAmount().intValue()) > limit;
+	}
+	
+	@Override
+	public void prepare() {
+		// request limit
+		setLimit(AccountingManager.getInstance().requestLimit(getMonthKey(), getCategory()));
 	}
 }
