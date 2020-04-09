@@ -21,7 +21,7 @@ public class PaymentModalityFactory {
 		paymentModalitys.put(AccountingCategory.Sonstiges, PaymentModality.fromValues(100, new UndefinedPeriodOutgoingPaymentModalityDefinition()));
 		paymentModalitys.put(AccountingCategory.Abo, PaymentModality.fromValues(100, new UndefinedPeriodOutgoingPaymentModalityDefinition()));
 		paymentModalitys.put(AccountingCategory.Lebensversicherung, PaymentModality.fromValues(100, new FixedPeriodPaymentOutgoingModalityDefinition(null)));
-		paymentModalitys.put(AccountingCategory.Miete, PaymentModality.fromValues(100, new FixedPeriodPaymentOutgoingModalityDefinition(null)));
+		paymentModalitys.put(AccountingCategory.Miete, PaymentModality.fromValues(530, new FixedPeriodPaymentOutgoingModalityDefinition(null)));
 		paymentModalitys.put(AccountingCategory.Unterhalt, PaymentModality.fromValues(100, new FixedPeriodPaymentOutgoingModalityDefinition(PaymentPeriod.MONTH)));
 		paymentModalitys.put(AccountingCategory.Benzin, PaymentModality.fromValues(150, new UndefinedPeriodOutgoingPaymentModalityDefinition()));
 		paymentModalitys.put(AccountingCategory.Fahrrad, PaymentModality.fromValues(100, new UndefinedPeriodOutgoingPaymentModalityDefinition()));

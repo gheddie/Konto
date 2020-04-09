@@ -27,20 +27,19 @@ public class AccountingMonth {
 		return aMonth;
 	}
 
-	public void print(boolean showObjects) {
+	public void print(boolean onlyExceeded) {
 		System.out.println(" ######################## "+monthKey+" ######################## ");
 		BigDecimal totalPlusMinusAmountOfMonth = new BigDecimal(0);
 		HashMap<String, List<AccountingRow>> sortedByCategory = getSortedByWhat();
 		for (String categoryKey : sortedByCategory.keySet()) {
 			ResultPrinter printer = ResultPrinter.fromValues(categoryKey, PaymentModalityFactory.getPaymentModality(categoryKey));
 			for (AccountingRow obj : sortedByCategory.get(categoryKey)) {
-				if (showObjects) {
-					printer.addRow(obj);
-				}
+				printer.addRow(obj);
 			}
-			printer.print();
+			printer.print(onlyExceeded);
 			totalPlusMinusAmountOfMonth = totalPlusMinusAmountOfMonth.add(printer.getTotalAmount());
 		}
+		System.out.println();
 		System.out.println(" ---------------> total +/- : " + totalPlusMinusAmountOfMonth );
 	}
 

@@ -4,13 +4,13 @@ public class AccountingMain {
 
 	public static void main(String[] args) {
 		
-		// AccountingManager.instance().printMonth("4/2020", true);
+		AccountingManager.instance().printMonth("4/2020", false);
 		
-		AccountingManager.instance().saldoCheck();
+		// AccountingManager.instance().saldoCheck();
 		
-		// manager.printAll(true);
+		// AccountingManager.instance().printAll(true);
 		
-		// manager.printCategory("Nebenkosten");
-		// manager.printCategory("Paypal");
+		// AccountingManager.instance().printCategory("Nebenkosten");
+		// AccountingManager.instance().printCategory("Paypal");
 	}
 }

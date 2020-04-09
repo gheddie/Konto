@@ -200,23 +200,7 @@ public class AccountingManager {
 					}
 				}
 			}
-			/*
-			if (referenceSaldo != null) {
-				referenceSaldo = referenceSaldo.add(accountingRow.getAmount()); 
-				System.out.println(
-						" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: " + referenceSaldo);
-				if (accountingRow.getSaldo() != null) {
-					System.out.println("comparing ref to row saldo: [reference value: " + referenceSaldo
-							+ " <-> row value: " + accountingRow.getSaldo() + "]");
-					if (!(accountingRow.getSaldo().equals(referenceSaldo))) {
-						throw new AccountingException(
-								"invalid reference saldo [reference value: " + referenceSaldo + " <-> row value: "
-										+ accountingRow.getSaldo() + "]!!",
-								AccountingError.INVALID_SALDO_REF, accountingRow);
-					}
-				}
-			}
-			*/
 		}
+		System.out.println("saldo check ok...");
 	}
 }

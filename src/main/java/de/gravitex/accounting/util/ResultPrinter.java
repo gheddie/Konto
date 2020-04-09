@@ -36,7 +36,13 @@ public class ResultPrinter {
 		totalAmount = totalAmount.add(accountingRow.getAmount());
 	}
 
-	public void print() {
+	// TODO onlyExceeded... 
+	public void print(boolean onlyExceeded) {
+		
+		if (!budgetPlanning.amountExceeded(totalAmount) && onlyExceeded) {
+			return;
+		}
+		
 		System.out.println(" ------------------------------------ " + category + " ------------------------------------ ");
 		// sort by date
 		
@@ -44,6 +50,7 @@ public class ResultPrinter {
 		for (AccountingRow accountingRow : accountingRows) {
 			System.out.println(formatRow(accountingRow));
 		}
+		System.out.println();
 		if (budgetPlanning == null) {
 			System.out.println("SUMME ------> " + totalAmount);			
 		} else {
