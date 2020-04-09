@@ -6,7 +6,7 @@ public class AccountingMain {
 		
 		AccountingManager.instance().printMonth("4/2020", false);
 		
-		// AccountingManager.instance().saldoCheck();
+		AccountingManager.instance().saldoCheck();
 		
 		// AccountingManager.instance().printAll(true);
 		

@@ -10,4 +10,9 @@ public abstract class IncomingPaymentModalityDefinition extends PaymentModalityD
 	protected PaymentType getPaymentType() {
 		return PaymentType.INCOMING;
 	}
+	
+	@Override
+	public StringBuffer getCalculationFooter() {
+		return new StringBuffer().append("SUMME ------> " + getTotalAmount());
+	}
 }

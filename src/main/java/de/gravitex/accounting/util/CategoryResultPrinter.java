@@ -6,62 +6,45 @@ import java.util.Collections;
 import java.util.List;
 
 import de.gravitex.accounting.AccountingRow;
-import de.gravitex.accounting.modality.PaymentModality;
+import de.gravitex.accounting.modality.PaymentModalityDefinition;
 import lombok.Data;
 
 @Data
-public class ResultPrinter {
+public class CategoryResultPrinter {
 
 	private List<AccountingRow> accountingRows = new ArrayList<AccountingRow>();
-	
-	private BigDecimal totalAmount = new BigDecimal(0);
-	
-	private String category;
-	
-	private PaymentModality paymentModality;
 
-	private ResultPrinter() {
+	private String category;
+
+	private PaymentModalityDefinition paymentModalityDefinition;
+
+	private CategoryResultPrinter() {
 		// ...
 	}
 
-	public static ResultPrinter fromValues(String aCategory, PaymentModality aPaymentModality) {
-		ResultPrinter resultPrinter = new ResultPrinter();
+	public static CategoryResultPrinter fromValues(String aCategory, PaymentModalityDefinition aPaymentModalityDefinition) {
+		CategoryResultPrinter resultPrinter = new CategoryResultPrinter();
 		resultPrinter.setCategory(aCategory);
-		resultPrinter.setPaymentModality(aPaymentModality);
+		resultPrinter.setPaymentModalityDefinition(aPaymentModalityDefinition);
 		return resultPrinter;
 	}
 
 	public void addRow(AccountingRow accountingRow) {
 		accountingRows.add(accountingRow);
-		totalAmount = totalAmount.add(accountingRow.getAmount());
+		paymentModalityDefinition.addAmount(accountingRow.getAmount());
 	}
 
-	// TODO onlyExceeded... 
+	// TODO onlyExceeded...
 	public void print(boolean onlyExceeded) {
-		
-		if (!paymentModality.amountExceeded(totalAmount) && onlyExceeded) {
-			return;
-		}
-		
-		System.out.println(" ------------------------------------ " + category + " ------------------------------------ ");
-		// sort by date
-		
+
+		System.out.println(
+				" ------------------------------------ " + category + " ------------------------------------ ");
 		Collections.sort(accountingRows);
 		for (AccountingRow accountingRow : accountingRows) {
 			System.out.println(formatRow(accountingRow));
 		}
 		System.out.println();
-		
-		if (paymentModality == null) {
-			System.out.println("SUMME ------> " + totalAmount);			
-		} else {
-			if (paymentModality.amountExceeded(totalAmount)) {
-				System.out.println(
-						"SUMME ------> " + totalAmount + " [BUDGET EXCEEDED (" + paymentModality.getLimit() + ")]");	
-			} else {
-				System.out.println("SUMME ------> " + totalAmount + " [IN BUDGET (" + paymentModality.getLimit() + ")]");
-			}
-		}
+		System.out.println(paymentModalityDefinition.getCalculationFooter().toString());
 	}
 
 	private String formatRow(AccountingRow accountingRow) {
@@ -82,5 +65,9 @@ public class ResultPrinter {
 			result += " ";
 		}
 		return result;
+	}
+
+	public BigDecimal getTotalAmount() {
+		return paymentModalityDefinition.getTotalAmount();
 	}
 }

@@ -2,7 +2,7 @@ package de.gravitex.accounting.modality;
 
 public class UndefinedPeriodOutgoingPaymentModalityDefinition extends OutgoingPaymentModalityDefinition {
 
-	public UndefinedPeriodOutgoingPaymentModalityDefinition() {
-		super(PaymentPeriod.UNDEFINED);
+	public UndefinedPeriodOutgoingPaymentModalityDefinition(int aLimit) {
+		super(PaymentPeriod.UNDEFINED, aLimit);
 	}
 }
