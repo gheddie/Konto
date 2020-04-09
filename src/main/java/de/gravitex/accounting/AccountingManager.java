@@ -170,6 +170,9 @@ public class AccountingManager {
 	}
 
 	public void saldoCheck() {
+		
+		System.out.println(" --------------------- SALDO CHECK --------------------- ");
+		
 		List<AccountingRow> results = new ArrayList<AccountingRow>();
 		for (AccountingMonth month : result.values()) {
 			results.addAll(month.getRowObjects());
@@ -184,16 +187,14 @@ public class AccountingManager {
 				if (referenceSaldo != null) {
 					referenceSaldo = referenceSaldo.add(accountingRow.getAmount());
 					if (accountingRow.getSaldo() != null) {
-						System.out.println(" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: "
-								+ referenceSaldo + " [CHECK against row saldo '" + accountingRow.getSaldo() + "']");
-						
 						if (!(accountingRow.getSaldo().equals(referenceSaldo))) {
 							throw new AccountingException(
 									"invalid reference saldo [reference value: " + referenceSaldo + " <-> row value: "
 											+ accountingRow.getSaldo() + "]!!",
 									AccountingError.INVALID_SALDO_REF, accountingRow);
-						}
-						
+						}						
+						System.out.println(" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: "
+								+ referenceSaldo + " [CHECK against row saldo '" + accountingRow.getSaldo() + "'] --> OK!!");
 					} else {
 						System.out.println(
 								" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: " + referenceSaldo);

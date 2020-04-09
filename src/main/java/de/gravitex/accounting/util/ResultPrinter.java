@@ -18,16 +18,16 @@ public class ResultPrinter {
 	
 	private String category;
 	
-	private PaymentModality budgetPlanning;
+	private PaymentModality paymentModality;
 
 	private ResultPrinter() {
 		// ...
 	}
 
-	public static ResultPrinter fromValues(String aCategory, PaymentModality aBudgetPlanning) {
+	public static ResultPrinter fromValues(String aCategory, PaymentModality aPaymentModality) {
 		ResultPrinter resultPrinter = new ResultPrinter();
 		resultPrinter.setCategory(aCategory);
-		resultPrinter.setBudgetPlanning(aBudgetPlanning);
+		resultPrinter.setPaymentModality(aPaymentModality);
 		return resultPrinter;
 	}
 
@@ -39,7 +39,7 @@ public class ResultPrinter {
 	// TODO onlyExceeded... 
 	public void print(boolean onlyExceeded) {
 		
-		if (!budgetPlanning.amountExceeded(totalAmount) && onlyExceeded) {
+		if (!paymentModality.amountExceeded(totalAmount) && onlyExceeded) {
 			return;
 		}
 		
@@ -51,14 +51,15 @@ public class ResultPrinter {
 			System.out.println(formatRow(accountingRow));
 		}
 		System.out.println();
-		if (budgetPlanning == null) {
+		
+		if (paymentModality == null) {
 			System.out.println("SUMME ------> " + totalAmount);			
 		} else {
-			if (budgetPlanning.amountExceeded(totalAmount)) {
+			if (paymentModality.amountExceeded(totalAmount)) {
 				System.out.println(
-						"SUMME ------> " + totalAmount + " [BUDGET EXCEEDED (" + budgetPlanning.getLimit() + ")]");	
+						"SUMME ------> " + totalAmount + " [BUDGET EXCEEDED (" + paymentModality.getLimit() + ")]");	
 			} else {
-				System.out.println("SUMME ------> " + totalAmount + " [IN BUDGET (" + budgetPlanning.getLimit() + ")]");
+				System.out.println("SUMME ------> " + totalAmount + " [IN BUDGET (" + paymentModality.getLimit() + ")]");
 			}
 		}
 	}

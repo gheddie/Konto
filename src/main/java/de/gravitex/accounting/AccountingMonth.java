@@ -16,6 +16,8 @@ public class AccountingMonth {
 	
 	private List<AccountingRow> rowObjects;
 
+	private ResultPrinter printer;
+
 	private AccountingMonth() {
 
 	}
@@ -32,7 +34,7 @@ public class AccountingMonth {
 		BigDecimal totalPlusMinusAmountOfMonth = new BigDecimal(0);
 		HashMap<String, List<AccountingRow>> sortedByCategory = getSortedByWhat();
 		for (String categoryKey : sortedByCategory.keySet()) {
-			ResultPrinter printer = ResultPrinter.fromValues(categoryKey, PaymentModalityFactory.getPaymentModality(categoryKey));
+			printer = ResultPrinter.fromValues(categoryKey, PaymentModalityFactory.getPaymentModality(categoryKey));
 			for (AccountingRow obj : sortedByCategory.get(categoryKey)) {
 				printer.addRow(obj);
 			}
@@ -40,7 +42,7 @@ public class AccountingMonth {
 			totalPlusMinusAmountOfMonth = totalPlusMinusAmountOfMonth.add(printer.getTotalAmount());
 		}
 		System.out.println();
-		System.out.println(" ---------------> total +/- : " + totalPlusMinusAmountOfMonth );
+		System.out.println(" ---------------> total +/- in month: " + totalPlusMinusAmountOfMonth );
 	}
 
 	private HashMap<String, List<AccountingRow>> getSortedByWhat() {
