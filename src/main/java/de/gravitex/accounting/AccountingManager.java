@@ -2,13 +2,17 @@ package de.gravitex.accounting;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -22,6 +26,8 @@ import lombok.Data;
 public class AccountingManager {
 
 	private static final String FILE = "C:\\work\\eclipseWorkspaces\\2019\\konto2\\accounting-excel\\src\\main\\resources\\Konto.xlsx";
+	
+	private static final String RESOURCE_PLANNING_FOLDER = "rp";
 
 	private static final int COL_RUNNING_INDEX = 0;
 	private static final int COL_DATUM = 1;
@@ -50,10 +56,10 @@ public class AccountingManager {
 		result.get(monthKey).print(showObjects);
 	}
 
-	public static AccountingManager instance() {
-
+	public static AccountingManager getInstance() {
 		HashMap<String, AccountingMonth> result = new HashMap<String, AccountingMonth>();
 		HashMap<String, List<AccountingRow>> fileData = readFileData();
+		readBudgetPlannings();
 		if (fileData == null) {
 			return null;
 		}
@@ -61,6 +67,31 @@ public class AccountingManager {
 			result.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
 		}
 		return AccountingManager.fromData(result);
+	}
+
+	private static void readBudgetPlannings() {
+		for (File resourcePlanningFile : getResourceFolderFiles(RESOURCE_PLANNING_FOLDER)) {
+			System.out.println("reading resource planning: " + resourcePlanningFile.getName());
+			Properties resourcePlanningForMonth = new Properties();
+			try {
+				resourcePlanningForMonth.load(new FileInputStream(resourcePlanningFile.getAbsolutePath()));
+				int werner = 5;
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private static File[] getResourceFolderFiles(String folder) {
+	    ClassLoader loader = Thread.currentThread().getContextClassLoader();
+	    URL url = loader.getResource(folder);
+	    String path = url.getPath();
+	    File[] result = new File(path).listFiles();
+		return result;
 	}
 
 	private static HashMap<String, List<AccountingRow>> readFileData() {

@@ -43,7 +43,6 @@ public class CategoryResultPrinter {
 		for (AccountingRow accountingRow : accountingRows) {
 			System.out.println(formatRow(accountingRow));
 		}
-		System.out.println();
 		System.out.println(paymentModalityDefinition.getCalculationFooter().toString());
 	}
 
