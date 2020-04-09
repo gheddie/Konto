@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.gravitex.accounting.modality.PaymentModality;
-import de.gravitex.accounting.modality.PaymentModalityFactory;
 import de.gravitex.accounting.util.CategoryResultPrinter;
 import lombok.Data;
 
@@ -35,7 +34,7 @@ public class AccountingMonth {
 		BigDecimal totalPlusMinusAmountOfMonth = new BigDecimal(0);
 		HashMap<String, List<AccountingRow>> sortedByCategory = getSortedByWhat();
 		for (String categoryKey : sortedByCategory.keySet()) {
-			PaymentModality paymentModality = PaymentModalityFactory.getPaymentModality(categoryKey);
+			PaymentModality paymentModality = AccountingManager.getInstance().getPaymentModality(categoryKey);
 			paymentModality.reset();
 			paymentModality.setMonthKey(monthKey);
 			paymentModality.setCategory(categoryKey);

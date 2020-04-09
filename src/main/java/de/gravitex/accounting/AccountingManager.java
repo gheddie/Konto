@@ -21,6 +21,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.modality.FixedPeriodIncomingPaymentModality;
+import de.gravitex.accounting.modality.FixedPeriodPaymentOutgoingModality;
+import de.gravitex.accounting.modality.PaymentModality;
+import de.gravitex.accounting.modality.PaymentPeriod;
+import de.gravitex.accounting.modality.UndefinedPeriodOutgoingPaymentModality;
 import lombok.Data;
 
 @Data
@@ -35,6 +40,33 @@ public class AccountingManager {
 	private static final int COL_BETRAG = 2;
 	private static final int COL_SALDO = 3;
 	private static final int COL_TEXT = 4;
+	
+	private static final HashMap<AccountingCategory, PaymentModality> paymentModalityDefinitions = new HashMap<AccountingCategory, PaymentModality>();
+	static {
+		paymentModalityDefinitions.put(AccountingCategory.Auto, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Undefiniert, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Kreditkarte, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Paypal, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Nebenkosten, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
+		paymentModalityDefinitions.put(AccountingCategory.Nahverkehr, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Telekommunikation, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Essen, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Sonstiges, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Abo, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Lebensversicherung, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.HALF_YEAR));
+		paymentModalityDefinitions.put(AccountingCategory.Miete, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
+		paymentModalityDefinitions.put(AccountingCategory.Unterhalt, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
+		paymentModalityDefinitions.put(AccountingCategory.Benzin, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Fahrrad, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Charity, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.QUARTER));
+		paymentModalityDefinitions.put(AccountingCategory.Musik, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Einrichtung, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.AbhebungEC, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Kippen, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalityDefinitions.put(AccountingCategory.Fitnessstudio, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
+		paymentModalityDefinitions.put(AccountingCategory.Rundfunk, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.YEAR));
+		paymentModalityDefinitions.put(AccountingCategory.Krankengeld, new FixedPeriodIncomingPaymentModality(PaymentPeriod.MONTH));
+	}
 
 	private static List<String> header;
 
@@ -269,5 +301,14 @@ public class AccountingManager {
 			throw new AccountingException("request limit --> unparsable numeric value ["+value+"] set for budget planning for month ["+monthKey+"] available and category ["+category+"]!!", null, null);
 		}
 		return limit;
+	}
+
+	public PaymentModality getPaymentModality(String categoryKey) {
+		PaymentModality paymentModality = paymentModalityDefinitions.get(AccountingCategory.valueOf(categoryKey));
+		if (paymentModality == null) {
+			throw new AccountingException("no payment modality found for category '" + categoryKey + "'!!",
+					AccountingError.NO_PM_FOR_CATEGORY, null);
+		}
+		return paymentModality;
 	}
 }
