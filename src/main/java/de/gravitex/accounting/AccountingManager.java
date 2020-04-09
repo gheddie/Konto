@@ -41,31 +41,31 @@ public class AccountingManager {
 	private static final int COL_SALDO = 3;
 	private static final int COL_TEXT = 4;
 	
-	private static final HashMap<AccountingCategory, PaymentModality> paymentModalityDefinitions = new HashMap<AccountingCategory, PaymentModality>();
+	private static final HashMap<AccountingCategory, PaymentModality> paymentModalitys = new HashMap<AccountingCategory, PaymentModality>();
 	static {
-		paymentModalityDefinitions.put(AccountingCategory.Auto, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Undefiniert, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Kreditkarte, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Paypal, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Nebenkosten, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
-		paymentModalityDefinitions.put(AccountingCategory.Nahverkehr, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Telekommunikation, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Essen, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Sonstiges, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Abo, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Lebensversicherung, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.HALF_YEAR));
-		paymentModalityDefinitions.put(AccountingCategory.Miete, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
-		paymentModalityDefinitions.put(AccountingCategory.Unterhalt, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
-		paymentModalityDefinitions.put(AccountingCategory.Benzin, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Fahrrad, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Charity, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.QUARTER));
-		paymentModalityDefinitions.put(AccountingCategory.Musik, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Einrichtung, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.AbhebungEC, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Kippen, new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalityDefinitions.put(AccountingCategory.Fitnessstudio, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
-		paymentModalityDefinitions.put(AccountingCategory.Rundfunk, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.YEAR));
-		paymentModalityDefinitions.put(AccountingCategory.Krankengeld, new FixedPeriodIncomingPaymentModality(PaymentPeriod.MONTH));
+		paymentModalitys.put(AccountingCategory.Auto, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Undefiniert, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Kreditkarte, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Paypal, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Nebenkosten, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
+		paymentModalitys.put(AccountingCategory.Nahverkehr, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Telekommunikation, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Essen, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Sonstiges, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Abo, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Lebensversicherung, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.HALF_YEAR));
+		paymentModalitys.put(AccountingCategory.Miete, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
+		paymentModalitys.put(AccountingCategory.Unterhalt, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
+		paymentModalitys.put(AccountingCategory.Benzin, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Fahrrad, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Charity, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.QUARTER));
+		paymentModalitys.put(AccountingCategory.Musik, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Einrichtung, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.AbhebungEC, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Kippen, new UndefinedPeriodOutgoingPaymentModality());
+		paymentModalitys.put(AccountingCategory.Fitnessstudio, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
+		paymentModalitys.put(AccountingCategory.Rundfunk, new FixedPeriodPaymentOutgoingModality(PaymentPeriod.YEAR));
+		paymentModalitys.put(AccountingCategory.Krankengeld, new FixedPeriodIncomingPaymentModality(PaymentPeriod.MONTH));
 	}
 
 	private static List<String> header;
@@ -304,7 +304,7 @@ public class AccountingManager {
 	}
 
 	public PaymentModality getPaymentModality(String categoryKey) {
-		PaymentModality paymentModality = paymentModalityDefinitions.get(AccountingCategory.valueOf(categoryKey));
+		PaymentModality paymentModality = paymentModalitys.get(AccountingCategory.valueOf(categoryKey));
 		if (paymentModality == null) {
 			throw new AccountingException("no payment modality found for category '" + categoryKey + "'!!",
 					AccountingError.NO_PM_FOR_CATEGORY, null);
