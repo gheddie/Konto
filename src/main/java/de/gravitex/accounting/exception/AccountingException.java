@@ -1,7 +1,7 @@
 package de.gravitex.accounting.exception;
 
-import de.gravitex.accounting.AccountingError;
 import de.gravitex.accounting.AccountingRow;
+import de.gravitex.accounting.enumeration.AccountingError;
 import lombok.Data;
 
 @Data

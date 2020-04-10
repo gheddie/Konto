@@ -20,11 +20,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import de.gravitex.accounting.enumeration.AccountingCategory;
+import de.gravitex.accounting.enumeration.AccountingError;
+import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.modality.FixedPeriodIncomingPaymentModality;
 import de.gravitex.accounting.modality.FixedPeriodPaymentOutgoingModality;
 import de.gravitex.accounting.modality.PaymentModality;
-import de.gravitex.accounting.modality.PaymentPeriod;
 import de.gravitex.accounting.modality.UndefinedPeriodOutgoingPaymentModality;
 import lombok.Data;
 
@@ -34,6 +36,8 @@ public class AccountingManager {
 	private static final String FILE = "C:\\work\\eclipseWorkspaces\\2019\\konto2\\accounting-excel\\src\\main\\resources\\Konto.xlsx";
 	
 	private static final String RESOURCE_PLANNING_FOLDER = "rp";
+	
+	private static final String MODALITIES_PROPERTIES = "modalities.properties";
 
 	private static final int COL_RUNNING_INDEX = 0;
 	private static final int COL_DATUM = 1;
@@ -81,6 +85,7 @@ public class AccountingManager {
 		result = new HashMap<String, AccountingMonth>();
 		HashMap<String, List<AccountingRow>> fileData = readFileData();
 		readBudgetPlannings();
+		readCategories();
 		for (String key : fileData.keySet()) {
 			result.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
 		}
@@ -103,6 +108,26 @@ public class AccountingManager {
 		return instance;
 		
 		// ---
+	}
+	
+	private void readCategories() {
+		Properties prop = new Properties();
+		try {
+			prop.load(AccountingManager.class.getClassLoader().getResourceAsStream(MODALITIES_PROPERTIES));
+			String key = null;
+			for (Object keyValue : prop.keySet()) {
+				key = String.valueOf(keyValue);
+				System.out.println(keyValue + " ---> " + prop.getProperty(key));
+				createCategory(key, prop.getProperty(key));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void createCategory(String categoryKey, String paymentType) {
+		// TODO Auto-generated method stub
 	}
 
 	private static void readBudgetPlannings() {

@@ -1,5 +1,8 @@
 package de.gravitex.accounting.modality;
 
+import de.gravitex.accounting.enumeration.PaymentPeriod;
+import de.gravitex.accounting.enumeration.PaymentType;
+
 public abstract class IncomingPaymentModality extends PaymentModality {
 
 	public IncomingPaymentModality(PaymentPeriod aPaymentPeriod) {

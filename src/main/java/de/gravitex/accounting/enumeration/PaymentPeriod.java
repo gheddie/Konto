@@ -1,4 +1,4 @@
-package de.gravitex.accounting.modality;
+package de.gravitex.accounting.enumeration;
 
 public enum PaymentPeriod {
 	MONTH,

@@ -2,6 +2,8 @@ package de.gravitex.accounting.modality;
 
 import java.math.BigDecimal;
 
+import de.gravitex.accounting.enumeration.PaymentPeriod;
+import de.gravitex.accounting.enumeration.PaymentType;
 import lombok.Data;
 
 @Data

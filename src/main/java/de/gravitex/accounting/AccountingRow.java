@@ -3,6 +3,8 @@ package de.gravitex.accounting;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import de.gravitex.accounting.enumeration.AccountingCategory;
+import de.gravitex.accounting.enumeration.AccountingError;
 import lombok.Data;
 
 @Data
