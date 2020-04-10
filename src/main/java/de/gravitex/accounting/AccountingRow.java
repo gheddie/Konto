@@ -3,7 +3,6 @@ package de.gravitex.accounting;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import de.gravitex.accounting.enumeration.AccountingCategory;
 import de.gravitex.accounting.enumeration.AccountingError;
 import lombok.Data;
 
@@ -38,7 +37,7 @@ public class AccountingRow implements Comparable<AccountingRow> {
 			return AccountingError.NO_CATEGORY;
 		}
 		// undefined without without a text
-		if (category.equals(AccountingCategory.Undefiniert.toString()) && (text == null || text.length() == 0)) {
+		if (category.equals(AccountingManager.UNDEFINED_CATEGORY) && (text == null || text.length() == 0)) {
 			return AccountingError.UNDEF_NO_TEXT;
 		}
 		return null;
