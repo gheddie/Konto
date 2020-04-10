@@ -22,9 +22,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
+import de.gravitex.accounting.enumeration.PaymentType;
 import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.modality.FixedPeriodIncomingPaymentModality;
-import de.gravitex.accounting.modality.FixedPeriodPaymentOutgoingModality;
+import de.gravitex.accounting.modality.FixedPeriodOutgoingPaymentModality;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.modality.UndefinedPeriodOutgoingPaymentModality;
 import lombok.Data;
@@ -33,11 +34,11 @@ import lombok.Data;
 public class AccountingManager {
 
 	private static final String FILE = "C:\\work\\eclipseWorkspaces\\2019\\konto2\\accounting-excel\\src\\main\\resources\\Konto.xlsx";
-	
+
 	private static final String RESOURCE_PLANNING_FOLDER = "rp";
-	
+
 	private static final String MODALITIES_PROPERTIES = "modalities.properties";
-	
+
 	public static final String UNDEFINED_CATEGORY = "Undefiniert";
 
 	private static final int COL_RUNNING_INDEX = 0;
@@ -45,33 +46,8 @@ public class AccountingManager {
 	private static final int COL_BETRAG = 2;
 	private static final int COL_SALDO = 3;
 	private static final int COL_TEXT = 4;
-	
-	private static final HashMap<String, PaymentModality> paymentModalitys = new HashMap<String, PaymentModality>();
-	static {
-		paymentModalitys.put("Auto", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Undefiniert", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Kreditkarte", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Paypal", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Nebenkosten", new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
-		paymentModalitys.put("Nahverkehr", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Telekommunikation", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Essen", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Sonstiges", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Abo", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Lebensversicherung", new FixedPeriodPaymentOutgoingModality(PaymentPeriod.HALF_YEAR));
-		paymentModalitys.put("Miete", new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
-		paymentModalitys.put("Unterhalt", new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
-		paymentModalitys.put("Benzin", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Fahrrad", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Charity", new FixedPeriodPaymentOutgoingModality(PaymentPeriod.QUARTER));
-		paymentModalitys.put("Musik", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Einrichtung", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("AbhebungEC", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Kippen", new UndefinedPeriodOutgoingPaymentModality());
-		paymentModalitys.put("Fitnessstudio", new FixedPeriodPaymentOutgoingModality(PaymentPeriod.MONTH));
-		paymentModalitys.put("Rundfunk", new FixedPeriodPaymentOutgoingModality(PaymentPeriod.YEAR));
-		paymentModalitys.put("Krankengeld", new FixedPeriodIncomingPaymentModality(PaymentPeriod.MONTH));
-	}
+
+	private HashMap<String, PaymentModality> paymentModalitys = new HashMap<String, PaymentModality>();
 
 	private static List<String> header;
 
@@ -81,7 +57,7 @@ public class AccountingManager {
 
 	// hashmap month to rows...
 	private HashMap<String, AccountingMonth> result;
-	
+
 	private AccountingManager() {
 		result = new HashMap<String, AccountingMonth>();
 		HashMap<String, List<AccountingRow>> fileData = readFileData();
@@ -107,10 +83,10 @@ public class AccountingManager {
 			instance = new AccountingManager();
 		}
 		return instance;
-		
+
 		// ---
 	}
-	
+
 	private void readCategories() {
 		Properties prop = new Properties();
 		try {
@@ -127,8 +103,21 @@ public class AccountingManager {
 		}
 	}
 
-	private void createCategory(String categoryKey, String paymentType) {
-		// TODO Auto-generated method stub
+	private void createCategory(String categoryKey, String paymentInfo) {
+		String[] spl = paymentInfo.split("#");
+		PaymentPeriod paymentPeriod = PaymentPeriod.valueOf(spl[1]);
+		switch (PaymentType.valueOf(spl[0])) {
+		case INCOMING:
+			paymentModalitys.put(categoryKey, new FixedPeriodIncomingPaymentModality(paymentPeriod));
+			break;
+		case OUTGOING:
+			if (paymentPeriod.equals(paymentPeriod.UNDEFINED)) {
+				paymentModalitys.put(categoryKey, new UndefinedPeriodOutgoingPaymentModality());
+			} else {
+				paymentModalitys.put(categoryKey, new FixedPeriodOutgoingPaymentModality(paymentPeriod));
+			}
+			break;
+		}
 	}
 
 	private static void readBudgetPlannings() {
@@ -155,10 +144,10 @@ public class AccountingManager {
 	}
 
 	private static File[] getResourceFolderFiles(String folder) {
-	    ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	    URL url = loader.getResource(folder);
-	    String path = url.getPath();
-	    File[] result = new File(path).listFiles();
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		URL url = loader.getResource(folder);
+		String path = url.getPath();
+		File[] result = new File(path).listFiles();
 		return result;
 	}
 
@@ -176,7 +165,8 @@ public class AccountingManager {
 				if (row.getRowNum() > 0) {
 					AccountingRow accountingRow = readLine(row);
 					if (fileRows.get(AccountingUtil.getMonthKey(accountingRow.getDate())) == null) {
-						fileRows.put(AccountingUtil.getMonthKey(accountingRow.getDate()), new ArrayList<AccountingRow>());
+						fileRows.put(AccountingUtil.getMonthKey(accountingRow.getDate()),
+								new ArrayList<AccountingRow>());
 					}
 					fileRows.get(AccountingUtil.getMonthKey(accountingRow.getDate())).add(accountingRow);
 					completeAmount = completeAmount.add(accountingRow.getAmount());
@@ -269,9 +259,9 @@ public class AccountingManager {
 	}
 
 	public void saldoCheck() {
-		
+
 		System.out.println(" --------------------- SALDO CHECK --------------------- ");
-		
+
 		List<AccountingRow> results = new ArrayList<AccountingRow>();
 		for (AccountingMonth month : result.values()) {
 			results.addAll(month.getRowObjects());
@@ -281,7 +271,7 @@ public class AccountingManager {
 		for (AccountingRow accountingRow : results) {
 			if (referenceSaldo == null && accountingRow.getSaldo() != null) {
 				referenceSaldo = accountingRow.getSaldo();
-				System.out.println("setting reference saldo to: " + referenceSaldo);				
+				System.out.println("setting reference saldo to: " + referenceSaldo);
 			} else {
 				if (referenceSaldo != null) {
 					referenceSaldo = referenceSaldo.add(accountingRow.getAmount());
@@ -291,12 +281,13 @@ public class AccountingManager {
 									"invalid reference saldo [reference value: " + referenceSaldo + " <-> row value: "
 											+ accountingRow.getSaldo() + "]!!",
 									AccountingError.INVALID_SALDO_REF, accountingRow);
-						}						
-						System.out.println(" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: "
-								+ referenceSaldo + " [CHECK against row saldo '" + accountingRow.getSaldo() + "'] --> OK!!");
-					} else {
+						}
 						System.out.println(
-								" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: " + referenceSaldo);
+								" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: " + referenceSaldo
+										+ " [CHECK against row saldo '" + accountingRow.getSaldo() + "'] --> OK!!");
+					} else {
+						System.out.println(" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: "
+								+ referenceSaldo);
 					}
 				}
 			}
@@ -310,21 +301,27 @@ public class AccountingManager {
 		}
 		Properties properties = budgetPlannings.get(monthKey);
 		if (properties == null) {
-			throw new AccountingException("request limit --> no budget planning available for month key ["+monthKey+"]!!", null, null);
+			throw new AccountingException(
+					"request limit --> no budget planning available for month key [" + monthKey + "]!!", null, null);
 		}
 		Object entry = properties.get(category);
 		if (entry == null) {
-			throw new AccountingException("request limit --> no budget planning available for category ["+category+"] in month key ["+monthKey+"]!!", null, null);
+			throw new AccountingException("request limit --> no budget planning available for category [" + category
+					+ "] in month key [" + monthKey + "]!!", null, null);
 		}
 		String value = String.valueOf(properties.get(category));
 		if (value == null || value.length() == 0) {
-			throw new AccountingException("request limit --> no value set for budget planning for month ["+monthKey+"] available and category ["+category+"]!!", null, null);
+			throw new AccountingException("request limit --> no value set for budget planning for month [" + monthKey
+					+ "] available and category [" + category + "]!!", null, null);
 		}
 		int limit = 0;
 		try {
-			limit = Integer.parseInt(String.valueOf(value));			
+			limit = Integer.parseInt(String.valueOf(value));
 		} catch (Exception e) {
-			throw new AccountingException("request limit --> unparsable numeric value ["+value+"] set for budget planning for month ["+monthKey+"] available and category ["+category+"]!!", null, null);
+			throw new AccountingException(
+					"request limit --> unparsable numeric value [" + value + "] set for budget planning for month ["
+							+ monthKey + "] available and category [" + category + "]!!",
+					null, null);
 		}
 		return limit;
 	}
