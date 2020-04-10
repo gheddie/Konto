@@ -239,7 +239,7 @@ public class AccountingManager {
 			}
 		}
 		if (categorys.size() == 0) {
-			throw new AccountingException("no category found for row!!", AccountingError.NO_CATEGORY, null);
+				throw new AccountingException("no category found for row!!", AccountingError.NO_CATEGORY, null);
 		}
 		if (categorys.size() > 1) {
 			throw new AccountingException("more than one category found for row!!", AccountingError.MULTIPLE_CATEGORIES,
