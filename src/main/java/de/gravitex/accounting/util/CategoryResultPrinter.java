@@ -38,15 +38,15 @@ public class CategoryResultPrinter {
 	}
 
 	// TODO onlyExceeded...
-	public void print(boolean onlyExceeded) {
-
-		System.out.println(
-				" ------------------------------------ " + category + " ------------------------------------ ");
+	public StringBuffer print(boolean onlyExceeded) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(" ------------------------------------ " + category + " ------------------------------------ " + "\n");
 		Collections.sort(accountingRows);
 		for (AccountingRow accountingRow : accountingRows) {
-			System.out.println(formatRow(accountingRow));
+			buffer.append(formatRow(accountingRow) + "\n");
 		}
-		System.out.println(paymentModalityDefinition.getCalculationFooter().toString());
+		buffer.append(paymentModalityDefinition.getCalculationFooter().toString() + "\n");
+		return buffer;
 	}
 
 	private String formatRow(AccountingRow accountingRow) {

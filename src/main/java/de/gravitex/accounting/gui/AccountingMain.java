@@ -1,10 +1,12 @@
-package de.gravitex.accounting;
+package de.gravitex.accounting.gui;
+
+import de.gravitex.accounting.AccountingManager;
 
 public class AccountingMain {
 
 	public static void main(String[] args) {
 		
-		AccountingManager.getInstance().printMonth("4/2020", false);
+		System.out.println(AccountingManager.getInstance().printMonth("4/2020", false).toString());
 		
 		// AccountingManager.getInstance().printAll(true);
 		

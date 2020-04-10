@@ -29,8 +29,10 @@ public class AccountingMonth {
 		return aMonth;
 	}
 
-	public void print(boolean onlyExceeded) {
-		System.out.println(" ######################## "+monthKey+" ######################## ");
+	public StringBuffer print(boolean onlyExceeded) {
+		StringBuffer result = new StringBuffer();
+		result.append(" ######################## "+monthKey+" ######################## " + "\n");
+		result.append("\n");
 		BigDecimal totalPlusMinusAmountOfMonth = new BigDecimal(0);
 		HashMap<String, List<AccountingRow>> sortedByCategory = getSortedByWhat();
 		for (String categoryKey : sortedByCategory.keySet()) {
@@ -43,11 +45,13 @@ public class AccountingMonth {
 			for (AccountingRow obj : sortedByCategory.get(categoryKey)) {
 				printer.addRow(obj);
 			}
-			printer.print(onlyExceeded);
+			StringBuffer buffer = printer.print(onlyExceeded);
+			result.append(buffer);
 			totalPlusMinusAmountOfMonth = totalPlusMinusAmountOfMonth.add(printer.getTotalAmount());
 		}
-		System.out.println();
-		System.out.println(" ---------------> total +/- in month: " + totalPlusMinusAmountOfMonth );
+		result.append("\n");
+		result.append(" ---------------> total +/- in month: " + totalPlusMinusAmountOfMonth + "\n");
+		return result;
 	}
 
 	private HashMap<String, List<AccountingRow>> getSortedByWhat() {

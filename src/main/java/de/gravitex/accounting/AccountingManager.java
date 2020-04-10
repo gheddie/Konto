@@ -74,8 +74,8 @@ public class AccountingManager {
 		}
 	}
 
-	public void printMonth(String monthKey, boolean showObjects) {
-		result.get(monthKey).print(showObjects);
+	public StringBuffer printMonth(String monthKey, boolean showObjects) {
+		return result.get(monthKey).print(showObjects);
 	}
 
 	public static AccountingManager getInstance() {

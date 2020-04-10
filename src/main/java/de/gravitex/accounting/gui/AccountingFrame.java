@@ -23,6 +23,7 @@ public class AccountingFrame extends JFrame {
 	public AccountingFrame() {
 		initComponents();
 		manager = AccountingManager.getInstance();
+		accountingMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		fillAccountingMonths();
 	}
 
@@ -36,7 +37,9 @@ public class AccountingFrame extends JFrame {
 		accountingMonthList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				System.out.println(accountingMonthList.getSelectedValues());
+				System.out.println(accountingMonthList.getSelectedValue());
+				taOutput.setText(
+						manager.printMonth(String.valueOf(accountingMonthList.getSelectedValue()), true).toString());
 			}
 		});
 	}
@@ -47,14 +50,17 @@ public class AccountingFrame extends JFrame {
 		scrollPane1 = new JScrollPane();
 		accountingMonthList = new JList();
 		button1 = new JButton();
+		scrollPane2 = new JScrollPane();
+		taOutput = new JTextArea();
 
 		//======== this ========
+		setTitle("Accounting Manager");
 		var contentPane = getContentPane();
 		contentPane.setLayout(new GridBagLayout());
 		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 0, 0};
-		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
+		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {92, 0, 0, 0};
 		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 1.0, 1.0E-4};
-		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 1.0E-4};
 
 		//======== scrollPane1 ========
 		{
@@ -65,10 +71,18 @@ public class AccountingFrame extends JFrame {
 			new Insets(0, 0, 5, 0), 0, 0));
 
 		//---- button1 ----
-		button1.setText("text");
+		button1.setText("Check Saldo");
 		contentPane.add(button1, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
+
+		//======== scrollPane2 ========
+		{
+			scrollPane2.setViewportView(taOutput);
+		}
+		contentPane.add(scrollPane2, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 0, 0), 0, 0));
 		pack();
 		setLocationRelativeTo(getOwner());
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -85,5 +99,7 @@ public class AccountingFrame extends JFrame {
 	private JScrollPane scrollPane1;
 	private JList accountingMonthList;
 	private JButton button1;
+	private JScrollPane scrollPane2;
+	private JTextArea taOutput;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }
