@@ -3,7 +3,9 @@ package de.gravitex.accounting;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.util.CategoryResultPrinter;
@@ -71,6 +73,14 @@ public class AccountingMonth {
 			if (accountingRow.hasCategory(category)) {
 				result.add(accountingRow);
 			}
+		}
+		return result;
+	}
+
+	public Set<String> getDistinctCategories() {
+		HashSet<String> result = new HashSet<String>();
+		for (AccountingRow accountingRow : rowObjects) {
+			result.add(accountingRow.getCategory());
 		}
 		return result;
 	}

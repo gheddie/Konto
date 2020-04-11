@@ -28,6 +28,8 @@ import de.gravitex.accounting.modality.FixedPeriodIncomingPaymentModality;
 import de.gravitex.accounting.modality.FixedPeriodOutgoingPaymentModality;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.modality.UndefinedPeriodOutgoingPaymentModality;
+import de.gravitex.accounting.model.AccountingResultCategoryModel;
+import de.gravitex.accounting.model.AccountingResultModelRow;
 import lombok.Data;
 
 @Data
@@ -333,5 +335,32 @@ public class AccountingManager {
 					AccountingError.NO_PM_FOR_CATEGORY, null);
 		}
 		return paymentModality;
+	}
+	
+	public AccountingResultMonthModel getAccountingResultMonthModel(String monthKey) {
+		AccountingMonth accountingMonth = result.get(monthKey);
+		AccountingResultMonthModel result = new AccountingResultMonthModel();
+		for (String category : accountingMonth.getDistinctCategories()) {
+			result.addCategoryModel(getAccountingResultCategoryModel(monthKey, category));
+		}
+		return result;
+	}
+
+	public AccountingResultCategoryModel getAccountingResultCategoryModel(String monthKey, String category) {
+		AccountingMonth accountingMonth = result.get(monthKey);
+		List<AccountingRow> rowsByCategory = accountingMonth.getRowObjectsByCategory(category);
+		AccountingResultCategoryModel monthModel = new AccountingResultCategoryModel();
+		monthModel.setMonthKey(monthKey);
+		monthModel.setCategory(category);
+		List<AccountingResultModelRow> accountingResultModelRows = new ArrayList<AccountingResultModelRow>();
+		BigDecimal sum = new BigDecimal(0);
+		for (AccountingRow accountingRow : rowsByCategory) {
+			accountingResultModelRows.add(AccountingResultModelRow.fromValues(accountingRow.getAmount(),
+					accountingRow.getDate(), accountingRow.getText()));
+			sum = sum.add(accountingRow.getAmount());
+		}
+		monthModel.setAccountingResultModelRows(accountingResultModelRows);
+		monthModel.setSum(sum);
+		return monthModel;
 	}
 }
