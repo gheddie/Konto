@@ -12,6 +12,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.swing.*;
@@ -62,6 +63,7 @@ public class AccountingFrame extends JFrame {
 			}
 
 			private void fillAllCategoryEntries(String category) {
+				categoryEntriesTable.setBackground(Color.WHITE);
 				System.out.println("fillAllCategoryEntries : " + cbAllCategories.getSelectedItem());
 				List<AccountingRow> allEntriesForCategory = AccountingManager.getInstance()
 						.getAllEntriesForCategory(category);
@@ -83,7 +85,8 @@ public class AccountingFrame extends JFrame {
 
 	private void fillAllCategories() {
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		for (String category : AccountingManager.getInstance().getAllCategories()) {
+		Set<String> allCategories = AccountingManager.getInstance().getAllCategories();
+		for (String category : allCategories) {
 			model.addElement(category);
 		}
 		cbAllCategories.setModel(model);

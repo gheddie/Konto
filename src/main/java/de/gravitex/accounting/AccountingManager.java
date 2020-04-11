@@ -399,6 +399,7 @@ public class AccountingManager {
 				allEntriesForCategory.add(accountingRow);
 			}
 		}
+		Collections.sort(allEntriesForCategory);
 		return allEntriesForCategory;
 	}
 }
