@@ -2,6 +2,7 @@ package de.gravitex.accounting;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Vector;
 
 import de.gravitex.accounting.enumeration.AccountingError;
 import lombok.Data;
@@ -41,5 +42,9 @@ public class AccountingRow implements Comparable<AccountingRow> {
 			return AccountingError.UNDEF_NO_TEXT;
 		}
 		return null;
+	}
+
+	public String[] asTableRow() {
+		return new String[] {date.toString(), amount.toString(), text};
 	}
 }

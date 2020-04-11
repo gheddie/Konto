@@ -10,9 +10,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -378,5 +380,25 @@ public class AccountingManager {
 		paymentModality.setCategory(category);
 		paymentModality.prepare();
 		return paymentModality;
+	}
+
+	public Set<String> getAllCategories() {
+		Set<String> allCategories = new HashSet<String>();
+		AccountingMonth accountingMonth = null;
+		for (String key : result.keySet()) {
+			accountingMonth = result.get(key);
+			allCategories.addAll(accountingMonth.getDistinctCategories());
+		}
+		return allCategories;
+	}
+
+	public List<AccountingRow> getAllEntriesForCategory(String category) {
+		List<AccountingRow> allEntriesForCategory = new ArrayList<AccountingRow>();
+		for (String key : result.keySet()) {
+			for (AccountingRow accountingRow : result.get(key).getRowObjectsByCategory(category)) {
+				allEntriesForCategory.add(accountingRow);
+			}
+		}
+		return allEntriesForCategory;
 	}
 }
