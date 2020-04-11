@@ -3,7 +3,7 @@ package de.gravitex.accounting.gui;
 import java.util.Set;
 
 import de.gravitex.accounting.AccountingManager;
-import de.gravitex.accounting.AccountingResultMonthModel;
+import de.gravitex.accounting.model.AccountingResultMonthModel;
 
 public class AccountingMain {
 

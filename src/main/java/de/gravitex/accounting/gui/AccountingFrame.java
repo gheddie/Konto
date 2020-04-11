@@ -10,26 +10,27 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.Set;
 import javax.swing.*;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import de.gravitex.accounting.AccountingManager;
-import de.gravitex.accounting.AccountingResultMonthModel;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
+import de.gravitex.accounting.model.AccountingResultMonthModel;
 
 /**
  * @author Stefan Schulz
@@ -69,10 +70,11 @@ public class AccountingFrame extends JFrame {
 				System.out.println(accountingMonthList.getSelectedValue());
 				String monthKey = String.valueOf(accountingMonthList.getSelectedValue());
 				monthModel = manager.getAccountingResultMonthModel(monthKey);
-				fillCategoriesForMoth(monthModel.getDistinctCategories());
+				fillCategoriesForMonth(monthModel.getDistinctCategories());
+				tfMonthOverall.setText(monthModel.calculateOverallSum().toString());
 			}
 
-			private void fillCategoriesForMoth(Set<String> distinctCategories) {
+			private void fillCategoriesForMonth(Set<String> distinctCategories) {
 				final DefaultListModel<String> categoriesByMonthModel = new DefaultListModel<String>();
 				for (String category : distinctCategories) {
 					categoriesByMonthModel.addElement(category);	
@@ -109,11 +111,12 @@ public class AccountingFrame extends JFrame {
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Evaluation license - Stefan Schulz
+		toolBar1 = new JToolBar();
+		btnCheckSaldo = new JButton();
 		scrollPane1 = new JScrollPane();
 		accountingMonthList = new JList();
 		scrollPane3 = new JScrollPane();
 		categoriesByMonthList = new JList();
-		btnCheckSaldo = new JButton();
 		scrollPane4 = new JScrollPane();
 		categoryEntriesTable = new JTable();
 		label1 = new JLabel();
@@ -128,15 +131,27 @@ public class AccountingFrame extends JFrame {
 		var contentPane = getContentPane();
 		contentPane.setLayout(new GridBagLayout());
 		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {211, 0, 0};
-		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {92, 0, 0, 0, 0, 0, 0};
+		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 92, 0, 0, 0, 0, 0};
 		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 1.0, 1.0E-4};
 		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0E-4};
+
+		//======== toolBar1 ========
+		{
+			toolBar1.setEnabled(false);
+
+			//---- btnCheckSaldo ----
+			btnCheckSaldo.setText("Check Saldo");
+			toolBar1.add(btnCheckSaldo);
+		}
+		contentPane.add(toolBar1, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 5, 0), 0, 0));
 
 		//======== scrollPane1 ========
 		{
 			scrollPane1.setViewportView(accountingMonthList);
 		}
-		contentPane.add(scrollPane1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+		contentPane.add(scrollPane1, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 5), 0, 0));
 
@@ -144,13 +159,7 @@ public class AccountingFrame extends JFrame {
 		{
 			scrollPane3.setViewportView(categoriesByMonthList);
 		}
-		contentPane.add(scrollPane3, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 0), 0, 0));
-
-		//---- btnCheckSaldo ----
-		btnCheckSaldo.setText("Check Saldo");
-		contentPane.add(btnCheckSaldo, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0,
+		contentPane.add(scrollPane3, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -206,11 +215,12 @@ public class AccountingFrame extends JFrame {
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner Evaluation license - Stefan Schulz
+	private JToolBar toolBar1;
+	private JButton btnCheckSaldo;
 	private JScrollPane scrollPane1;
 	private JList accountingMonthList;
 	private JScrollPane scrollPane3;
 	private JList categoriesByMonthList;
-	private JButton btnCheckSaldo;
 	private JScrollPane scrollPane4;
 	private JTable categoryEntriesTable;
 	private JLabel label1;

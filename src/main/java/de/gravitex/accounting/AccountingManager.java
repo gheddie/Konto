@@ -30,6 +30,7 @@ import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.modality.UndefinedPeriodOutgoingPaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
+import de.gravitex.accounting.model.AccountingResultMonthModel;
 import lombok.Data;
 
 @Data

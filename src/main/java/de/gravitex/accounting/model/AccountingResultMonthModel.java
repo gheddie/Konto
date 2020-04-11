@@ -1,5 +1,6 @@
-package de.gravitex.accounting;
+package de.gravitex.accounting.model;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,5 +27,13 @@ public class AccountingResultMonthModel {
 
 	public AccountingResultCategoryModel getCategoryModel(String category) {
 		return categoryModels.get(category);
+	}
+
+	public BigDecimal calculateOverallSum() {
+		BigDecimal result = new BigDecimal(0);
+		for (String monthKey : categoryModels.keySet()) {
+			result = result.add(categoryModels.get(monthKey).getSum());
+		}
+		return result;
 	}
 }
