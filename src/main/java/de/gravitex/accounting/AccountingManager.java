@@ -298,7 +298,7 @@ public class AccountingManager {
 		System.out.println("saldo check ok...");
 	}
 
-	public int requestLimit(String monthKey, String category) {
+	public Integer requestLimit(String monthKey, String category) {
 		if (monthKey == null || category == null) {
 			throw new AccountingException("request limit --> both month key and category must be set!!", null, null);
 		}
@@ -309,8 +309,11 @@ public class AccountingManager {
 		}
 		Object entry = properties.get(category);
 		if (entry == null) {
+			return null;
+			/*
 			throw new AccountingException("request limit --> no budget planning available for category [" + category
 					+ "] in month key [" + monthKey + "]!!", null, null);
+					*/
 		}
 		String value = String.valueOf(properties.get(category));
 		if (value == null || value.length() == 0) {
@@ -350,9 +353,9 @@ public class AccountingManager {
 	public AccountingResultCategoryModel getAccountingResultCategoryModel(String monthKey, String category) {
 		AccountingMonth accountingMonth = result.get(monthKey);
 		List<AccountingRow> rowsByCategory = accountingMonth.getRowObjectsByCategory(category);
-		AccountingResultCategoryModel monthModel = new AccountingResultCategoryModel();
-		monthModel.setMonthKey(monthKey);
-		monthModel.setCategory(category);
+		AccountingResultCategoryModel categoryModel = new AccountingResultCategoryModel();
+		categoryModel.setMonthKey(monthKey);
+		categoryModel.setCategory(category);
 		List<AccountingResultModelRow> accountingResultModelRows = new ArrayList<AccountingResultModelRow>();
 		BigDecimal sum = new BigDecimal(0);
 		for (AccountingRow accountingRow : rowsByCategory) {
@@ -360,8 +363,20 @@ public class AccountingManager {
 					accountingRow.getDate(), accountingRow.getText()));
 			sum = sum.add(accountingRow.getAmount());
 		}
-		monthModel.setAccountingResultModelRows(accountingResultModelRows);
-		monthModel.setSum(sum);
-		return monthModel;
+		categoryModel.setAccountingResultModelRows(accountingResultModelRows);
+		categoryModel.setSum(sum);
+		// initPaymentModality(monthKey, category);
+		Integer limit = requestLimit(monthKey, category);
+		categoryModel.setBudget(limit != null ? new BigDecimal(limit) : null);
+		return categoryModel;
+	}
+
+	public PaymentModality initPaymentModality(String monthKey, String category) {
+		PaymentModality paymentModality = getPaymentModality(monthKey);
+		paymentModality.reset();
+		paymentModality.setMonthKey(monthKey);
+		paymentModality.setCategory(category);
+		paymentModality.prepare();
+		return paymentModality;
 	}
 }

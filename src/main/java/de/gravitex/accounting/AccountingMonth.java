@@ -38,11 +38,7 @@ public class AccountingMonth {
 		BigDecimal totalPlusMinusAmountOfMonth = new BigDecimal(0);
 		HashMap<String, List<AccountingRow>> sortedByCategory = getSortedByWhat();
 		for (String categoryKey : sortedByCategory.keySet()) {
-			PaymentModality paymentModality = AccountingManager.getInstance().getPaymentModality(categoryKey);
-			paymentModality.reset();
-			paymentModality.setMonthKey(monthKey);
-			paymentModality.setCategory(categoryKey);
-			paymentModality.prepare();
+			PaymentModality paymentModality = AccountingManager.getInstance().initPaymentModality(monthKey, categoryKey);
 			printer = CategoryResultPrinter.fromValues(categoryKey, paymentModality, monthKey);
 			for (AccountingRow obj : sortedByCategory.get(categoryKey)) {
 				printer.addRow(obj);

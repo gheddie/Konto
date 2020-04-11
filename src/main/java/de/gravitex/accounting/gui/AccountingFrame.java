@@ -4,12 +4,14 @@
 
 package de.gravitex.accounting.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.Set;
 import javax.swing.*;
 
@@ -28,6 +30,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import de.gravitex.accounting.AccountingManager;
+import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
@@ -51,7 +54,12 @@ public class AccountingFrame extends JFrame {
 		btnCheckSaldo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				manager.saldoCheck();
+				try {
+					manager.saldoCheck();	
+					JOptionPane.showMessageDialog(AccountingFrame.this, "Saldo OK!!");
+				} catch (AccountingException accountingException) {
+					JOptionPane.showMessageDialog(AccountingFrame.this, "Saldo error: " + accountingException.getMessage());
+				}
 			}
 		});
 		fillAccountingMonths();
@@ -71,7 +79,13 @@ public class AccountingFrame extends JFrame {
 				String monthKey = String.valueOf(accountingMonthList.getSelectedValue());
 				monthModel = manager.getAccountingResultMonthModel(monthKey);
 				fillCategoriesForMonth(monthModel.getDistinctCategories());
-				tfMonthOverall.setText(monthModel.calculateOverallSum().toString());
+				BigDecimal overallSum = monthModel.calculateOverallSum();
+				tfMonthOverall.setText(overallSum.toString());
+				if (overallSum.intValue() > 0) {
+					tfMonthOverall.setBackground(Color.WHITE);
+				} else {
+					tfMonthOverall.setBackground(Color.RED);
+				}
 			}
 
 			private void fillCategoriesForMonth(Set<String> distinctCategories) {
@@ -84,13 +98,19 @@ public class AccountingFrame extends JFrame {
 					@Override
 					public void valueChanged(ListSelectionEvent e) {
 						AccountingResultCategoryModel categoryModel = monthModel.getCategoryModel((String) categoriesByMonthList.getSelectedValue());
+						/*
 						System.out.println("entries [" + categoryModel.getAccountingResultModelRows().size()
 								+ "] for month " + accountingMonthList.getSelectedValue() + " and category "
 								+ categoriesByMonthList.getSelectedValue() + "...");
+								*/
 						fillCategoryEntries(categoryModel);
 					}
 
 					private void fillCategoryEntries(AccountingResultCategoryModel categoryModel) {
+						
+						if (categoryModel == null) {
+							return;
+						}
 						
 					    DefaultTableModel tablemodel = new DefaultTableModel();
 					    // tablemodel.setRowCount(0);
@@ -102,6 +122,17 @@ public class AccountingFrame extends JFrame {
 					    }
 					    categoryEntriesTable.setModel(tablemodel);
 					    tfSum.setText(categoryModel.getSum().toString());
+					    tfBudget.setText(categoryModel.getBudget() != null ? categoryModel.getBudget().toString() : "---");
+					    
+					    updateBudgetAlert(categoryModel.inBudget());
+					}
+
+					private void updateBudgetAlert(boolean inBudget) {
+						if (!inBudget) {
+							categoryEntriesTable.setBackground(Color.RED);
+						} else {
+							categoryEntriesTable.setBackground(Color.WHITE);
+						}
 					}
 				});
 			}
@@ -111,7 +142,7 @@ public class AccountingFrame extends JFrame {
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Evaluation license - Stefan Schulz
-		toolBar1 = new JToolBar();
+		tbMain = new JToolBar();
 		btnCheckSaldo = new JButton();
 		scrollPane1 = new JScrollPane();
 		accountingMonthList = new JList();
@@ -119,8 +150,10 @@ public class AccountingFrame extends JFrame {
 		categoriesByMonthList = new JList();
 		scrollPane4 = new JScrollPane();
 		categoryEntriesTable = new JTable();
-		label1 = new JLabel();
+		lblSum = new JLabel();
 		tfSum = new JTextField();
+		lblBudget = new JLabel();
+		tfBudget = new JTextField();
 		scrollPane2 = new JScrollPane();
 		taOutput = new JTextArea();
 		label2 = new JLabel();
@@ -130,20 +163,20 @@ public class AccountingFrame extends JFrame {
 		setTitle("Accounting Manager");
 		var contentPane = getContentPane();
 		contentPane.setLayout(new GridBagLayout());
-		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {211, 0, 0};
+		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {77, 236, 43, 0, 0};
 		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 92, 0, 0, 0, 0, 0};
-		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 1.0, 1.0E-4};
+		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0, 1.0E-4};
 		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0E-4};
 
-		//======== toolBar1 ========
+		//======== tbMain ========
 		{
-			toolBar1.setEnabled(false);
+			tbMain.setEnabled(false);
 
 			//---- btnCheckSaldo ----
 			btnCheckSaldo.setText("Check Saldo");
-			toolBar1.add(btnCheckSaldo);
+			tbMain.add(btnCheckSaldo);
 		}
-		contentPane.add(toolBar1, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
+		contentPane.add(tbMain, new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -151,7 +184,7 @@ public class AccountingFrame extends JFrame {
 		{
 			scrollPane1.setViewportView(accountingMonthList);
 		}
-		contentPane.add(scrollPane1, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+		contentPane.add(scrollPane1, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 5), 0, 0));
 
@@ -159,7 +192,7 @@ public class AccountingFrame extends JFrame {
 		{
 			scrollPane3.setViewportView(categoriesByMonthList);
 		}
-		contentPane.add(scrollPane3, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+		contentPane.add(scrollPane3, new GridBagConstraints(2, 1, 2, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -167,13 +200,13 @@ public class AccountingFrame extends JFrame {
 		{
 			scrollPane4.setViewportView(categoryEntriesTable);
 		}
-		contentPane.add(scrollPane4, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
+		contentPane.add(scrollPane4, new GridBagConstraints(0, 2, 4, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
-		//---- label1 ----
-		label1.setText("Summe:");
-		contentPane.add(label1, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+		//---- lblSum ----
+		lblSum.setText("Summe:");
+		contentPane.add(lblSum, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 5), 0, 0));
 
@@ -181,13 +214,25 @@ public class AccountingFrame extends JFrame {
 		tfSum.setEditable(false);
 		contentPane.add(tfSum, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 5, 5), 0, 0));
+
+		//---- lblBudget ----
+		lblBudget.setText("Budget:");
+		contentPane.add(lblBudget, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 5, 5), 0, 0));
+
+		//---- tfBudget ----
+		tfBudget.setEditable(false);
+		contentPane.add(tfBudget, new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
 		//======== scrollPane2 ========
 		{
 			scrollPane2.setViewportView(taOutput);
 		}
-		contentPane.add(scrollPane2, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0,
+		contentPane.add(scrollPane2, new GridBagConstraints(0, 4, 4, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -199,7 +244,7 @@ public class AccountingFrame extends JFrame {
 
 		//---- tfMonthOverall ----
 		tfMonthOverall.setEditable(false);
-		contentPane.add(tfMonthOverall, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0,
+		contentPane.add(tfMonthOverall, new GridBagConstraints(1, 5, 3, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 0, 0), 0, 0));
 		pack();
@@ -215,7 +260,7 @@ public class AccountingFrame extends JFrame {
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner Evaluation license - Stefan Schulz
-	private JToolBar toolBar1;
+	private JToolBar tbMain;
 	private JButton btnCheckSaldo;
 	private JScrollPane scrollPane1;
 	private JList accountingMonthList;
@@ -223,8 +268,10 @@ public class AccountingFrame extends JFrame {
 	private JList categoriesByMonthList;
 	private JScrollPane scrollPane4;
 	private JTable categoryEntriesTable;
-	private JLabel label1;
+	private JLabel lblSum;
 	private JTextField tfSum;
+	private JLabel lblBudget;
+	private JTextField tfBudget;
 	private JScrollPane scrollPane2;
 	private JTextArea taOutput;
 	private JLabel label2;

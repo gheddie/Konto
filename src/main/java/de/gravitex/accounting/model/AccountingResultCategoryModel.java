@@ -15,8 +15,17 @@ public class AccountingResultCategoryModel {
 	private List<AccountingResultModelRow> accountingResultModelRows;
 	
 	private BigDecimal sum;
+	
+	private BigDecimal budget;
 
 	public String[] getHeaders() {
 		return new String[] {"Datum", "Betrag", "Text"};
+	}
+
+	public boolean inBudget() {
+		if (budget == null) {
+			return true;
+		}
+		return !(Math.abs(sum.intValue()) > budget.intValue());
 	}
 }
