@@ -153,7 +153,7 @@ public class AccountingFrame extends JFrame {
 								for (String message : evaluationResult) {
 									buffer.append(message).append("\n");
 								}
-								JOptionPane.showMessageDialog(AccountingFrame.this, buffer.toString(), "Achtung", JOptionPane.OK_OPTION);
+								pushMessage(buffer.toString());
 							}
 						}
 					}
@@ -203,6 +203,10 @@ public class AccountingFrame extends JFrame {
 				});
 			}
 		});
+	}
+	
+	private void pushMessage(String aMessage) {
+		taOutput.setText(aMessage);
 	}
 
 	private void initComponents() {
