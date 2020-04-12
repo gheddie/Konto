@@ -30,7 +30,7 @@ public class TimelineProjector {
 	public TimelineProjectonResult getResult() {
 		TimelineProjectonResult result = new TimelineProjectonResult();
 		String actualAppereance = initialAppereance;
-		result.getTimelineProjectorItems().add(TimelineProjectorItem.fromValues(actualAppereance , null));
+		// result.getTimelineProjectorItems().add(TimelineProjectorItem.fromValues(actualAppereance , null));
 		int months = 0;
 		while (months < projectionDuration) {
 			actualAppereance = AccountingUtil.nextMonthlyTimeStamp(actualAppereance, paymentPeriod);

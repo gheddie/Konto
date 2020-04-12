@@ -23,4 +23,13 @@ public class TimelineProjectonResult {
 		}
 		return true;
 	}
+
+	public boolean hasTimeStamp(String aTimeStamp) {
+		for (TimelineProjectorItem timelineProjectorItem : timelineProjectorItems) {
+			if (timelineProjectorItem.getMonthKey().equals(aTimeStamp)) {
+				return true;		
+			}
+		}
+		return false;
+	}
 }

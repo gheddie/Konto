@@ -147,7 +147,14 @@ public class AccountingFrame extends JFrame {
 						fillCategoryEntries(categoryModel);
 						updatePaymentModality(categoryWrapper.getPaymentModality());
 						if (manager.getAccountManagerSettings().isBudgetProjectionsEnabled()) {
-							manager.projectBudget(categoryWrapper);
+							List<String> evaluationResult = manager.evaluateBudgetProjection(categoryWrapper);
+							if (evaluationResult.size() > 0) {
+								StringBuffer buffer = new StringBuffer();
+								for (String message : evaluationResult) {
+									buffer.append(message).append("\n");
+								}
+								JOptionPane.showMessageDialog(AccountingFrame.this, buffer.toString(), "Achtung", JOptionPane.OK_OPTION);
+							}
 						}
 					}
 

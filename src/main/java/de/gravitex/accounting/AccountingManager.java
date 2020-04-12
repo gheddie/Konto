@@ -34,6 +34,7 @@ import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
 import de.gravitex.accounting.setting.AccountManagerSettings;
+import de.gravitex.accounting.util.TimelineProjectonResult;
 import de.gravitex.accounting.util.TimelineProjector;
 import de.gravitex.accounting.wrapper.CategoryWrapper;
 import lombok.Data;
@@ -401,22 +402,71 @@ public class AccountingManager {
 		return accountManagerSettings;
 	}
 
-	public void projectBudget(CategoryWrapper categoryWrapper) {
+	public List<String> evaluateBudgetProjection(CategoryWrapper categoryWrapper) {
 		if (!categoryWrapper.getPaymentModality().isProjectable()) {
 			System.out.println("payment modiality '"+categoryWrapper.getPaymentModality().getClass().getSimpleName()+"' is not projectable -- returning!!");
-			return;
+			return new ArrayList<String>();
 		}
 		System.out.println(" --- projecting [" + categoryWrapper.getCategory() + "] ----: "
 				+ categoryWrapper.getPaymentModality().getClass().getSimpleName());
-		generateBudgetProjection(categoryWrapper);
+		return evaluateBudgetProjectionIntern(categoryWrapper);
 	}
 
-	private void generateBudgetProjection(CategoryWrapper categoryWrapper) {
+	private List<String> evaluateBudgetProjectionIntern(CategoryWrapper categoryWrapper) {
+		
+		List<String> evaluationResult = new ArrayList<String>();
+		
 		String initialAppeareance = getInitialAppeareanceOfCategory(categoryWrapper.getCategory());
 		if (initialAppeareance == null) {
-			return;
+			return null;
 		}
-		TimelineProjector.fromValues(initialAppeareance, categoryWrapper.getPaymentModality().getPaymentPeriod(), accountManagerSettings.getProjectionDurationInMonths()).getResult();
+		TimelineProjectonResult timelineProjectonResult = TimelineProjector
+				.fromValues(initialAppeareance, categoryWrapper.getPaymentModality().getPaymentPeriod(),
+						accountManagerSettings.getProjectionDurationInMonths())
+				.getResult();
+		// search in budget plannings...
+		int months = 0;
+		LocalDate now = LocalDate.now();
+		String actualAppearance = AccountingUtil.getMonthKey(now.getMonthValue(), now.getYear());
+		boolean budgetPlanningAvailable = false;
+		while (months < accountManagerSettings.getProjectionDurationInMonths()) {
+			actualAppearance = AccountingUtil.nextMonthlyTimeStamp(actualAppearance, PaymentPeriod.MONTH);
+			budgetPlanningAvailable = budgetPlanningAvailableFor(actualAppearance, categoryWrapper.getCategory());
+			months += PaymentPeriod.MONTH.getDurationInMonths();
+			if (timelineProjectonResult.hasTimeStamp(actualAppearance)) {
+				// budget planning should be there...
+				System.out.println("projecting: " + actualAppearance + " *");
+				if (!budgetPlanningAvailable) {
+					if (budgetPlanningPresentFor(actualAppearance)) {
+						evaluationResult.add("FEHLENDES Budget für Kategorie [" + categoryWrapper.getCategory()
+						+ "] in Monat '" + actualAppearance + "'!!");						
+					}
+				}
+			} else {
+				// budget planning should NOT be there...
+				System.out.println("projecting: " + actualAppearance);
+				if (budgetPlanningAvailable) {
+					if (budgetPlanningPresentFor(actualAppearance)) {
+						evaluationResult.add("Fehlplaziertes Budget für Kategorie [" + categoryWrapper.getCategory()
+						+ "] in Monat '" + actualAppearance + "'!!");						
+					}
+				}
+			}
+		}
+		
+		return evaluationResult;
+	}
+
+	private boolean budgetPlanningPresentFor(String monthKey) {
+		return budgetPlannings.keySet().contains(monthKey);
+	}
+
+	private boolean budgetPlanningAvailableFor(String monthKey, String category) {
+		Properties budgetPlanningForMonth = budgetPlannings.get(monthKey);
+		if (budgetPlanningForMonth == null) {
+			return false;
+		}
+		return (budgetPlanningForMonth.keySet().contains(category));
 	}
 
 	private String getInitialAppeareanceOfCategory(String category) {
