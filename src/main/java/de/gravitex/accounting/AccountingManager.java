@@ -56,11 +56,13 @@ public class AccountingManager {
 	private static final int COL_SALDO = 3;
 	private static final int COL_TEXT = 4;
 
+	private static final BigDecimal AVAILABLE_INCOME = new BigDecimal(2400);
+
 	private HashMap<String, PaymentModality> paymentModalitys = new HashMap<String, PaymentModality>();
 
 	private static List<String> header;
 
-	private static HashMap<String, Properties> budgetPlannings = new HashMap<String, Properties>();
+	private HashMap<String, Properties> budgetPlannings = new HashMap<String, Properties>();
 
 	private static AccountingManager instance;
 
@@ -119,7 +121,7 @@ public class AccountingManager {
 		}
 	}
 
-	private static void readBudgetPlannings() {
+	private void readBudgetPlannings() {
 		for (File resourcePlanningFile : getResourceFolderFiles(RESOURCE_PLANNING_FOLDER)) {
 			System.out.println("reading resource planning: " + resourcePlanningFile.getName());
 			Properties budgetPlanningForMonth = new Properties();
@@ -136,7 +138,7 @@ public class AccountingManager {
 		}
 	}
 
-	private static void applyBudgetPlanningForMonth(Properties budgetPlanningForMonth, String fileName) {
+	private void applyBudgetPlanningForMonth(Properties budgetPlanningForMonth, String fileName) {
 		String[] spl = FilenameUtils.removeExtension(fileName).split("_");
 		String monthKey = AccountingUtil.getMonthKey(Integer.parseInt(spl[1]), Integer.parseInt(spl[2]));
 		budgetPlannings.put(monthKey, budgetPlanningForMonth);
@@ -476,5 +478,10 @@ public class AccountingManager {
 		}
 		LocalDate initalDate = allEntries.get(0).getDate();
 		return AccountingUtil.getMonthKey(initalDate.getMonthValue(), initalDate.getYear());
+	}
+
+	public BigDecimal getAvailableIncome(String monthKey) {
+		// TODO
+		return AVAILABLE_INCOME;
 	}
 }

@@ -44,4 +44,8 @@ public class AccountingUtil {
 		localDate = localDate.plusMonths(paymentPeriod.getDurationInMonths());
 		return getMonthKey(localDate.getMonth().getValue(), localDate.getYear());
 	}
+
+	public static double getPercentage(double obtained, double total) {
+		return obtained * 100 / total;
+	}
 }
