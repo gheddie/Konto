@@ -12,10 +12,23 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import javax.swing.*;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -23,9 +36,11 @@ import javax.swing.table.DefaultTableModel;
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
+import de.gravitex.accounting.wrapper.CategoryWrapper;
 
 /**
  * @author Stefan Schulz
@@ -105,7 +120,7 @@ public class AccountingFrame extends JFrame {
 				System.out.println(accountingMonthList.getSelectedValue());
 				String monthKey = String.valueOf(accountingMonthList.getSelectedValue());
 				monthModel = manager.getAccountingResultMonthModel(monthKey);
-				fillCategoriesForMonth(monthModel.getDistinctCategories());
+				fillCategoriesForMonth(monthModel);
 				BigDecimal overallSum = monthModel.calculateOverallSum();
 				tfMonthOverall.setText(overallSum.toString());
 				if (overallSum.intValue() > 0) {
@@ -115,21 +130,17 @@ public class AccountingFrame extends JFrame {
 				}
 			}
 
-			private void fillCategoriesForMonth(Set<String> distinctCategories) {
-				final DefaultListModel<String> categoriesByMonthModel = new DefaultListModel<String>();
-				for (String category : distinctCategories) {
-					categoriesByMonthModel.addElement(category);	
+			private void fillCategoriesForMonth(AccountingResultMonthModel accountingResultMonthModel) {
+				final DefaultListModel<CategoryWrapper> categoriesByMonthModel = new DefaultListModel<CategoryWrapper>();
+				for (String category : accountingResultMonthModel.getDistinctCategories()) {
+					categoriesByMonthModel.addElement(CategoryWrapper.fromValues(category, manager.initPaymentModality(accountingResultMonthModel.getMonthKey(), category)));	
 				}
 				categoriesByMonthList.setModel(categoriesByMonthModel);
 				categoriesByMonthList.addListSelectionListener(new ListSelectionListener() {
 					@Override
 					public void valueChanged(ListSelectionEvent e) {
-						AccountingResultCategoryModel categoryModel = monthModel.getCategoryModel((String) categoriesByMonthList.getSelectedValue());
-						/*
-						System.out.println("entries [" + categoryModel.getAccountingResultModelRows().size()
-								+ "] for month " + accountingMonthList.getSelectedValue() + " and category "
-								+ categoriesByMonthList.getSelectedValue() + "...");
-								*/
+						AccountingResultCategoryModel categoryModel = monthModel.getCategoryModel(
+								((CategoryWrapper) categoriesByMonthList.getSelectedValue()).getCategory());
 						fillCategoryEntries(categoryModel);
 					}
 

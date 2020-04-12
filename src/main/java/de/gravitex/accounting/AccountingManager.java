@@ -73,23 +73,11 @@ public class AccountingManager {
 		}
 	}
 
-	public void printAll(boolean showObjects) {
-		for (String monthKey : result.keySet()) {
-			result.get(monthKey).print(showObjects);
-		}
-	}
-
-	public StringBuffer printMonth(String monthKey, boolean showObjects) {
-		return result.get(monthKey).print(showObjects);
-	}
-
 	public static AccountingManager getInstance() {
 		if (instance == null) {
 			instance = new AccountingManager();
 		}
 		return instance;
-
-		// ---
 	}
 
 	private void readCategories() {
@@ -346,6 +334,7 @@ public class AccountingManager {
 	public AccountingResultMonthModel getAccountingResultMonthModel(String monthKey) {
 		AccountingMonth accountingMonth = result.get(monthKey);
 		AccountingResultMonthModel result = new AccountingResultMonthModel();
+		result.setMonthKey(monthKey);
 		for (String category : accountingMonth.getDistinctCategories()) {
 			result.addCategoryModel(getAccountingResultCategoryModel(monthKey, category));
 		}
@@ -374,7 +363,7 @@ public class AccountingManager {
 	}
 
 	public PaymentModality initPaymentModality(String monthKey, String category) {
-		PaymentModality paymentModality = getPaymentModality(monthKey);
+		PaymentModality paymentModality = getPaymentModality(category);
 		paymentModality.reset();
 		paymentModality.setMonthKey(monthKey);
 		paymentModality.setCategory(category);

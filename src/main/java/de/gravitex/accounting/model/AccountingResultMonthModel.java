@@ -12,6 +12,8 @@ import lombok.Data;
 public class AccountingResultMonthModel {
 
 	private HashMap<String, AccountingResultCategoryModel> categoryModels = new HashMap<String, AccountingResultCategoryModel>();
+	
+	private String monthKey;
 
 	public void addCategoryModel(AccountingResultCategoryModel accountingResultCategoryModel) {
 		categoryModels.put(accountingResultCategoryModel.getCategory(), accountingResultCategoryModel);
