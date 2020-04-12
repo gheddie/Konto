@@ -22,7 +22,7 @@ public abstract class PaymentModality {
 		this.paymentPeriod = aPaymentPeriod;
 	}
 
-	protected abstract PaymentType getPaymentType();
+	public abstract PaymentType getPaymentType();
 
 	public abstract StringBuffer getCalculationFooter();
 

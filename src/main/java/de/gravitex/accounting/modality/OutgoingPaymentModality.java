@@ -15,7 +15,7 @@ public abstract class OutgoingPaymentModality extends PaymentModality {
 	}
 
 	@Override
-	protected PaymentType getPaymentType() {
+	public PaymentType getPaymentType() {
 		return PaymentType.OUTGOING;
 	}
 	

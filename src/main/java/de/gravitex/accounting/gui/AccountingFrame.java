@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import javax.swing.*;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -139,9 +140,25 @@ public class AccountingFrame extends JFrame {
 				categoriesByMonthList.addListSelectionListener(new ListSelectionListener() {
 					@Override
 					public void valueChanged(ListSelectionEvent e) {
+						CategoryWrapper categoryWrapper = (CategoryWrapper) categoriesByMonthList.getSelectedValue();
 						AccountingResultCategoryModel categoryModel = monthModel.getCategoryModel(
-								((CategoryWrapper) categoriesByMonthList.getSelectedValue()).getCategory());
+								categoryWrapper.getCategory());
 						fillCategoryEntries(categoryModel);
+						updatePaymentModality(categoryWrapper.getPaymentModality());
+					}
+
+					private void updatePaymentModality(PaymentModality paymentModality) {
+						switch(paymentModality.getPaymentType()) {
+						case INCOMING:
+							rbIncoming.setSelected(true);
+							rbOutgoing.setSelected(false);
+							break;
+						case OUTGOING:
+							rbIncoming.setSelected(false);
+							rbOutgoing.setSelected(true);
+							break;
+						}
+						tfPaymentPeriod.setText(paymentModality.getPaymentPeriod().toString());
 					}
 
 					private void fillCategoryEntries(AccountingResultCategoryModel categoryModel) {
@@ -185,8 +202,11 @@ public class AccountingFrame extends JFrame {
 		accountingMonthList = new JList();
 		scrollPane3 = new JScrollPane();
 		categoriesByMonthList = new JList();
+		rbIncoming = new JRadioButton();
+		rbOutgoing = new JRadioButton();
 		label1 = new JLabel();
 		cbAllCategories = new JComboBox();
+		tfPaymentPeriod = new JTextField();
 		scrollPane4 = new JScrollPane();
 		categoryEntriesTable = new JTable();
 		lblSum = new JLabel();
@@ -202,9 +222,9 @@ public class AccountingFrame extends JFrame {
 		setTitle("Accounting Manager");
 		var contentPane = getContentPane();
 		contentPane.setLayout(new GridBagLayout());
-		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {77, 236, 43, 0, 0};
+		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {77, 236, 43, 0, 0, 0, 0};
 		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 92, 0, 0, 0, 0, 0, 0};
-		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0, 1.0E-4};
+		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0E-4};
 		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0E-4};
 
 		//======== tbMain ========
@@ -217,7 +237,7 @@ public class AccountingFrame extends JFrame {
 		}
 		contentPane.add(tbMain, new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 0), 0, 0));
+			new Insets(0, 0, 5, 5), 0, 0));
 
 		//======== scrollPane1 ========
 		{
@@ -233,6 +253,20 @@ public class AccountingFrame extends JFrame {
 		}
 		contentPane.add(scrollPane3, new GridBagConstraints(2, 1, 2, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 5, 5), 0, 0));
+
+		//---- rbIncoming ----
+		rbIncoming.setText("eingehend");
+		rbIncoming.setEnabled(false);
+		contentPane.add(rbIncoming, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 5, 5), 0, 0));
+
+		//---- rbOutgoing ----
+		rbOutgoing.setText("ausgehend");
+		rbOutgoing.setEnabled(false);
+		contentPane.add(rbOutgoing, new GridBagConstraints(5, 1, 1, 1, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
 		//---- label1 ----
@@ -242,13 +276,19 @@ public class AccountingFrame extends JFrame {
 			new Insets(0, 0, 5, 5), 0, 0));
 		contentPane.add(cbAllCategories, new GridBagConstraints(1, 2, 3, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 5, 5), 0, 0));
+
+		//---- tfPaymentPeriod ----
+		tfPaymentPeriod.setEditable(false);
+		contentPane.add(tfPaymentPeriod, new GridBagConstraints(4, 2, 2, 1, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
 		//======== scrollPane4 ========
 		{
 			scrollPane4.setViewportView(categoryEntriesTable);
 		}
-		contentPane.add(scrollPane4, new GridBagConstraints(0, 3, 4, 1, 0.0, 0.0,
+		contentPane.add(scrollPane4, new GridBagConstraints(0, 3, 6, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -272,7 +312,7 @@ public class AccountingFrame extends JFrame {
 
 		//---- tfBudget ----
 		tfBudget.setEditable(false);
-		contentPane.add(tfBudget, new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0,
+		contentPane.add(tfBudget, new GridBagConstraints(3, 4, 3, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -280,7 +320,7 @@ public class AccountingFrame extends JFrame {
 		{
 			scrollPane2.setViewportView(taOutput);
 		}
-		contentPane.add(scrollPane2, new GridBagConstraints(0, 5, 4, 1, 0.0, 0.0,
+		contentPane.add(scrollPane2, new GridBagConstraints(0, 5, 6, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -292,7 +332,7 @@ public class AccountingFrame extends JFrame {
 
 		//---- tfMonthOverall ----
 		tfMonthOverall.setEditable(false);
-		contentPane.add(tfMonthOverall, new GridBagConstraints(1, 6, 3, 1, 0.0, 0.0,
+		contentPane.add(tfMonthOverall, new GridBagConstraints(1, 6, 5, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 0, 0), 0, 0));
 		pack();
@@ -314,8 +354,11 @@ public class AccountingFrame extends JFrame {
 	private JList accountingMonthList;
 	private JScrollPane scrollPane3;
 	private JList categoriesByMonthList;
+	private JRadioButton rbIncoming;
+	private JRadioButton rbOutgoing;
 	private JLabel label1;
 	private JComboBox cbAllCategories;
+	private JTextField tfPaymentPeriod;
 	private JScrollPane scrollPane4;
 	private JTable categoryEntriesTable;
 	private JLabel lblSum;
