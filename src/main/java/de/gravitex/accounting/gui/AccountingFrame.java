@@ -12,9 +12,9 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import javax.swing.*;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -23,10 +23,9 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
@@ -64,9 +63,9 @@ public class AccountingFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					manager.saldoCheck();	
-					JOptionPane.showMessageDialog(AccountingFrame.this, "Saldo OK!!");
+					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Saldo OK!!").getAlertMessages());
 				} catch (AccountingException accountingException) {
-					JOptionPane.showMessageDialog(AccountingFrame.this, "Saldo error: " + accountingException.getMessage());
+					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, "Saldo error: " + accountingException.getMessage()).getAlertMessages());
 				}
 			}
 		});
@@ -149,11 +148,13 @@ public class AccountingFrame extends JFrame {
 						if (manager.getAccountManagerSettings().isBudgetProjectionsEnabled()) {
 							List<String> evaluationResult = manager.evaluateBudgetProjection(categoryWrapper);
 							if (evaluationResult.size() > 0) {
-								StringBuffer buffer = new StringBuffer();
+								AlertMessagesBuilder builder = new AlertMessagesBuilder();
 								for (String message : evaluationResult) {
-									buffer.append(message).append("\n");
+									builder.withMessage(AlertMessageType.WARNING, message);
 								}
-								pushMessage(buffer.toString());
+								pushMessages(builder.getAlertMessages());
+							} else {
+								clearMessages();
 							}
 						}
 					}
@@ -205,8 +206,19 @@ public class AccountingFrame extends JFrame {
 		});
 	}
 	
-	private void pushMessage(String aMessage) {
-		taOutput.setText(aMessage);
+	private void clearMessages() {
+		pushMessages(new AlertMessagesBuilder().getAlertMessages());
+	}
+	
+	private void pushMessages(List<AlertMessage> messages) {
+	    DefaultTableModel tablemodel = new DefaultTableModel();
+	    tablemodel.addColumn("Typ");
+	    tablemodel.addColumn("Text");
+	    for (AlertMessage message : messages) {
+	        tablemodel.addRow(new String[] {message.getAlertMessageType().toString(), message.getText()});
+	    }
+	    messagesTable.setModel(tablemodel);
+	    messagesTable.getColumnModel().getColumn(0).setPreferredWidth(25);
 	}
 
 	private void initComponents() {
@@ -230,7 +242,7 @@ public class AccountingFrame extends JFrame {
 		lblBudget = new JLabel();
 		tfBudget = new JTextField();
 		scrollPane2 = new JScrollPane();
-		taOutput = new JTextArea();
+		messagesTable = new JTable();
 		label2 = new JLabel();
 		tfMonthOverall = new JTextField();
 
@@ -334,7 +346,7 @@ public class AccountingFrame extends JFrame {
 
 		//======== scrollPane2 ========
 		{
-			scrollPane2.setViewportView(taOutput);
+			scrollPane2.setViewportView(messagesTable);
 		}
 		contentPane.add(scrollPane2, new GridBagConstraints(0, 5, 6, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -382,7 +394,7 @@ public class AccountingFrame extends JFrame {
 	private JLabel lblBudget;
 	private JTextField tfBudget;
 	private JScrollPane scrollPane2;
-	private JTextArea taOutput;
+	private JTable messagesTable;
 	private JLabel label2;
 	private JTextField tfMonthOverall;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
