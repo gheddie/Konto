@@ -2,12 +2,13 @@ package de.gravitex.accounting.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Vector;
 
 import lombok.Data;
 
 @Data
 public class AccountingResultModelRow {
+	
+	private int runningIndex;
 
 	private BigDecimal amount;
 	
@@ -19,8 +20,9 @@ public class AccountingResultModelRow {
 		// ...
 	}
 
-	public static AccountingResultModelRow fromValues(BigDecimal amount, LocalDate date, String text) {
+	public static AccountingResultModelRow fromValues(int runningIndex, BigDecimal amount, LocalDate date, String text) {
 		AccountingResultModelRow accountingResultModelRow = new AccountingResultModelRow();
+		accountingResultModelRow.setRunningIndex(runningIndex);
 		accountingResultModelRow.setAmount(amount);
 		accountingResultModelRow.setDate(date);
 		accountingResultModelRow.setText(text);
@@ -28,6 +30,6 @@ public class AccountingResultModelRow {
 	}
 
 	public String[] asTableRow() {
-		return new String[] {date.toString(), amount.toString(), text};
+		return new String[] {String.valueOf(runningIndex), date.toString(), amount.toString(), text};
 	}
 }

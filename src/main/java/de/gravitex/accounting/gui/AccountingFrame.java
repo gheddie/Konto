@@ -97,6 +97,7 @@ public class AccountingFrame extends JFrame {
 			    tfBudget.setText("---");
 			}
 		});
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	private void fillAllCategories() {
@@ -145,6 +146,9 @@ public class AccountingFrame extends JFrame {
 								categoryWrapper.getCategory());
 						fillCategoryEntries(categoryModel);
 						updatePaymentModality(categoryWrapper.getPaymentModality());
+						if (manager.getAccountManagerSettings().isBudgetProjectionsEnabled()) {
+							manager.projectBudget(categoryWrapper);
+						}
 					}
 
 					private void updatePaymentModality(PaymentModality paymentModality) {
@@ -158,9 +162,10 @@ public class AccountingFrame extends JFrame {
 							rbOutgoing.setSelected(true);
 							break;
 						}
-						tfPaymentPeriod.setText(paymentModality.getPaymentPeriod().toString());
+						tfPaymentPeriod.setText(paymentModality.getPaymentPeriod().getTranslation());
 					}
 
+					@SuppressWarnings("static-access")
 					private void fillCategoryEntries(AccountingResultCategoryModel categoryModel) {
 						
 						if (categoryModel == null) {
@@ -235,9 +240,9 @@ public class AccountingFrame extends JFrame {
 			btnCheckSaldo.setText("Check Saldo");
 			tbMain.add(btnCheckSaldo);
 		}
-		contentPane.add(tbMain, new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0,
+		contentPane.add(tbMain, new GridBagConstraints(0, 0, 6, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 5), 0, 0));
+			new Insets(0, 0, 5, 0), 0, 0));
 
 		//======== scrollPane1 ========
 		{

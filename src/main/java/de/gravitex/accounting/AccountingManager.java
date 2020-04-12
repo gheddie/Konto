@@ -33,6 +33,9 @@ import de.gravitex.accounting.modality.UndefinedPeriodOutgoingPaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
+import de.gravitex.accounting.setting.AccountManagerSettings;
+import de.gravitex.accounting.util.TimelineProjector;
+import de.gravitex.accounting.wrapper.CategoryWrapper;
 import lombok.Data;
 
 @Data
@@ -62,6 +65,8 @@ public class AccountingManager {
 
 	// hashmap month to rows...
 	private HashMap<String, AccountingMonth> result;
+
+	private AccountManagerSettings accountManagerSettings = AccountManagerSettings.fromValues(true, 12);
 
 	private AccountingManager() {
 		result = new HashMap<String, AccountingMonth>();
@@ -350,7 +355,7 @@ public class AccountingManager {
 		List<AccountingResultModelRow> accountingResultModelRows = new ArrayList<AccountingResultModelRow>();
 		BigDecimal sum = new BigDecimal(0);
 		for (AccountingRow accountingRow : rowsByCategory) {
-			accountingResultModelRows.add(AccountingResultModelRow.fromValues(accountingRow.getAmount(),
+			accountingResultModelRows.add(AccountingResultModelRow.fromValues(accountingRow.getRunningIndex(), accountingRow.getAmount(),
 					accountingRow.getDate(), accountingRow.getText()));
 			sum = sum.add(accountingRow.getAmount());
 		}
@@ -390,5 +395,36 @@ public class AccountingManager {
 		}
 		Collections.sort(allEntriesForCategory);
 		return allEntriesForCategory;
+	}
+
+	public AccountManagerSettings getAccountManagerSettings() {
+		return accountManagerSettings;
+	}
+
+	public void projectBudget(CategoryWrapper categoryWrapper) {
+		if (!categoryWrapper.getPaymentModality().isProjectable()) {
+			System.out.println("payment modiality '"+categoryWrapper.getPaymentModality().getClass().getSimpleName()+"' is not projectable -- returning!!");
+			return;
+		}
+		System.out.println(" --- projecting [" + categoryWrapper.getCategory() + "] ----: "
+				+ categoryWrapper.getPaymentModality().getClass().getSimpleName());
+		generateBudgetProjection(categoryWrapper);
+	}
+
+	private void generateBudgetProjection(CategoryWrapper categoryWrapper) {
+		String initialAppeareance = getInitialAppeareanceOfCategory(categoryWrapper.getCategory());
+		if (initialAppeareance == null) {
+			return;
+		}
+		TimelineProjector.fromValues(initialAppeareance, categoryWrapper.getPaymentModality().getPaymentPeriod(), accountManagerSettings.getProjectionDurationInMonths()).getResult();
+	}
+
+	private String getInitialAppeareanceOfCategory(String category) {
+		List<AccountingRow> allEntries = getAllEntriesForCategory(category);
+		if (allEntries == null || allEntries.size() == 0) {
+			return null;
+		}
+		LocalDate initalDate = allEntries.get(0).getDate();
+		return AccountingUtil.getMonthKey(initalDate.getMonthValue(), initalDate.getYear());
 	}
 }

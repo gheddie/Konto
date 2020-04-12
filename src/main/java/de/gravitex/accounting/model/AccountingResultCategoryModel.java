@@ -19,7 +19,7 @@ public class AccountingResultCategoryModel {
 	private BigDecimal budget;
 
 	public static String[] getHeaders() {
-		return new String[] {"Datum", "Betrag", "Text"};
+		return new String[] {"Lfd. Nr.", "Datum", "Betrag", "Text"};
 	}
 
 	public boolean inBudget() {

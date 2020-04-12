@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import org.apache.poi.ss.usermodel.Cell;
 
+import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.resolver.BigDecimalCellValueResolver;
 import de.gravitex.accounting.resolver.BooleanCellValueResolver;
 import de.gravitex.accounting.resolver.CellValueResolver;
@@ -35,5 +36,12 @@ public class AccountingUtil {
 	@SuppressWarnings("unchecked")
 	public static <T> T getCellValue(Class<T> clazz, Cell cell) {
 		return (T) cellValueResolvers.get(clazz).resolveCellValue(cell);
+	}
+
+	public static String nextMonthlyTimeStamp(String actualAppereance, PaymentPeriod paymentPeriod) {
+		String[] spl = actualAppereance.split("/");
+		LocalDate localDate = LocalDate.of(Integer.parseInt(spl[1]), Integer.parseInt(spl[0]), 1);
+		localDate = localDate.plusMonths(paymentPeriod.getDurationInMonths());
+		return getMonthKey(localDate.getMonth().getValue(), localDate.getYear());
 	}
 }

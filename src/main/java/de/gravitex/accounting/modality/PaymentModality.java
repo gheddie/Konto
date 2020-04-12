@@ -35,4 +35,9 @@ public abstract class PaymentModality {
 	public void reset() {
 		totalAmount = new BigDecimal(0);
 	}
+
+	public boolean isProjectable() {
+		// to be overwritten...
+		return false;
+	}
 }
