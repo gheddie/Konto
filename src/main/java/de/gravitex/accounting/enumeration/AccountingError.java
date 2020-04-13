@@ -16,5 +16,7 @@ public enum AccountingError {
 	
 	NO_RUNNING_INDEX,
 	
-	INVALID_SALDO_REF
+	INVALID_SALDO_REF,
+	
+	BUDGET_OVERPLANNED
 }

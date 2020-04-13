@@ -27,7 +27,7 @@ new FormModel {
 				name: "tbpMain"
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 					"$columnSpecs": "0, 249, 227, 312:1.0"
-					"$rowSpecs": "0, 0, 0, 0, 0, 102:1.0, 0, 0, 0, 126:1.0"
+					"$rowSpecs": "0, 0, 0, 0, 0, 101:1.0, 0, 0, 0, 0"
 					"$hGap": 5
 					"$vGap": 5
 					"$alignLeft": true
@@ -76,7 +76,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label1"
-						"text": "Per Kategorie:"
+						"text": "Per Kategorie (übergreifend):"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 4
 					} )
@@ -97,45 +97,59 @@ new FormModel {
 						"gridy": 5
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label3"
+						"text": "Summentyp:"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 6
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "tfSumType"
+						"editable": false
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 6
+						"gridwidth": 3
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "lblSum"
 						"text": "Summe:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 6
+						"gridy": 7
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "tfSum"
 						"editable": false
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
-						"gridy": 6
+						"gridy": 7
 						"gridwidth": 3
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "lblBudget"
 						"text": "Budget:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 7
+						"gridy": 8
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "tfBudget"
 						"editable": false
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
-						"gridy": 7
+						"gridy": 8
 						"gridwidth": 3
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label2"
 						"text": "Monatsabschluss:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 8
+						"gridy": 9
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "tfMonthOverall"
 						"editable": false
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
-						"gridy": 8
+						"gridy": 9
 						"gridwidth": 3
 					} )
 				}, new FormLayoutConstraints( null ) {
