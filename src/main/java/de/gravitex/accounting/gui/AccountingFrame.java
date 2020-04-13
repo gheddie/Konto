@@ -71,7 +71,7 @@ public class AccountingFrame extends JFrame {
 		manager = AccountingManager.getInstance();
 		accountingMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		categoriesByMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		budgetPlanningList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		budgetPlanningList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		btnCheckSaldo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -140,7 +140,12 @@ public class AccountingFrame extends JFrame {
 		budgetPlanningList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				AccountingGuiHelper.displayBudgetChart(AccountingFrame.this, String.valueOf(budgetPlanningList.getSelectedValue()));
+				Object[] selectedValues = budgetPlanningList.getSelectedValues();
+				List<String> selectedValueList = new ArrayList<String>();
+				for (Object value : selectedValues) {
+					selectedValueList.add(String.valueOf(value));
+				}
+				AccountingGuiHelper.displayBudgetChart(AccountingFrame.this, selectedValueList);
 			}
 		});
 	}

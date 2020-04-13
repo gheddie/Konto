@@ -1,7 +1,7 @@
 package de.gravitex.accounting.gui;
 
 import java.awt.BorderLayout;
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JLabel;
@@ -9,27 +9,28 @@ import javax.swing.JLabel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import de.gravitex.accounting.AccountingManager;
-import de.gravitex.accounting.AccountingUtil;
-import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.exception.AccountingException;
 
 public class AccountingGuiHelper {
 
-	public static void displayBudgetChart(AccountingFrame accountingFrame, String monthKey) {
+	public static void displayBudgetChart(AccountingFrame accountingFrame, List<String> monthKeys) {
+		
+		System.out.println("displayBudgetChart: " + monthKeys);
 		
 		accountingFrame.getPnlChart().removeAll();
 		try {
-			PieDataset dataset = createDataset(monthKey);
-			JFreeChart chart = ChartFactory.createPieChart(  
-					"Budgetplanung für " + monthKey + " verfügbar: " + AccountingManager.getInstance().getAvailableIncome(monthKey) + " Euro",
-					dataset,  
-			        false,   
-			        true,  
-			        false);  
+		      JFreeChart chart = ChartFactory.createBarChart(
+		    	         "Budgetplanung",           
+		    	         "Kategorie",            
+		    	         "Aufwand",            
+		    	         createDataset(monthKeys),          
+		    	         PlotOrientation.HORIZONTAL,           
+		    	         true, true, false);
 			accountingFrame.getPnlChart().add(new ChartPanel(chart), BorderLayout.CENTER);
 			accountingFrame.getPnlChart().validate();		
 			accountingFrame.clearMessages();
@@ -39,7 +40,26 @@ public class AccountingGuiHelper {
 			accountingFrame.pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, e.getMessage()).getAlertMessages());
 		}
 	}
+
+	private static CategoryDataset createDataset(List<String> monthKeys) {
+
+		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		for (String monthKey : monthKeys) {
+			addMonthData(monthKey, dataset);
+		}
+		return dataset;
+	}
+
+	private static void addMonthData(String monthKey, DefaultCategoryDataset dataset) {
+		Properties budgetPlanningForMonth = AccountingManager.getInstance().getBudgetPlannings().get(monthKey);
+
+		for (Object categoryBudget : budgetPlanningForMonth.keySet()) {
+			dataset.addValue(Integer.parseInt(String.valueOf(budgetPlanningForMonth.get(categoryBudget))), monthKey,
+					(Comparable) categoryBudget);
+		}
+	}
 	
+	/*
 	private static PieDataset createDataset(String monthKey) {
 		
 		BigDecimal availableIncome = AccountingManager.
@@ -66,4 +86,5 @@ public class AccountingGuiHelper {
 		}
 	    return dataset;  
 	}
+	*/
 }
