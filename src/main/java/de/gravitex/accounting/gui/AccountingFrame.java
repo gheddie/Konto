@@ -2,9 +2,7 @@ package de.gravitex.accounting.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,7 +31,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -54,10 +52,12 @@ import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
 import de.gravitex.accounting.wrapper.CategoryWrapper;
+import lombok.Data;
 
 /**
  * @author Stefan Schulz
  */
+@Data
 public class AccountingFrame extends JFrame {
 
 	private static final long serialVersionUID = -8241085588080811229L;
@@ -140,55 +140,11 @@ public class AccountingFrame extends JFrame {
 		budgetPlanningList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				displayBudgetChart(String.valueOf(budgetPlanningList.getSelectedValue()));
-			}
-
-			private void displayBudgetChart(String monthKey) {
-				pnlChart.removeAll();
-				try {
-					PieDataset dataset = createDataset(monthKey);
-					JFreeChart chart = ChartFactory.createPieChart(  
-							"Budgetplanung für " + monthKey + " verfügbar: " + manager.getAvailableIncome(monthKey) + " Euro",
-							dataset,  
-					        false,   
-					        true,  
-					        false);  
-					pnlChart.add(new ChartPanel(chart), BorderLayout.CENTER);
-					pnlChart.validate();		
-					clearMessages();
-				} catch (AccountingException e) {
-					pnlChart.add(new JLabel(), BorderLayout.CENTER);
-					pnlChart.validate();
-					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, e.getMessage()).getAlertMessages());
-				}
-			}
-
-			private PieDataset createDataset(String monthKey) {
-				BigDecimal availableIncome = manager.getAvailableIncome(monthKey);
-				Properties budgetPlanningForMonth = manager.getBudgetPlannings().get(monthKey);
-				int totalyPlanned = 0;
-				for (Object categoryBudget : budgetPlanningForMonth.keySet()) {
-					totalyPlanned += Integer.parseInt(String.valueOf(budgetPlanningForMonth.get(categoryBudget)));
-				}
-				if (totalyPlanned > availableIncome.intValue()) {
-					throw new AccountingException("budget ("+availableIncome+") was overplanned ("+totalyPlanned+")", AccountingError.BUDGET_OVERPLANNED, null);
-				}
-			    DefaultPieDataset dataset=new DefaultPieDataset();
-			    // Rest
-			    int freeToUse = availableIncome.intValue() - totalyPlanned;
-				dataset.setValue("Frei ("+freeToUse+")", AccountingUtil.getPercentage(freeToUse, availableIncome.intValue()));
-			    // Kategorien
-				int budgetForCategory = 0;
-			    for (Object categoryBudget : budgetPlanningForMonth.keySet()) {
-					budgetForCategory = Integer.parseInt(String.valueOf(budgetPlanningForMonth.get(categoryBudget)));
-					dataset.setValue(String.valueOf(categoryBudget) + " (" + budgetForCategory + ")",
-							AccountingUtil.getPercentage(budgetForCategory, availableIncome.intValue()));
-				}
-			    return dataset;  
+				AccountingGuiHelper.displayBudgetChart(AccountingFrame.this, String.valueOf(budgetPlanningList.getSelectedValue()));
 			}
 		});
 	}
-
+	
 	private void fillAllCategories() {
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 		Set<String> allCategories = AccountingManager.getInstance().getAllCategories();
@@ -302,11 +258,12 @@ public class AccountingFrame extends JFrame {
 		});
 	}
 
-	private void clearMessages() {
+	public void clearMessages() {
 		pushMessages(new AlertMessagesBuilder().getAlertMessages());
 	}
 
-	private void pushMessages(List<AlertMessage> messages) {
+	public void pushMessages(List<AlertMessage> messages) {
+		
 		DefaultTableModel tablemodel = new DefaultTableModel();
 		tablemodel.addColumn("Typ");
 		tablemodel.addColumn("Text");
