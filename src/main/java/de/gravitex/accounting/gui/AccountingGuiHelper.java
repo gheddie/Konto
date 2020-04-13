@@ -3,10 +3,10 @@ package de.gravitex.accounting.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import org.jfree.chart.ChartFactory;
@@ -18,7 +18,6 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingUtil;
-import de.gravitex.accounting.exception.AccountingException;
 
 public class AccountingGuiHelper {
 
@@ -28,7 +27,7 @@ public class AccountingGuiHelper {
 
 		String title = "";
 		if (monthKeys.size() == 1) {
-			fillPercentages(accountingFrame, monthKeys.get(0));
+			displayBudgetPercentage(accountingFrame, monthKeys.get(0));
 			title = "Budgetplanung (verfügbar: " + AccountingManager.getInstance().getAvailableIncome(monthKeys.get(0))
 					+ " Euro)";
 		} else {
@@ -49,7 +48,7 @@ public class AccountingGuiHelper {
 		accountingFrame.getPercentageBar().setValue(0);
 	}
 
-	private static void fillPercentages(AccountingFrame accountingFrame, String monthKey) {
+	private static void displayBudgetPercentage(AccountingFrame accountingFrame, String monthKey) {
 
 		BigDecimal availableIncome = AccountingManager.getInstance().getAvailableIncome(monthKey);
 		Properties budgetPlanningForMonth = AccountingManager.getInstance().getBudgetPlannings().get(monthKey);
@@ -78,20 +77,36 @@ public class AccountingGuiHelper {
 	}
 
 	private static CategoryDataset createDataset(List<String> monthKeys) {
+		
+		HashMap<String, BigDecimal> categorySums = null;
+		if (monthKeys.size() == 1) {
+			categorySums = AccountingManager.getInstance().getCategorySums(monthKeys.get(0));			
+		}
 
 		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (String monthKey : monthKeys) {
-			addMonthData(monthKey, dataset);
+			addMonthData(monthKey, dataset, categorySums);
 		}
 		return dataset;
 	}
 
-	private static void addMonthData(String monthKey, DefaultCategoryDataset dataset) {
+	private static void addMonthData(String monthKey, DefaultCategoryDataset dataset, HashMap<String, BigDecimal> categorySums) {
+		
 		Properties budgetPlanningForMonth = AccountingManager.getInstance().getBudgetPlannings().get(monthKey);
 
-		for (Object categoryBudget : budgetPlanningForMonth.keySet()) {
-			dataset.addValue(Integer.parseInt(String.valueOf(budgetPlanningForMonth.get(categoryBudget))), monthKey,
-					(Comparable) categoryBudget);
+		int categoryBudget = 0;
+		for (Object categoryBudgetKey : budgetPlanningForMonth.keySet()) {
+			categoryBudget = Integer.parseInt(String.valueOf(budgetPlanningForMonth.get(categoryBudgetKey)));
+			dataset.addValue(categoryBudget, monthKey, (String) categoryBudgetKey);
+			if (categorySums != null) {
+				BigDecimal categorySum = categorySums.get((String) categoryBudgetKey);
+				if (categorySum != null) {
+					if (AccountingManager.getInstance().getAccountManagerSettings().isShowActualValuesInBidgetPlanning()) {
+						dataset.addValue(Math.abs(categorySum.intValue()), monthKey + " (aktuell)",
+								(String) categoryBudgetKey);						
+					}
+				}
+			}
 		}
 	}
 }

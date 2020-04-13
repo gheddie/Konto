@@ -69,7 +69,7 @@ public class AccountingManager {
 	// hashmap month to rows...
 	private HashMap<String, AccountingMonth> result;
 
-	private AccountManagerSettings accountManagerSettings = AccountManagerSettings.fromValues(true, 12);
+	private AccountManagerSettings accountManagerSettings = AccountManagerSettings.fromValues(true, 12, true);
 
 	private AccountingManager() {
 		result = new HashMap<String, AccountingMonth>();
@@ -309,9 +309,10 @@ public class AccountingManager {
 		if (entry == null) {
 			return null;
 			/*
-			throw new AccountingException("request limit --> no budget planning available for category [" + category
-					+ "] in month key [" + monthKey + "]!!", null, null);
-					*/
+			 * throw new
+			 * AccountingException("request limit --> no budget planning available for category ["
+			 * + category + "] in month key [" + monthKey + "]!!", null, null);
+			 */
 		}
 		String value = String.valueOf(properties.get(category));
 		if (value == null || value.length() == 0) {
@@ -338,7 +339,7 @@ public class AccountingManager {
 		}
 		return paymentModality;
 	}
-	
+
 	public AccountingResultMonthModel getAccountingResultMonthModel(String monthKey) {
 		AccountingMonth accountingMonth = result.get(monthKey);
 		AccountingResultMonthModel result = new AccountingResultMonthModel();
@@ -358,8 +359,8 @@ public class AccountingManager {
 		List<AccountingResultModelRow> accountingResultModelRows = new ArrayList<AccountingResultModelRow>();
 		BigDecimal sum = new BigDecimal(0);
 		for (AccountingRow accountingRow : rowsByCategory) {
-			accountingResultModelRows.add(AccountingResultModelRow.fromValues(accountingRow.getRunningIndex(), accountingRow.getAmount(),
-					accountingRow.getDate(), accountingRow.getText()));
+			accountingResultModelRows.add(AccountingResultModelRow.fromValues(accountingRow.getRunningIndex(),
+					accountingRow.getAmount(), accountingRow.getDate(), accountingRow.getText()));
 			sum = sum.add(accountingRow.getAmount());
 		}
 		categoryModel.setAccountingResultModelRows(accountingResultModelRows);
@@ -406,7 +407,8 @@ public class AccountingManager {
 
 	public List<String> evaluateBudgetProjection(CategoryWrapper categoryWrapper) {
 		if (!categoryWrapper.getPaymentModality().isProjectable()) {
-			System.out.println("payment modiality '"+categoryWrapper.getPaymentModality().getClass().getSimpleName()+"' is not projectable -- returning!!");
+			System.out.println("payment modiality '" + categoryWrapper.getPaymentModality().getClass().getSimpleName()
+					+ "' is not projectable -- returning!!");
 			return new ArrayList<String>();
 		}
 		System.out.println(" --- projecting [" + categoryWrapper.getCategory() + "] ----: "
@@ -415,9 +417,9 @@ public class AccountingManager {
 	}
 
 	private List<String> evaluateBudgetProjectionIntern(CategoryWrapper categoryWrapper) {
-		
+
 		List<String> evaluationResult = new ArrayList<String>();
-		
+
 		String initialAppeareance = getInitialAppeareanceOfCategory(categoryWrapper.getCategory());
 		if (initialAppeareance == null) {
 			return null;
@@ -441,7 +443,7 @@ public class AccountingManager {
 				if (!budgetPlanningAvailable) {
 					if (budgetPlanningPresentFor(actualAppearance)) {
 						evaluationResult.add("FEHLENDES Budget für Kategorie [" + categoryWrapper.getCategory()
-						+ "] in Monat '" + actualAppearance + "'!!");						
+								+ "] in Monat '" + actualAppearance + "'!!");
 					}
 				}
 			} else {
@@ -450,12 +452,12 @@ public class AccountingManager {
 				if (budgetPlanningAvailable) {
 					if (budgetPlanningPresentFor(actualAppearance)) {
 						evaluationResult.add("Fehlplaziertes Budget für Kategorie [" + categoryWrapper.getCategory()
-						+ "] in Monat '" + actualAppearance + "'!!");						
+								+ "] in Monat '" + actualAppearance + "'!!");
 					}
 				}
 			}
 		}
-		
+
 		return evaluationResult;
 	}
 
@@ -483,5 +485,21 @@ public class AccountingManager {
 	public BigDecimal getAvailableIncome(String monthKey) {
 		// TODO
 		return AVAILABLE_INCOME;
+	}
+
+	public HashMap<String, BigDecimal> getCategorySums(String monthKey) {
+		AccountingMonth monthData = result.get(monthKey);
+		if (monthData == null) {
+			return null;
+		}
+		HashMap<String, BigDecimal> categorySums = new HashMap<String, BigDecimal>();
+		for (String category : monthData.getDistinctCategories()) {
+			BigDecimal categorySum = new BigDecimal(0);
+			for (AccountingRow accountingRow : monthData.getRowObjectsByCategory(category)) {
+				categorySum = categorySum.add(accountingRow.getAmount());
+			}
+			categorySums.put(category, categorySum);
+		}
+		return categorySums;
 	}
 }

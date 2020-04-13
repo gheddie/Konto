@@ -24,7 +24,7 @@ new FormModel {
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
 				name: "tbpMain"
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "0, 249, 227, 312:1.0"
+					"$columnSpecs": "0, 249, 646:1.0, 114"
 					"$rowSpecs": "0, 0, 0, 0, 0, 101:1.0, 0, 0, 0"
 					"$hGap": 5
 					"$vGap": 5
