@@ -304,7 +304,7 @@ public class AccountingFrame extends JFrame {
 		// Generated using JFormDesigner Evaluation license - Stefan Schulz
 		tbMain = new JToolBar();
 		btnCheckSaldo = new JButton();
-		tabbedPane1 = new JTabbedPane();
+		tbpMain = new JTabbedPane();
 		pnlData = new JPanel();
 		scrollPane1 = new JScrollPane();
 		accountingMonthList = new JList();
@@ -321,23 +321,23 @@ public class AccountingFrame extends JFrame {
 		tfSum = new JTextField();
 		lblBudget = new JLabel();
 		tfBudget = new JTextField();
-		scrollPane2 = new JScrollPane();
-		messagesTable = new JTable();
 		label2 = new JLabel();
 		tfMonthOverall = new JTextField();
 		pnlChartHolder = new JPanel();
 		scrollPane5 = new JScrollPane();
 		budgetPlanningList = new JList();
 		pnlChart = new JPanel();
+		scrollPane2 = new JScrollPane();
+		messagesTable = new JTable();
 
 		//======== this ========
 		setTitle("Accounting Manager");
 		var contentPane = getContentPane();
 		contentPane.setLayout(new GridBagLayout());
 		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {173, 43, 444, 102, 0};
-		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 169, 0, 183, 0, 0};
+		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 169, 0, 183, 0, 129, 0};
 		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0, 1.0, 1.0E-4};
-		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0E-4};
+		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0E-4};
 
 		//======== tbMain ========
 		{
@@ -351,22 +351,23 @@ public class AccountingFrame extends JFrame {
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
-		//======== tabbedPane1 ========
+		//======== tbpMain ========
 		{
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax . swing. border .EmptyBorder
-				( 0, 0 ,0 , 0) ,  "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e" , javax. swing .border . TitledBorder. CENTER ,javax . swing. border
-				.TitledBorder . BOTTOM, new java. awt .Font ( "D\u0069al\u006fg", java .awt . Font. BOLD ,12 ) ,java . awt
-				. Color .red ) ,pnlData. getBorder () ) ); pnlData. addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override public void
-				propertyChange (java . beans. PropertyChangeEvent e) { if( "\u0062or\u0064er" .equals ( e. getPropertyName () ) )throw new RuntimeException( )
-				;} } );
+				pnlData.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax
+				.swing.border.EmptyBorder(0,0,0,0), "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e",javax.swing
+				.border.TitledBorder.CENTER,javax.swing.border.TitledBorder.BOTTOM,new java.awt.
+				Font("D\u0069al\u006fg",java.awt.Font.BOLD,12),java.awt.Color.red
+				),pnlData. getBorder()));pnlData. addPropertyChangeListener(new java.beans.PropertyChangeListener(){@Override
+				public void propertyChange(java.beans.PropertyChangeEvent e){if("\u0062or\u0064er".equals(e.getPropertyName(
+				)))throw new RuntimeException();}});
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 232, 312, 0};
-				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 107, 0, 131, 0, 0};
+				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 107, 0, 0, 0, 126, 0};
 				((GridBagLayout)pnlData.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0, 1.0E-4};
-				((GridBagLayout)pnlData.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0E-4};
+				((GridBagLayout)pnlData.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0E-4};
 
 				//======== scrollPane1 ========
 				{
@@ -429,27 +430,19 @@ public class AccountingFrame extends JFrame {
 
 				//---- tfSum ----
 				tfSum.setEditable(false);
-				pnlData.add(tfSum, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0,
+				pnlData.add(tfSum, new GridBagConstraints(1, 6, 3, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 5, 5), 0, 0));
+					new Insets(0, 0, 5, 0), 0, 0));
 
 				//---- lblBudget ----
 				lblBudget.setText("Budget:");
-				pnlData.add(lblBudget, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0,
+				pnlData.add(lblBudget, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 
 				//---- tfBudget ----
 				tfBudget.setEditable(false);
-				pnlData.add(tfBudget, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 5, 0), 0, 0));
-
-				//======== scrollPane2 ========
-				{
-					scrollPane2.setViewportView(messagesTable);
-				}
-				pnlData.add(scrollPane2, new GridBagConstraints(0, 7, 4, 1, 0.0, 0.0,
+				pnlData.add(tfBudget, new GridBagConstraints(1, 7, 3, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 0), 0, 0));
 
@@ -457,15 +450,15 @@ public class AccountingFrame extends JFrame {
 				label2.setText("Monatsabschluss:");
 				pnlData.add(label2, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 0, 5), 0, 0));
+					new Insets(0, 0, 5, 5), 0, 0));
 
 				//---- tfMonthOverall ----
 				tfMonthOverall.setEditable(false);
 				pnlData.add(tfMonthOverall, new GridBagConstraints(1, 8, 3, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 0, 0), 0, 0));
+					new Insets(0, 0, 5, 0), 0, 0));
 			}
-			tabbedPane1.addTab("Daten", pnlData);
+			tbpMain.addTab("Daten", pnlData);
 
 			//======== pnlChartHolder ========
 			{
@@ -491,9 +484,17 @@ public class AccountingFrame extends JFrame {
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 0, 0), 0, 0));
 			}
-			tabbedPane1.addTab("Budget", pnlChartHolder);
+			tbpMain.addTab("Budget", pnlChartHolder);
 		}
-		contentPane.add(tabbedPane1, new GridBagConstraints(0, 1, 4, 5, 0.0, 0.0,
+		contentPane.add(tbpMain, new GridBagConstraints(0, 1, 4, 5, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 5, 0), 0, 0));
+
+		//======== scrollPane2 ========
+		{
+			scrollPane2.setViewportView(messagesTable);
+		}
+		contentPane.add(scrollPane2, new GridBagConstraints(0, 6, 4, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 0, 0), 0, 0));
 		pack();
@@ -511,7 +512,7 @@ public class AccountingFrame extends JFrame {
 	// Generated using JFormDesigner Evaluation license - Stefan Schulz
 	private JToolBar tbMain;
 	private JButton btnCheckSaldo;
-	private JTabbedPane tabbedPane1;
+	private JTabbedPane tbpMain;
 	private JPanel pnlData;
 	private JScrollPane scrollPane1;
 	private JList accountingMonthList;
@@ -528,13 +529,13 @@ public class AccountingFrame extends JFrame {
 	private JTextField tfSum;
 	private JLabel lblBudget;
 	private JTextField tfBudget;
-	private JScrollPane scrollPane2;
-	private JTable messagesTable;
 	private JLabel label2;
 	private JTextField tfMonthOverall;
 	private JPanel pnlChartHolder;
 	private JScrollPane scrollPane5;
 	private JList budgetPlanningList;
 	private JPanel pnlChart;
+	private JScrollPane scrollPane2;
+	private JTable messagesTable;
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 }
