@@ -304,6 +304,8 @@ public class AccountingFrame extends JFrame {
 		// Generated using JFormDesigner Evaluation license - Stefan Schulz
 		tbMain = new JToolBar();
 		btnCheckSaldo = new JButton();
+		tabbedPane1 = new JTabbedPane();
+		pnlData = new JPanel();
 		scrollPane1 = new JScrollPane();
 		accountingMonthList = new JList();
 		scrollPane3 = new JScrollPane();
@@ -311,8 +313,6 @@ public class AccountingFrame extends JFrame {
 		rbIncoming = new JRadioButton();
 		rbOutgoing = new JRadioButton();
 		tfPaymentPeriod = new JTextField();
-		tabbedPane1 = new JTabbedPane();
-		pnlData = new JPanel();
 		label1 = new JLabel();
 		cbAllCategories = new JComboBox();
 		scrollPane4 = new JScrollPane();
@@ -330,161 +330,172 @@ public class AccountingFrame extends JFrame {
 		budgetPlanningList = new JList();
 		pnlChart = new JPanel();
 
-		// ======== this ========
+		//======== this ========
 		setTitle("Accounting Manager");
 		var contentPane = getContentPane();
 		contentPane.setLayout(new GridBagLayout());
-		((GridBagLayout) contentPane.getLayout()).columnWidths = new int[] { 173, 43, 444, 102, 0 };
-		((GridBagLayout) contentPane.getLayout()).rowHeights = new int[] { 0, 0, 0, 0, 92, 0, 169, 0, 183, 0, 0 };
-		((GridBagLayout) contentPane.getLayout()).columnWeights = new double[] { 0.0, 0.0, 1.0, 1.0, 1.0E-4 };
-		((GridBagLayout) contentPane.getLayout()).rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-				1.0, 0.0, 1.0E-4 };
+		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {173, 43, 444, 102, 0};
+		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 169, 0, 183, 0, 0};
+		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0, 1.0, 1.0E-4};
+		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0E-4};
 
-		// ======== tbMain ========
+		//======== tbMain ========
 		{
 			tbMain.setEnabled(false);
 
-			// ---- btnCheckSaldo ----
+			//---- btnCheckSaldo ----
 			btnCheckSaldo.setText("Check Saldo");
 			tbMain.add(btnCheckSaldo);
 		}
-		contentPane.add(tbMain, new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0));
+		contentPane.add(tbMain, new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 5, 0), 0, 0));
 
-		// ======== scrollPane1 ========
-		{
-			scrollPane1.setViewportView(accountingMonthList);
-		}
-		contentPane.add(scrollPane1, new GridBagConstraints(0, 1, 1, 4, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0));
-
-		// ======== scrollPane3 ========
-		{
-			scrollPane3.setViewportView(categoriesByMonthList);
-		}
-		contentPane.add(scrollPane3, new GridBagConstraints(1, 1, 2, 4, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0));
-
-		// ---- rbIncoming ----
-		rbIncoming.setText("eingehend");
-		rbIncoming.setEnabled(false);
-		contentPane.add(rbIncoming, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0));
-
-		// ---- rbOutgoing ----
-		rbOutgoing.setText("ausgehend");
-		rbOutgoing.setEnabled(false);
-		contentPane.add(rbOutgoing, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0));
-
-		// ---- tfPaymentPeriod ----
-		tfPaymentPeriod.setEditable(false);
-		contentPane.add(tfPaymentPeriod, new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0));
-
-		// ======== tabbedPane1 ========
+		//======== tabbedPane1 ========
 		{
 
-			// ======== pnlData ========
+			//======== pnlData ========
 			{
-				pnlData.setBorder(new javax.swing.border.CompoundBorder(
-						new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-								"JF\u006frmDes\u0069gner \u0045valua\u0074ion", javax.swing.border.TitledBorder.CENTER,
-								javax.swing.border.TitledBorder.BOTTOM,
-								new java.awt.Font("D\u0069alog", java.awt.Font.BOLD, 12), java.awt.Color.red),
-						pnlData.getBorder()));
-				pnlData.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-					@Override
-					public void propertyChange(java.beans.PropertyChangeEvent e) {
-						if ("\u0062order".equals(e.getPropertyName()))
-							throw new RuntimeException();
-					}
-				});
+				pnlData.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax . swing. border .EmptyBorder
+				( 0, 0 ,0 , 0) ,  "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e" , javax. swing .border . TitledBorder. CENTER ,javax . swing. border
+				.TitledBorder . BOTTOM, new java. awt .Font ( "D\u0069al\u006fg", java .awt . Font. BOLD ,12 ) ,java . awt
+				. Color .red ) ,pnlData. getBorder () ) ); pnlData. addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override public void
+				propertyChange (java . beans. PropertyChangeEvent e) { if( "\u0062or\u0064er" .equals ( e. getPropertyName () ) )throw new RuntimeException( )
+				;} } );
 				pnlData.setLayout(new GridBagLayout());
-				((GridBagLayout) pnlData.getLayout()).columnWidths = new int[] { 0, 254, 0, 312, 0 };
-				((GridBagLayout) pnlData.getLayout()).rowHeights = new int[] { 0, 107, 0, 131, 0, 0 };
-				((GridBagLayout) pnlData.getLayout()).columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 1.0E-4 };
-				((GridBagLayout) pnlData.getLayout()).rowWeights = new double[] { 0.0, 1.0, 0.0, 1.0, 0.0, 1.0E-4 };
+				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 232, 312, 0};
+				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 107, 0, 131, 0, 0};
+				((GridBagLayout)pnlData.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0, 1.0E-4};
+				((GridBagLayout)pnlData.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0E-4};
 
-				// ---- label1 ----
+				//======== scrollPane1 ========
+				{
+					scrollPane1.setViewportView(accountingMonthList);
+				}
+				pnlData.add(scrollPane1, new GridBagConstraints(0, 0, 2, 4, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 5), 0, 0));
+
+				//======== scrollPane3 ========
+				{
+					scrollPane3.setViewportView(categoriesByMonthList);
+				}
+				pnlData.add(scrollPane3, new GridBagConstraints(2, 0, 1, 4, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 5), 0, 0));
+
+				//---- rbIncoming ----
+				rbIncoming.setText("eingehend");
+				rbIncoming.setEnabled(false);
+				pnlData.add(rbIncoming, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 0), 0, 0));
+
+				//---- rbOutgoing ----
+				rbOutgoing.setText("ausgehend");
+				rbOutgoing.setEnabled(false);
+				pnlData.add(rbOutgoing, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 0), 0, 0));
+
+				//---- tfPaymentPeriod ----
+				tfPaymentPeriod.setEditable(false);
+				pnlData.add(tfPaymentPeriod, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 0), 0, 0));
+
+				//---- label1 ----
 				label1.setText("Per Kategorie:");
-				pnlData.add(label1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0));
-				pnlData.add(cbAllCategories, new GridBagConstraints(1, 0, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0));
+				pnlData.add(label1, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 5), 0, 0));
+				pnlData.add(cbAllCategories, new GridBagConstraints(1, 4, 3, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 0), 0, 0));
 
-				// ======== scrollPane4 ========
+				//======== scrollPane4 ========
 				{
 					scrollPane4.setViewportView(categoryEntriesTable);
 				}
-				pnlData.add(scrollPane4, new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0));
+				pnlData.add(scrollPane4, new GridBagConstraints(0, 5, 4, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 0), 0, 0));
 
-				// ---- lblSum ----
+				//---- lblSum ----
 				lblSum.setText("Summe:");
-				pnlData.add(lblSum, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0));
+				pnlData.add(lblSum, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 5), 0, 0));
 
-				// ---- tfSum ----
+				//---- tfSum ----
 				tfSum.setEditable(false);
-				pnlData.add(tfSum, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0));
+				pnlData.add(tfSum, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 5), 0, 0));
 
-				// ---- lblBudget ----
+				//---- lblBudget ----
 				lblBudget.setText("Budget:");
-				pnlData.add(lblBudget, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 5, 5), 0, 0));
+				pnlData.add(lblBudget, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 5), 0, 0));
 
-				// ---- tfBudget ----
+				//---- tfBudget ----
 				tfBudget.setEditable(false);
-				pnlData.add(tfBudget, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0));
+				pnlData.add(tfBudget, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 0), 0, 0));
 
-				// ======== scrollPane2 ========
+				//======== scrollPane2 ========
 				{
 					scrollPane2.setViewportView(messagesTable);
 				}
-				pnlData.add(scrollPane2, new GridBagConstraints(0, 3, 4, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0));
+				pnlData.add(scrollPane2, new GridBagConstraints(0, 7, 4, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 0), 0, 0));
 
-				// ---- label2 ----
+				//---- label2 ----
 				label2.setText("Monatsabschluss:");
-				pnlData.add(label2, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 0, 5), 0, 0));
+				pnlData.add(label2, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 0, 5), 0, 0));
 
-				// ---- tfMonthOverall ----
+				//---- tfMonthOverall ----
 				tfMonthOverall.setEditable(false);
-				pnlData.add(tfMonthOverall, new GridBagConstraints(1, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+				pnlData.add(tfMonthOverall, new GridBagConstraints(1, 8, 3, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 0, 0), 0, 0));
 			}
 			tabbedPane1.addTab("Daten", pnlData);
 
-			// ======== pnlChartHolder ========
+			//======== pnlChartHolder ========
 			{
 				pnlChartHolder.setLayout(new GridBagLayout());
-				((GridBagLayout) pnlChartHolder.getLayout()).columnWidths = new int[] { 216, 0, 0 };
-				((GridBagLayout) pnlChartHolder.getLayout()).rowHeights = new int[] { 0, 0 };
-				((GridBagLayout) pnlChartHolder.getLayout()).columnWeights = new double[] { 0.0, 1.0, 1.0E-4 };
-				((GridBagLayout) pnlChartHolder.getLayout()).rowWeights = new double[] { 1.0, 1.0E-4 };
+				((GridBagLayout)pnlChartHolder.getLayout()).columnWidths = new int[] {216, 0, 0};
+				((GridBagLayout)pnlChartHolder.getLayout()).rowHeights = new int[] {0, 0};
+				((GridBagLayout)pnlChartHolder.getLayout()).columnWeights = new double[] {0.0, 1.0, 1.0E-4};
+				((GridBagLayout)pnlChartHolder.getLayout()).rowWeights = new double[] {1.0, 1.0E-4};
 
-				// ======== scrollPane5 ========
+				//======== scrollPane5 ========
 				{
 					scrollPane5.setViewportView(budgetPlanningList);
 				}
-				pnlChartHolder.add(scrollPane5, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+				pnlChartHolder.add(scrollPane5, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 0, 0), 0, 0));
 
-				// ======== pnlChart ========
+				//======== pnlChart ========
 				{
 					pnlChart.setLayout(new BorderLayout());
 				}
-				pnlChartHolder.add(pnlChart, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+				pnlChartHolder.add(pnlChart, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 0, 0), 0, 0));
 			}
 			tabbedPane1.addTab("Budget", pnlChartHolder);
 		}
-		contentPane.add(tabbedPane1, new GridBagConstraints(0, 5, 4, 5, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		contentPane.add(tabbedPane1, new GridBagConstraints(0, 1, 4, 5, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 0, 0), 0, 0));
 		pack();
 		setLocationRelativeTo(getOwner());
 		// JFormDesigner - End of component initialization //GEN-END:initComponents
@@ -500,6 +511,8 @@ public class AccountingFrame extends JFrame {
 	// Generated using JFormDesigner Evaluation license - Stefan Schulz
 	private JToolBar tbMain;
 	private JButton btnCheckSaldo;
+	private JTabbedPane tabbedPane1;
+	private JPanel pnlData;
 	private JScrollPane scrollPane1;
 	private JList accountingMonthList;
 	private JScrollPane scrollPane3;
@@ -507,8 +520,6 @@ public class AccountingFrame extends JFrame {
 	private JRadioButton rbIncoming;
 	private JRadioButton rbOutgoing;
 	private JTextField tfPaymentPeriod;
-	private JTabbedPane tabbedPane1;
-	private JPanel pnlData;
 	private JLabel label1;
 	private JComboBox cbAllCategories;
 	private JScrollPane scrollPane4;

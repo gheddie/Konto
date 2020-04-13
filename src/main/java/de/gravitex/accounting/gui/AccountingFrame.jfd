@@ -5,7 +5,7 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.GridBagLayout ) {
 			"$columnSpecs": "168, 38, 439:1.0, 102:1.0"
-			"$rowSpecs": "0, 0, 0, 0, 87, 0, 164:1.0, 0, 178:1.0, 0"
+			"$rowSpecs": "0, 0, 164:1.0, 0, 178:1.0, 0"
 			"$hGap": 5
 			"$vGap": 5
 			"$alignLeft": true
@@ -23,69 +23,69 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridwidth": 4
 			} )
-			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-				name: "scrollPane1"
-				add( new FormComponent( "javax.swing.JList" ) {
-					name: "accountingMonthList"
-				} )
-			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridy": 1
-				"gridheight": 4
-			} )
-			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-				name: "scrollPane3"
-				add( new FormComponent( "javax.swing.JList" ) {
-					name: "categoriesByMonthList"
-				} )
-			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 1
-				"gridy": 1
-				"gridwidth": 2
-				"gridheight": 4
-			} )
-			add( new FormComponent( "javax.swing.JRadioButton" ) {
-				name: "rbIncoming"
-				"text": "eingehend"
-				"enabled": false
-			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 3
-				"gridy": 1
-			} )
-			add( new FormComponent( "javax.swing.JRadioButton" ) {
-				name: "rbOutgoing"
-				"text": "ausgehend"
-				"enabled": false
-			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 3
-				"gridy": 2
-			} )
-			add( new FormComponent( "javax.swing.JTextField" ) {
-				name: "tfPaymentPeriod"
-				"editable": false
-			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 3
-				"gridy": 3
-			} )
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
 				name: "tabbedPane1"
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "0, 249, 0, 312:1.0"
-					"$rowSpecs": "0, 102:1.0, 0, 126:1.0, 0"
+					"$columnSpecs": "0, 249, 227, 312:1.0"
+					"$rowSpecs": "0, 0, 0, 0, 0, 102:1.0, 0, 126:1.0, 0"
 					"$hGap": 5
 					"$vGap": 5
 					"$alignLeft": true
 					"$alignTop": true
 				} ) {
 					name: "pnlData"
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane1"
+						add( new FormComponent( "javax.swing.JList" ) {
+							name: "accountingMonthList"
+						} )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridheight": 4
+						"gridwidth": 2
+					} )
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane3"
+						add( new FormComponent( "javax.swing.JList" ) {
+							name: "categoriesByMonthList"
+						} )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 2
+						"gridheight": 4
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "rbIncoming"
+						"text": "eingehend"
+						"enabled": false
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 3
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "rbOutgoing"
+						"text": "ausgehend"
+						"enabled": false
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 3
+						"gridy": 1
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "tfPaymentPeriod"
+						"editable": false
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 3
+						"gridy": 2
+					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label1"
 						"text": "Per Kategorie:"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 4
+					} )
 					add( new FormComponent( "javax.swing.JComboBox" ) {
 						name: "cbAllCategories"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridwidth": 3
+						"gridy": 4
 					} )
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 						name: "scrollPane4"
@@ -94,34 +94,34 @@ new FormModel {
 						} )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridwidth": 4
-						"gridy": 1
+						"gridy": 5
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "lblSum"
 						"text": "Summe:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 2
+						"gridy": 6
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "tfSum"
 						"editable": false
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
-						"gridy": 2
+						"gridy": 6
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "lblBudget"
 						"text": "Budget:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
-						"gridy": 2
+						"gridy": 6
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "tfBudget"
 						"editable": false
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 3
-						"gridy": 2
+						"gridy": 6
 					} )
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 						name: "scrollPane2"
@@ -129,21 +129,21 @@ new FormModel {
 							name: "messagesTable"
 						} )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 3
+						"gridy": 7
 						"gridwidth": 4
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label2"
 						"text": "Monatsabschluss:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 4
+						"gridy": 8
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "tfMonthOverall"
 						"editable": false
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
-						"gridy": 4
+						"gridy": 8
 						"gridwidth": 3
 					} )
 				}, new FormLayoutConstraints( null ) {
@@ -171,7 +171,7 @@ new FormModel {
 					"title": "Budget"
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridy": 5
+				"gridy": 1
 				"gridheight": 5
 				"gridwidth": 4
 			} )
