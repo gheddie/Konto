@@ -1,7 +1,5 @@
 package de.gravitex.accounting.util;
 
-import java.util.List;
-
 import de.gravitex.accounting.AccountingUtil;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import lombok.Data;
