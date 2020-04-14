@@ -20,6 +20,14 @@ new FormModel {
 					name: "btnCheckSaldo"
 					"text": "Check Saldo"
 				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "btnReloadData"
+					"text": "Reload Data"
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "btnClose"
+					"text": "Close"
+				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
 				name: "tbpMain"
@@ -34,8 +42,14 @@ new FormModel {
 					name: "pnlData"
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 						name: "scrollPane1"
-						add( new FormComponent( "javax.swing.JList" ) {
-							name: "accountingMonthList"
+						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+							name: "panel4"
+							"border": new javax.swing.border.TitledBorder( "Buchungen" )
+							add( new FormComponent( "javax.swing.JList" ) {
+								name: "accountingMonthList"
+							}, new FormLayoutConstraints( class java.lang.String ) {
+								"value": "Center"
+							} )
 						} )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridheight": 4
@@ -43,8 +57,14 @@ new FormModel {
 					} )
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 						name: "scrollPane3"
-						add( new FormComponent( "javax.swing.JList" ) {
-							name: "categoriesByMonthList"
+						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+							name: "panel5"
+							"border": new javax.swing.border.TitledBorder( "Buchungskategorien" )
+							add( new FormComponent( "javax.swing.JList" ) {
+								name: "categoriesByMonthList"
+							}, new FormLayoutConstraints( class java.lang.String ) {
+								"value": "Center"
+							} )
 						} )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
@@ -198,6 +218,22 @@ new FormModel {
 					} )
 				}, new FormLayoutConstraints( null ) {
 					"title": "Budget"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "74:1.0"
+					"$rowSpecs": "0, 0, 0"
+					"$hGap": 5
+					"$vGap": 5
+					"$alignLeft": true
+					"$alignTop": true
+				} ) {
+					name: "panel2"
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "chkRealValuesInBudgets"
+						"text": "Realwerte in Budgetplanung"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Einstellungen"
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 1

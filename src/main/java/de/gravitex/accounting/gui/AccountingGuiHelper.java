@@ -2,6 +2,7 @@ package de.gravitex.accounting.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.RenderingHints;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,9 @@ public class AccountingGuiHelper {
 		
 		JFreeChart chart = ChartFactory.createBarChart(title, "Kategorie", "Aufwand", createDataset(monthKeys),
 				PlotOrientation.HORIZONTAL, true, true, false);
+		
+		chart.setRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
+		
 		accountingFrame.getPnlChart().add(new ChartPanel(chart), BorderLayout.CENTER);
 		accountingFrame.getPnlChart().validate();
 		accountingFrame.clearMessages();

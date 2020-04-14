@@ -72,6 +72,10 @@ public class AccountingManager {
 	private AccountManagerSettings accountManagerSettings = AccountManagerSettings.fromValues(true, 12, true);
 
 	private AccountingManager() {
+		initialize();
+	}
+
+	public void initialize() {
 		result = new HashMap<String, AccountingMonth>();
 		HashMap<String, List<AccountingRow>> fileData = readFileData();
 		readBudgetPlannings();

@@ -87,6 +87,18 @@ public class AccountingFrame extends JFrame {
 				}
 			}
 		});
+		btnReloadData.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AccountingManager.getInstance().initialize();
+			}
+		});
+		btnClose.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
 		fillAccountingMonths();
 		fillAllCategories();
 		cbAllCategories.addActionListener(new ActionListener() {
@@ -116,9 +128,22 @@ public class AccountingFrame extends JFrame {
 			}
 		});
 		fillBudgetPlannings();
+		initSettings();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
+	private void initSettings() {
+		chkRealValuesInBudgets.setSelected(
+				AccountingManager.getInstance().getAccountManagerSettings().isShowActualValuesInBidgetPlanning());
+		chkRealValuesInBudgets.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AccountingManager.getInstance().getAccountManagerSettings()
+						.setShowActualValuesInBidgetPlanning(chkRealValuesInBudgets.isSelected());
+			}
+		});
+	}
+
 	private void handleSumType(String category, String monthKey) {
 		String text = "";
 		if (monthKey != null) {
@@ -286,11 +311,15 @@ public class AccountingFrame extends JFrame {
 		// Generated using JFormDesigner Evaluation license - Stefan Schulz
 		tbMain = new JToolBar();
 		btnCheckSaldo = new JButton();
+		btnReloadData = new JButton();
+		btnClose = new JButton();
 		tbpMain = new JTabbedPane();
 		pnlData = new JPanel();
 		scrollPane1 = new JScrollPane();
+		panel4 = new JPanel();
 		accountingMonthList = new JList();
 		scrollPane3 = new JScrollPane();
+		panel5 = new JPanel();
 		categoriesByMonthList = new JList();
 		rbIncoming = new JRadioButton();
 		rbOutgoing = new JRadioButton();
@@ -313,6 +342,8 @@ public class AccountingFrame extends JFrame {
 		panel3 = new JPanel();
 		pnlChart = new JPanel();
 		percentageBar = new JProgressBar();
+		panel2 = new JPanel();
+		chkRealValuesInBudgets = new JCheckBox();
 		panelAlerts = new JPanel();
 		scrollPane2 = new JScrollPane();
 		messagesTable = new JTable();
@@ -333,6 +364,14 @@ public class AccountingFrame extends JFrame {
 			//---- btnCheckSaldo ----
 			btnCheckSaldo.setText("Check Saldo");
 			tbMain.add(btnCheckSaldo);
+
+			//---- btnReloadData ----
+			btnReloadData.setText("Reload Data");
+			tbMain.add(btnReloadData);
+
+			//---- btnClose ----
+			btnClose.setText("Close");
+			tbMain.add(btnClose);
 		}
 		contentPane.add(tbMain, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -343,13 +382,12 @@ public class AccountingFrame extends JFrame {
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new
-				javax. swing. border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e", javax
-				. swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM, new java
-				.awt .Font ("D\u0069al\u006fg" ,java .awt .Font .BOLD ,12 ), java. awt
-				. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans.
-				PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062or\u0064er" .
-				equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
+				pnlData.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.border.
+				EmptyBorder(0,0,0,0), "JF\u006frmDes\u0069gner \u0045valua\u0074ion",javax.swing.border.TitledBorder.CENTER,javax.swing
+				.border.TitledBorder.BOTTOM,new java.awt.Font("D\u0069alog",java.awt.Font.BOLD,12),
+				java.awt.Color.red),pnlData. getBorder()));pnlData. addPropertyChangeListener(new java.beans.PropertyChangeListener()
+				{@Override public void propertyChange(java.beans.PropertyChangeEvent e){if("\u0062order".equals(e.getPropertyName()))
+				throw new RuntimeException();}});
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -358,7 +396,14 @@ public class AccountingFrame extends JFrame {
 
 				//======== scrollPane1 ========
 				{
-					scrollPane1.setViewportView(accountingMonthList);
+
+					//======== panel4 ========
+					{
+						panel4.setBorder(new TitledBorder("Buchungen"));
+						panel4.setLayout(new BorderLayout());
+						panel4.add(accountingMonthList, BorderLayout.CENTER);
+					}
+					scrollPane1.setViewportView(panel4);
 				}
 				pnlData.add(scrollPane1, new GridBagConstraints(0, 0, 2, 4, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -366,7 +411,14 @@ public class AccountingFrame extends JFrame {
 
 				//======== scrollPane3 ========
 				{
-					scrollPane3.setViewportView(categoriesByMonthList);
+
+					//======== panel5 ========
+					{
+						panel5.setBorder(new TitledBorder("Buchungskategorien"));
+						panel5.setLayout(new BorderLayout());
+						panel5.add(categoriesByMonthList, BorderLayout.CENTER);
+					}
+					scrollPane3.setViewportView(panel5);
 				}
 				pnlData.add(scrollPane3, new GridBagConstraints(2, 0, 1, 4, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -514,6 +566,22 @@ public class AccountingFrame extends JFrame {
 					new Insets(0, 0, 0, 0), 0, 0));
 			}
 			tbpMain.addTab("Budget", pnlChartHolder);
+
+			//======== panel2 ========
+			{
+				panel2.setLayout(new GridBagLayout());
+				((GridBagLayout)panel2.getLayout()).columnWidths = new int[] {74, 0};
+				((GridBagLayout)panel2.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
+				((GridBagLayout)panel2.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
+				((GridBagLayout)panel2.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+
+				//---- chkRealValuesInBudgets ----
+				chkRealValuesInBudgets.setText("Realwerte in Budgetplanung");
+				panel2.add(chkRealValuesInBudgets, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 0), 0, 0));
+			}
+			tbpMain.addTab("Einstellungen", panel2);
 		}
 		contentPane.add(tbpMain, new GridBagConstraints(0, 1, 1, 5, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -554,11 +622,15 @@ public class AccountingFrame extends JFrame {
 	// Generated using JFormDesigner Evaluation license - Stefan Schulz
 	private JToolBar tbMain;
 	private JButton btnCheckSaldo;
+	private JButton btnReloadData;
+	private JButton btnClose;
 	private JTabbedPane tbpMain;
 	private JPanel pnlData;
 	private JScrollPane scrollPane1;
+	private JPanel panel4;
 	private JList accountingMonthList;
 	private JScrollPane scrollPane3;
+	private JPanel panel5;
 	private JList categoriesByMonthList;
 	private JRadioButton rbIncoming;
 	private JRadioButton rbOutgoing;
@@ -581,6 +653,8 @@ public class AccountingFrame extends JFrame {
 	private JPanel panel3;
 	private JPanel pnlChart;
 	private JProgressBar percentageBar;
+	private JPanel panel2;
+	private JCheckBox chkRealValuesInBudgets;
 	private JPanel panelAlerts;
 	private JScrollPane scrollPane2;
 	private JTable messagesTable;
