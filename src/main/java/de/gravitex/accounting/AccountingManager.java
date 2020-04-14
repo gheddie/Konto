@@ -36,6 +36,7 @@ import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
 import de.gravitex.accounting.setting.AccountManagerSettings;
+import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.util.TimelineProjectonResult;
 import de.gravitex.accounting.util.TimelineProjector;
 import de.gravitex.accounting.wrapper.CategoryWrapper;
@@ -64,7 +65,7 @@ public class AccountingManager {
 
 	private static List<String> header;
 
-	private HashMap<String, Properties> budgetPlannings = new HashMap<String, Properties>();
+	private HashMap<MonthKey, Properties> budgetPlannings = new HashMap<MonthKey, Properties>();
 
 	private static AccountingManager instance;
 
@@ -79,10 +80,10 @@ public class AccountingManager {
 
 	public void initialize() {
 		accountingData = new AccountingData();
-		HashMap<String, List<AccountingRow>> fileData = readFileData();
+		HashMap<MonthKey, List<AccountingRow>> fileData = readFileData();
 		readBudgetPlannings();
 		readCategories();
-		for (String key : fileData.keySet()) {
+		for (MonthKey key : fileData.keySet()) {
 			accountingData.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
 		}
 	}
@@ -146,7 +147,7 @@ public class AccountingManager {
 
 	private void applyBudgetPlanningForMonth(Properties budgetPlanningForMonth, String fileName) {
 		String[] spl = FilenameUtils.removeExtension(fileName).split("_");
-		String monthKey = AccountingUtil.getMonthKey(Integer.parseInt(spl[1]), Integer.parseInt(spl[2]));
+		MonthKey monthKey = MonthKey.fromValues(Integer.parseInt(spl[1]), Integer.parseInt(spl[2]));
 		budgetPlannings.put(monthKey, budgetPlanningForMonth);
 	}
 
@@ -158,7 +159,7 @@ public class AccountingManager {
 		return result;
 	}
 
-	private static HashMap<String, List<AccountingRow>> readFileData() {
+	private static HashMap<MonthKey, List<AccountingRow>> readFileData() {
 		try {
 			File file = new File(FILE);
 			FileInputStream fis = new FileInputStream(file);
@@ -166,16 +167,16 @@ public class AccountingManager {
 			XSSFSheet sheet = wb.getSheetAt(0);
 			Iterator<Row> itr = sheet.iterator();
 			BigDecimal completeAmount = new BigDecimal(0);
-			HashMap<String, List<AccountingRow>> fileRows = new HashMap<String, List<AccountingRow>>();
+			HashMap<MonthKey, List<AccountingRow>> fileRows = new HashMap<MonthKey, List<AccountingRow>>();
 			while (itr.hasNext()) {
 				Row row = itr.next();
 				if (row.getRowNum() > 0) {
 					AccountingRow accountingRow = readLine(row);
-					if (fileRows.get(AccountingUtil.getMonthKey(accountingRow.getDate())) == null) {
-						fileRows.put(AccountingUtil.getMonthKey(accountingRow.getDate()),
+					if (fileRows.get(MonthKey.fromDate(accountingRow.getDate())) == null) {
+						fileRows.put(MonthKey.fromDate(accountingRow.getDate()),
 								new ArrayList<AccountingRow>());
 					}
-					fileRows.get(AccountingUtil.getMonthKey(accountingRow.getDate())).add(accountingRow);
+					fileRows.get(MonthKey.fromDate(accountingRow.getDate())).add(accountingRow);
 					completeAmount = completeAmount.add(accountingRow.getAmount());
 				} else {
 					readHeaderRow(row);
@@ -302,7 +303,7 @@ public class AccountingManager {
 		System.out.println("saldo check ok...");
 	}
 
-	public Integer requestLimit(String monthKey, String category) {
+	public Integer requestLimit(MonthKey monthKey, String category) {
 		if (monthKey == null || category == null) {
 			throw new AccountingException("request limit --> both month key and category must be set!!", null, null);
 		}
@@ -346,7 +347,7 @@ public class AccountingManager {
 		return paymentModality;
 	}
 
-	public AccountingResultMonthModel getAccountingResultMonthModel(String monthKey) {
+	public AccountingResultMonthModel getAccountingResultMonthModel(MonthKey monthKey) {
 		AccountingMonth accountingMonth = accountingData.get(monthKey);
 		AccountingResultMonthModel result = new AccountingResultMonthModel();
 		result.setMonthKey(monthKey);
@@ -356,7 +357,7 @@ public class AccountingManager {
 		return result;
 	}
 
-	public AccountingResultCategoryModel getAccountingResultCategoryModel(String monthKey, String category) {
+	public AccountingResultCategoryModel getAccountingResultCategoryModel(MonthKey monthKey, String category) {
 		AccountingMonth accountingMonth = accountingData.get(monthKey);
 		List<AccountingRow> rowsByCategory = accountingMonth.getRowObjectsByCategory(category);
 		AccountingResultCategoryModel categoryModel = new AccountingResultCategoryModel();
@@ -377,7 +378,7 @@ public class AccountingManager {
 		return categoryModel;
 	}
 
-	public PaymentModality initPaymentModality(String monthKey, String category) {
+	public PaymentModality initPaymentModality(MonthKey monthKey, String category) {
 		PaymentModality paymentModality = getPaymentModality(category);
 		paymentModality.reset();
 		paymentModality.setMonthKey(monthKey);
@@ -403,7 +404,7 @@ public class AccountingManager {
 		
 		List<BudgetEvaluation> evaluationResult = new ArrayList<BudgetEvaluation>();
 
-		String initialAppeareance = getInitialAppeareanceOfCategory(categoryWrapper.getCategory());
+		MonthKey initialAppeareance = getInitialAppeareanceOfCategory(categoryWrapper.getCategory());
 		if (initialAppeareance == null) {
 			return null;
 		}
@@ -414,7 +415,7 @@ public class AccountingManager {
 		// search in budget plannings...
 		int months = 0;
 		LocalDate now = LocalDate.now();
-		String actualAppearance = AccountingUtil.getMonthKey(now.getMonthValue(), now.getYear());
+		MonthKey actualAppearance = MonthKey.fromValues(now.getMonthValue(), now.getYear());
 		boolean budgetPlanningAvailable = false;
 		while (months < accountManagerSettings.getProjectionDurationInMonths()) {
 			actualAppearance = AccountingUtil.nextMonthlyTimeStamp(actualAppearance, PaymentPeriod.MONTH);
@@ -443,11 +444,11 @@ public class AccountingManager {
 		return evaluationResult;
 	}
 
-	private boolean budgetPlanningPresentFor(String monthKey) {
+	private boolean budgetPlanningPresentFor(MonthKey monthKey) {
 		return budgetPlannings.keySet().contains(monthKey);
 	}
 
-	private boolean budgetPlanningAvailableFor(String monthKey, String category) {
+	private boolean budgetPlanningAvailableFor(MonthKey monthKey, String category) {
 		Properties budgetPlanningForMonth = budgetPlannings.get(monthKey);
 		if (budgetPlanningForMonth == null) {
 			return false;
@@ -455,21 +456,21 @@ public class AccountingManager {
 		return (budgetPlanningForMonth.keySet().contains(category));
 	}
 
-	private String getInitialAppeareanceOfCategory(String category) {
+	private MonthKey getInitialAppeareanceOfCategory(String category) {
 		List<AccountingRow> allEntries = AccountingDao.getAllEntriesForCategory(accountingData, category);
 		if (allEntries == null || allEntries.size() == 0) {
 			return null;
 		}
 		LocalDate initalDate = allEntries.get(0).getDate();
-		return AccountingUtil.getMonthKey(initalDate.getMonthValue(), initalDate.getYear());
+		return MonthKey.fromValues(initalDate.getMonthValue(), initalDate.getYear());
 	}
 
-	public BigDecimal getAvailableIncome(String monthKey) {
+	public BigDecimal getAvailableIncome(MonthKey monthKey) {
 		// TODO
 		return AVAILABLE_INCOME;
 	}
 
-	public HashMap<String, BigDecimal> getCategorySums(String monthKey) {
+	public HashMap<String, BigDecimal> getCategorySums(MonthKey monthKey) {
 		AccountingMonth monthData = accountingData.get(monthKey);
 		if (monthData == null) {
 			return null;

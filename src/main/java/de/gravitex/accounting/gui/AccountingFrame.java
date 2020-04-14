@@ -45,6 +45,7 @@ import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
+import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.wrapper.CategoryWrapper;
 import lombok.Data;
 
@@ -140,7 +141,7 @@ public class AccountingFrame extends JFrame {
 		});
 	}
 
-	private void handleSumType(String category, String monthKey) {
+	private void handleSumType(String category, MonthKey monthKey) {
 		String text = "";
 		if (monthKey != null) {
 			text = "Einträge ("+category+") ["+monthKey+"]";	
@@ -151,11 +152,11 @@ public class AccountingFrame extends JFrame {
 	}
 	
 	private void fillBudgetPlannings() {
-		final DefaultListModel<String> budgetPlanningModel = new DefaultListModel<String>();
-		Set<String> keySet = manager.getBudgetPlannings().keySet();
-		ArrayList<String> keyList = new ArrayList<String>(keySet);
+		final DefaultListModel<MonthKey> budgetPlanningModel = new DefaultListModel<MonthKey>();
+		Set<MonthKey> keySet = manager.getBudgetPlannings().keySet();
+		ArrayList<MonthKey> keyList = new ArrayList<MonthKey>(keySet);
 		Collections.sort(keyList);
-		for (String budgetKey : keyList) {
+		for (MonthKey budgetKey : keyList) {
 			budgetPlanningModel.addElement(budgetKey);
 		}
 		budgetPlanningList.setModel(budgetPlanningModel);
@@ -163,9 +164,9 @@ public class AccountingFrame extends JFrame {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				Object[] selectedValues = budgetPlanningList.getSelectedValues();
-				List<String> selectedValueList = new ArrayList<String>();
+				List<MonthKey> selectedValueList = new ArrayList<MonthKey>();
 				for (Object value : selectedValues) {
-					selectedValueList.add(String.valueOf(value));
+					selectedValueList.add((MonthKey) value);
 				}
 				AccountingGuiHelper.displayBudgetChart(AccountingFrame.this, selectedValueList);
 			}
@@ -184,8 +185,11 @@ public class AccountingFrame extends JFrame {
 	@SuppressWarnings("unchecked")
 	private void fillAccountingMonths() {
 		
-		final DefaultListModel<String> monthKeyModel = new DefaultListModel<String>();
-		for (String monthKey : manager.getAccountingData().keySet()) {
+		final DefaultListModel<MonthKey> monthKeyModel = new DefaultListModel<MonthKey>();
+		Set<MonthKey> keySet = manager.getAccountingData().keySet();
+		List<MonthKey> keyList = new ArrayList<MonthKey>(keySet);
+		Collections.sort(keyList);
+		for (MonthKey monthKey : keyList) {
 			monthKeyModel.addElement(monthKey);
 		}
 		accountingMonthList.setModel(monthKeyModel);
@@ -193,7 +197,7 @@ public class AccountingFrame extends JFrame {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				System.out.println(accountingMonthList.getSelectedValue());
-				String monthKey = String.valueOf(accountingMonthList.getSelectedValue());
+				MonthKey monthKey = (MonthKey) accountingMonthList.getSelectedValue();
 				monthModel = manager.getAccountingResultMonthModel(monthKey);
 				clearMessages();
 				fillCategoriesForMonth(monthModel);

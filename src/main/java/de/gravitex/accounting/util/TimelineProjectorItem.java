@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class TimelineProjectorItem {
 	
-	private String monthKey;
+	private MonthKey monthKey;
 	
 	private TimelineProjectorItemState timelineProjectorItemState;
 
@@ -13,7 +13,7 @@ public class TimelineProjectorItem {
 		// ...
 	}
 
-	public static TimelineProjectorItem fromValues(String aMonthKey, TimelineProjectorItemState aTimelineProjectorItemState) {
+	public static TimelineProjectorItem fromValues(MonthKey aMonthKey, TimelineProjectorItemState aTimelineProjectorItemState) {
 		TimelineProjectorItem timelineProjectorItem = new TimelineProjectorItem();
 		timelineProjectorItem.setMonthKey(aMonthKey);
 		timelineProjectorItem.setTimelineProjectorItemState(aTimelineProjectorItemState);

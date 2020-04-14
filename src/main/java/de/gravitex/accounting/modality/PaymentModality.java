@@ -4,12 +4,13 @@ import java.math.BigDecimal;
 
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
+import de.gravitex.accounting.util.MonthKey;
 import lombok.Data;
 
 @Data
 public abstract class PaymentModality {
 	
-	private String monthKey;
+	private MonthKey monthKey;
 	
 	private String category;
 	

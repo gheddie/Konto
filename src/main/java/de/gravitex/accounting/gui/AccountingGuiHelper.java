@@ -19,10 +19,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingUtil;
+import de.gravitex.accounting.util.MonthKey;
 
 public class AccountingGuiHelper {
 
-	public static void displayBudgetChart(AccountingFrame accountingFrame, List<String> monthKeys) {
+	public static void displayBudgetChart(AccountingFrame accountingFrame, List<MonthKey> monthKeys) {
 
 		System.out.println("displayBudgetChart: " + monthKeys);
 
@@ -52,7 +53,7 @@ public class AccountingGuiHelper {
 		accountingFrame.getPercentageBar().setValue(0);
 	}
 
-	private static void displayBudgetPercentage(AccountingFrame accountingFrame, String monthKey) {
+	private static void displayBudgetPercentage(AccountingFrame accountingFrame, MonthKey monthKey) {
 
 		BigDecimal availableIncome = AccountingManager.getInstance().getAvailableIncome(monthKey);
 		Properties budgetPlanningForMonth = AccountingManager.getInstance().getBudgetPlannings().get(monthKey);
@@ -80,7 +81,7 @@ public class AccountingGuiHelper {
 		percentageBar.setStringPainted(true);
 	}
 
-	private static CategoryDataset createDataset(List<String> monthKeys) {
+	private static CategoryDataset createDataset(List<MonthKey> monthKeys) {
 		
 		HashMap<String, BigDecimal> categorySums = null;
 		if (monthKeys.size() == 1) {
@@ -88,20 +89,20 @@ public class AccountingGuiHelper {
 		}
 
 		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		for (String monthKey : monthKeys) {
+		for (MonthKey monthKey : monthKeys) {
 			addMonthData(monthKey, dataset, categorySums);
 		}
 		return dataset;
 	}
 
-	private static void addMonthData(String monthKey, DefaultCategoryDataset dataset, HashMap<String, BigDecimal> categorySums) {
+	private static void addMonthData(MonthKey monthKey, DefaultCategoryDataset dataset, HashMap<String, BigDecimal> categorySums) {
 		
 		Properties budgetPlanningForMonth = AccountingManager.getInstance().getBudgetPlannings().get(monthKey);
 
 		int categoryBudget = 0;
 		for (Object categoryBudgetKey : budgetPlanningForMonth.keySet()) {
 			categoryBudget = Integer.parseInt(String.valueOf(budgetPlanningForMonth.get(categoryBudgetKey)));
-			dataset.addValue(categoryBudget, monthKey, (String) categoryBudgetKey);
+			dataset.addValue(categoryBudget, monthKey.toString(), (String) categoryBudgetKey);
 			if (categorySums != null) {
 				BigDecimal categorySum = categorySums.get((String) categoryBudgetKey);
 				if (categorySum != null) {

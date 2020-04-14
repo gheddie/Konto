@@ -10,7 +10,7 @@ public class TimelineProjectonResult {
 	
 	private List<TimelineProjectorItem> timelineProjectorItems = new ArrayList<TimelineProjectorItem>();
 
-	public boolean hasTimeStamps(String...timeStamps) {
+	public boolean hasTimeStamps(MonthKey...timeStamps) {
 		if (timelineProjectorItems.size() != timeStamps.length) {
 			return false;
 		}
@@ -24,7 +24,7 @@ public class TimelineProjectonResult {
 		return true;
 	}
 
-	public boolean hasTimeStamp(String aTimeStamp) {
+	public boolean hasTimeStamp(MonthKey aTimeStamp) {
 		for (TimelineProjectorItem timelineProjectorItem : timelineProjectorItems) {
 			if (timelineProjectorItem.getMonthKey().equals(aTimeStamp)) {
 				return true;		

@@ -3,12 +3,13 @@ package de.gravitex.accounting.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import de.gravitex.accounting.util.MonthKey;
 import lombok.Data;
 
 @Data
 public class AccountingResultCategoryModel {
 
-	private String monthKey;
+	private MonthKey monthKey;
 	
 	private String category;
 	

@@ -1,6 +1,7 @@
 package de.gravitex.accounting;
 
 import de.gravitex.accounting.enumeration.BudgetEvaluationResult;
+import de.gravitex.accounting.util.MonthKey;
 import lombok.Data;
 
 @Data
@@ -8,7 +9,7 @@ public class BudgetEvaluation {
 
 	private String category;
 
-	private String monthKey;
+	private MonthKey monthKey;
 
 	private BudgetEvaluationResult budgetEvaluationResult;
 
@@ -16,7 +17,7 @@ public class BudgetEvaluation {
 		// ...
 	}
 
-	public static BudgetEvaluation fromValues(String aCategory, String aMonthKey,
+	public static BudgetEvaluation fromValues(String aCategory, MonthKey aMonthKey,
 			BudgetEvaluationResult aBudgetEvaluationResult) {
 		BudgetEvaluation budgetEvaluation = new BudgetEvaluation();
 		budgetEvaluation.setCategory(aCategory);

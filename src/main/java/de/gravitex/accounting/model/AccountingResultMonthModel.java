@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
+import de.gravitex.accounting.util.MonthKey;
 import lombok.Data;
 
 @Data
@@ -13,7 +14,7 @@ public class AccountingResultMonthModel {
 
 	private HashMap<String, AccountingResultCategoryModel> categoryModels = new HashMap<String, AccountingResultCategoryModel>();
 	
-	private String monthKey;
+	private MonthKey monthKey;
 
 	public void addCategoryModel(AccountingResultCategoryModel accountingResultCategoryModel) {
 		categoryModels.put(accountingResultCategoryModel.getCategory(), accountingResultCategoryModel);

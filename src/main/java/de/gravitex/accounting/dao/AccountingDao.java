@@ -9,13 +9,14 @@ import java.util.Set;
 import de.gravitex.accounting.AccountingData;
 import de.gravitex.accounting.AccountingMonth;
 import de.gravitex.accounting.AccountingRow;
+import de.gravitex.accounting.util.MonthKey;
 
 public class AccountingDao {
 
 	public static Set<String> getAllCategories(AccountingData accountingData) {
 		Set<String> allCategories = new HashSet<String>();
 		AccountingMonth accountingMonth = null;
-		for (String key : accountingData.keySet()) {
+		for (MonthKey key : accountingData.keySet()) {
 			accountingMonth = accountingData.get(key);
 			allCategories.addAll(accountingMonth.getDistinctCategories());
 		}
@@ -24,7 +25,7 @@ public class AccountingDao {
 
 	public static List<AccountingRow> getAllEntriesForCategory(AccountingData accountingData, String category) {
 		List<AccountingRow> allEntriesForCategory = new ArrayList<AccountingRow>();
-		for (String key : accountingData.keySet()) {
+		for (MonthKey key : accountingData.keySet()) {
 			for (AccountingRow accountingRow : accountingData.get(key).getRowObjectsByCategory(category)) {
 				allEntriesForCategory.add(accountingRow);
 			}

@@ -12,6 +12,7 @@ import de.gravitex.accounting.resolver.BooleanCellValueResolver;
 import de.gravitex.accounting.resolver.CellValueResolver;
 import de.gravitex.accounting.resolver.LocalDateCellValueResolver;
 import de.gravitex.accounting.resolver.StringCellValueResolver;
+import de.gravitex.accounting.util.MonthKey;
 
 public class AccountingUtil {
 	
@@ -25,24 +26,15 @@ public class AccountingUtil {
 		cellValueResolvers.put(String.class, new StringCellValueResolver());
 	}
 
-	public static String getMonthKey(LocalDate localDate) {
-		return getMonthKey(localDate.getMonth().getValue(), localDate.getYear());
-	}
-
-	public static String getMonthKey(int month, int year) {
-		return month + "/" + year;
-	}
-
 	@SuppressWarnings("unchecked")
 	public static <T> T getCellValue(Class<T> clazz, Cell cell) {
 		return (T) cellValueResolvers.get(clazz).resolveCellValue(cell);
 	}
 
-	public static String nextMonthlyTimeStamp(String actualAppereance, PaymentPeriod paymentPeriod) {
-		String[] spl = actualAppereance.split("/");
-		LocalDate localDate = LocalDate.of(Integer.parseInt(spl[1]), Integer.parseInt(spl[0]), 1);
+	public static MonthKey nextMonthlyTimeStamp(MonthKey actualAppereance, PaymentPeriod paymentPeriod) {
+		LocalDate localDate = LocalDate.of(actualAppereance.getYear(), actualAppereance.getMonth(), 1);
 		localDate = localDate.plusMonths(paymentPeriod.getDurationInMonths());
-		return getMonthKey(localDate.getMonth().getValue(), localDate.getYear());
+		return MonthKey.fromValues(localDate.getMonth().getValue(), localDate.getYear());
 	}
 
 	public static double getPercentage(double obtained, double total) {

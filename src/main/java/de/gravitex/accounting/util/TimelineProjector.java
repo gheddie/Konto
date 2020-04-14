@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class TimelineProjector {
 	
-	private String initialAppereance;
+	private MonthKey initialAppereance;
 	
 	private PaymentPeriod paymentPeriod;
 	
@@ -17,7 +17,7 @@ public class TimelineProjector {
 		// ...
 	}
 	
-	public static TimelineProjector fromValues(String anInitialAppereance, PaymentPeriod aPaymentPeriod, int aProjectionDuration) {
+	public static TimelineProjector fromValues(MonthKey anInitialAppereance, PaymentPeriod aPaymentPeriod, int aProjectionDuration) {
 		TimelineProjector timelineProjector = new TimelineProjector();
 		timelineProjector.setInitialAppereance(anInitialAppereance);
 		timelineProjector.setPaymentPeriod(aPaymentPeriod);
@@ -27,7 +27,7 @@ public class TimelineProjector {
 
 	public TimelineProjectonResult getResult() {
 		TimelineProjectonResult result = new TimelineProjectonResult();
-		String actualAppereance = initialAppereance;
+		MonthKey actualAppereance = initialAppereance;
 		// result.getTimelineProjectorItems().add(TimelineProjectorItem.fromValues(actualAppereance , null));
 		int months = 0;
 		while (months < projectionDuration) {

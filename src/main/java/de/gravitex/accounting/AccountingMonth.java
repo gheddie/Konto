@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.Set;
 
 import de.gravitex.accounting.util.CategoryResultPrinter;
+import de.gravitex.accounting.util.MonthKey;
 import lombok.Data;
 
 @Data
 public class AccountingMonth {
 	
-	private String monthKey;
+	private MonthKey monthKey;
 	
 	private List<AccountingRow> rowObjects;
 
@@ -22,7 +23,7 @@ public class AccountingMonth {
 
 	}
 
-	public static AccountingMonth fromValues(String monthKey, List<AccountingRow> rowObjects) {
+	public static AccountingMonth fromValues(MonthKey monthKey, List<AccountingRow> rowObjects) {
 		AccountingMonth aMonth = new AccountingMonth();
 		aMonth.setMonthKey(monthKey);
 		aMonth.setRowObjects(rowObjects);
