@@ -4,18 +4,18 @@ import de.gravitex.accounting.modality.PaymentModality;
 import lombok.Data;
 
 @Data
-public class CategoryWrapper {
+public class Category {
 
 	private String category;
 	
 	private PaymentModality paymentModality;
 	
-	private CategoryWrapper() {
+	private Category() {
 		// ...
 	}
 
-	public static CategoryWrapper fromValues(String aCategory, PaymentModality aPaymentModality) {
-		CategoryWrapper categoryWrapper = new CategoryWrapper();
+	public static Category fromValues(String aCategory, PaymentModality aPaymentModality) {
+		Category categoryWrapper = new Category();
 		categoryWrapper.setCategory(aCategory);
 		categoryWrapper.setPaymentModality(aPaymentModality);
 		return categoryWrapper;

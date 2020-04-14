@@ -46,7 +46,7 @@ import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
 import de.gravitex.accounting.util.MonthKey;
-import de.gravitex.accounting.wrapper.CategoryWrapper;
+import de.gravitex.accounting.wrapper.Category;
 import lombok.Data;
 
 @Data
@@ -175,9 +175,9 @@ public class AccountingFrame extends JFrame {
 	
 	private void fillAllCategories() {
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		Set<String> allCategories = AccountingManager.getInstance().getAllCategories();
-		for (String category : allCategories) {
-			model.addElement(category);
+		Set<Category> allCategories = AccountingManager.getInstance().getAllCategories();
+		for (Category category : allCategories) {
+			model.addElement(category.getCategory());
 		}
 		cbAllCategories.setModel(model);
 	}
@@ -214,16 +214,16 @@ public class AccountingFrame extends JFrame {
 	
 	private void fillCategoriesForMonth(AccountingResultMonthModel accountingResultMonthModel) {
 		try {
-			final DefaultListModel<CategoryWrapper> categoriesByMonthModel = new DefaultListModel<CategoryWrapper>();
+			final DefaultListModel<Category> categoriesByMonthModel = new DefaultListModel<Category>();
 			for (String category : accountingResultMonthModel.getDistinctCategories()) {
-				categoriesByMonthModel.addElement(CategoryWrapper.fromValues(category,
+				categoriesByMonthModel.addElement(Category.fromValues(category,
 						manager.initPaymentModality(accountingResultMonthModel.getMonthKey(), category)));
 			}
 			categoriesByMonthList.setModel(categoriesByMonthModel);
 			categoriesByMonthList.addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					CategoryWrapper categoryWrapper = (CategoryWrapper) categoriesByMonthList.getSelectedValue();
+					Category categoryWrapper = (Category) categoriesByMonthList.getSelectedValue();
 					if (categoryWrapper == null) {
 						return;
 					}

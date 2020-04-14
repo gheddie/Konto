@@ -3,8 +3,11 @@ package de.gravitex.accounting;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,7 +42,7 @@ import de.gravitex.accounting.setting.AccountManagerSettings;
 import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.util.TimelineProjectonResult;
 import de.gravitex.accounting.util.TimelineProjector;
-import de.gravitex.accounting.wrapper.CategoryWrapper;
+import de.gravitex.accounting.wrapper.Category;
 import lombok.Data;
 
 @Data
@@ -391,25 +394,25 @@ public class AccountingManager {
 		return accountManagerSettings;
 	}
 
-	public List<BudgetEvaluation> evaluateBudgetProjection(CategoryWrapper categoryWrapper) {
+	public List<BudgetEvaluation> evaluateBudgetProjection(Category category) {
 		
-		if (!categoryWrapper.getPaymentModality().isProjectable()) {
-			System.out.println("payment modiality '" + categoryWrapper.getPaymentModality().getClass().getSimpleName()
+		if (!category.getPaymentModality().isProjectable()) {
+			System.out.println("payment modiality '" + category.getPaymentModality().getClass().getSimpleName()
 					+ "' is not projectable -- returning!!");
 			return new ArrayList<BudgetEvaluation>();
 		}
 		
-		System.out.println(" --- projecting [" + categoryWrapper.getCategory() + "] ----: "
-				+ categoryWrapper.getPaymentModality().getClass().getSimpleName());
+		System.out.println(" --- projecting [" + category.getCategory() + "] ----: "
+				+ category.getPaymentModality().getClass().getSimpleName());
 		
 		List<BudgetEvaluation> evaluationResult = new ArrayList<BudgetEvaluation>();
 
-		MonthKey initialAppeareance = getInitialAppeareanceOfCategory(categoryWrapper.getCategory());
+		MonthKey initialAppeareance = getInitialAppeareanceOfCategory(category.getCategory());
 		if (initialAppeareance == null) {
 			return null;
 		}
 		TimelineProjectonResult timelineProjectonResult = TimelineProjector
-				.fromValues(initialAppeareance, categoryWrapper.getPaymentModality().getPaymentPeriod(),
+				.fromValues(initialAppeareance, category.getPaymentModality().getPaymentPeriod(),
 						accountManagerSettings.getProjectionDurationInMonths())
 				.getResult();
 		// search in budget plannings...
@@ -419,14 +422,14 @@ public class AccountingManager {
 		boolean budgetPlanningAvailable = false;
 		while (months < accountManagerSettings.getProjectionDurationInMonths()) {
 			actualAppearance = AccountingUtil.nextMonthlyTimeStamp(actualAppearance, PaymentPeriod.MONTH);
-			budgetPlanningAvailable = budgetPlanningAvailableFor(actualAppearance, categoryWrapper.getCategory());
+			budgetPlanningAvailable = budgetPlanningAvailableFor(actualAppearance, category.getCategory());
 			months += PaymentPeriod.MONTH.getDurationInMonths();
 			if (timelineProjectonResult.hasTimeStamp(actualAppearance)) {
 				// budget planning should be there...
 				System.out.println("projecting: " + actualAppearance + " *");
 				if (!budgetPlanningAvailable) {
 					if (budgetPlanningPresentFor(actualAppearance)) {
-						evaluationResult.add(BudgetEvaluation.fromValues(categoryWrapper.getCategory(),
+						evaluationResult.add(BudgetEvaluation.fromValues(category.getCategory(),
 								actualAppearance, BudgetEvaluationResult.MISSING_BUDGET));
 					}
 				}
@@ -435,7 +438,7 @@ public class AccountingManager {
 				System.out.println("projecting: " + actualAppearance);
 				if (budgetPlanningAvailable) {
 					if (budgetPlanningPresentFor(actualAppearance)) {
-						evaluationResult.add(BudgetEvaluation.fromValues(categoryWrapper.getCategory(),
+						evaluationResult.add(BudgetEvaluation.fromValues(category.getCategory(),
 								actualAppearance, BudgetEvaluationResult.MISPLACED_BUDGET));
 					}
 				}
@@ -487,10 +490,46 @@ public class AccountingManager {
 	}
 
 	public void prepareBudgets() {
-		// TODO Auto-generated method stub
+		HashMap<MonthKey, Set<BudgetEvaluation>> failuresPerMonth = new HashMap<MonthKey, Set<BudgetEvaluation>>();
+		Set<Category> allCategories = getAllCategories();
+		for (Category category : allCategories) {
+			List<BudgetEvaluation> evaluation = evaluateBudgetProjection(category);
+			for (BudgetEvaluation budgetEvaluation : evaluation) {
+				if (budgetEvaluation.getBudgetEvaluationResult().equals(BudgetEvaluationResult.MISSING_BUDGET)) {
+					if (failuresPerMonth.get(budgetEvaluation.getMonthKey()) == null) {
+						failuresPerMonth.put(budgetEvaluation.getMonthKey(), new HashSet<BudgetEvaluation>());
+					}
+					failuresPerMonth.get(budgetEvaluation.getMonthKey()).add(budgetEvaluation);	
+				}
+			}
+		}
+		for (MonthKey monthKey : failuresPerMonth.keySet()) {
+			completeBudgetPlanning(monthKey, failuresPerMonth.get(monthKey));
+		}
 	}
 
-	public Set<String> getAllCategories() {
+	private void completeBudgetPlanning(MonthKey monthKey, Set<BudgetEvaluation> additionalBudgetEvaluations) {
+		
+		// get existing categories
+		Properties existingBudgetPlannings = budgetPlannings.get(monthKey);
+		for (BudgetEvaluation budgetEvaluation : additionalBudgetEvaluations) {
+			// TODO which amount?!?
+			existingBudgetPlannings.put(budgetEvaluation.getCategory(), new BigDecimal(100).toString());
+		}
+		
+		try {
+			URL url = this.getClass().getResource("/rp");
+			File parentDirectory = new File(new URI(url.toString()));
+			existingBudgetPlannings.store(new FileOutputStream(
+					new File(parentDirectory, "RP_" + monthKey.getMonth() + "_" + monthKey.getYear() + ".properties")),
+					null);
+		} catch (IOException | URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public Set<Category> getAllCategories() {
 		return AccountingDao.getAllCategories(accountingData);
 	}
 
