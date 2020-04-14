@@ -24,6 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import de.gravitex.accounting.dao.AccountingDao;
 import de.gravitex.accounting.enumeration.AccountingError;
+import de.gravitex.accounting.enumeration.BudgetEvaluationResult;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
 import de.gravitex.accounting.exception.AccountingException;
@@ -389,20 +390,20 @@ public class AccountingManager {
 		return accountManagerSettings;
 	}
 
-	public List<String> evaluateBudgetProjection(CategoryWrapper categoryWrapper) {
+	public List<BudgetEvaluation> evaluateBudgetProjection(CategoryWrapper categoryWrapper) {
 		if (!categoryWrapper.getPaymentModality().isProjectable()) {
 			System.out.println("payment modiality '" + categoryWrapper.getPaymentModality().getClass().getSimpleName()
 					+ "' is not projectable -- returning!!");
-			return new ArrayList<String>();
+			return new ArrayList<BudgetEvaluation>();
 		}
 		System.out.println(" --- projecting [" + categoryWrapper.getCategory() + "] ----: "
 				+ categoryWrapper.getPaymentModality().getClass().getSimpleName());
 		return evaluateBudgetProjectionIntern(categoryWrapper);
 	}
 
-	private List<String> evaluateBudgetProjectionIntern(CategoryWrapper categoryWrapper) {
+	private List<BudgetEvaluation> evaluateBudgetProjectionIntern(CategoryWrapper categoryWrapper) {
 
-		List<String> evaluationResult = new ArrayList<String>();
+		List<BudgetEvaluation> evaluationResult = new ArrayList<BudgetEvaluation>();
 
 		String initialAppeareance = getInitialAppeareanceOfCategory(categoryWrapper.getCategory());
 		if (initialAppeareance == null) {
@@ -426,8 +427,8 @@ public class AccountingManager {
 				System.out.println("projecting: " + actualAppearance + " *");
 				if (!budgetPlanningAvailable) {
 					if (budgetPlanningPresentFor(actualAppearance)) {
-						evaluationResult.add("FEHLENDES Budget für Kategorie [" + categoryWrapper.getCategory()
-								+ "] in Monat '" + actualAppearance + "'!!");
+						evaluationResult.add(BudgetEvaluation.fromValues(categoryWrapper.getCategory(),
+								actualAppearance, BudgetEvaluationResult.MISSING_BUDGET));
 					}
 				}
 			} else {
@@ -435,8 +436,8 @@ public class AccountingManager {
 				System.out.println("projecting: " + actualAppearance);
 				if (budgetPlanningAvailable) {
 					if (budgetPlanningPresentFor(actualAppearance)) {
-						evaluationResult.add("Fehlplaziertes Budget für Kategorie [" + categoryWrapper.getCategory()
-								+ "] in Monat '" + actualAppearance + "'!!");
+						evaluationResult.add(BudgetEvaluation.fromValues(categoryWrapper.getCategory(),
+								actualAppearance, BudgetEvaluationResult.MISPLACED_BUDGET));
 					}
 				}
 			}

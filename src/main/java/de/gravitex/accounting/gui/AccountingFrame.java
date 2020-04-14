@@ -39,6 +39,7 @@ import javax.swing.table.DefaultTableModel;
 
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
+import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
@@ -227,11 +228,11 @@ public class AccountingFrame extends JFrame {
 					fillCategoryEntries(categoryModel);
 					updatePaymentModality(categoryWrapper.getPaymentModality());
 					if (manager.getAccountManagerSettings().isBudgetProjectionsEnabled()) {
-						List<String> evaluationResult = manager.evaluateBudgetProjection(categoryWrapper);
+						List<BudgetEvaluation> evaluationResult = manager.evaluateBudgetProjection(categoryWrapper);
 						if (evaluationResult.size() > 0) {
 							AlertMessagesBuilder builder = new AlertMessagesBuilder();
-							for (String message : evaluationResult) {
-								builder.withMessage(AlertMessageType.WARNING, message);
+							for (BudgetEvaluation budgetEvaluation : evaluationResult) {
+								builder.withMessage(AlertMessageType.WARNING, budgetEvaluation.generateMessage());
 							}
 							pushMessages(builder.getAlertMessages());
 						} else {
