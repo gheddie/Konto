@@ -391,18 +391,16 @@ public class AccountingManager {
 	}
 
 	public List<BudgetEvaluation> evaluateBudgetProjection(CategoryWrapper categoryWrapper) {
+		
 		if (!categoryWrapper.getPaymentModality().isProjectable()) {
 			System.out.println("payment modiality '" + categoryWrapper.getPaymentModality().getClass().getSimpleName()
 					+ "' is not projectable -- returning!!");
 			return new ArrayList<BudgetEvaluation>();
 		}
+		
 		System.out.println(" --- projecting [" + categoryWrapper.getCategory() + "] ----: "
 				+ categoryWrapper.getPaymentModality().getClass().getSimpleName());
-		return evaluateBudgetProjectionIntern(categoryWrapper);
-	}
-
-	private List<BudgetEvaluation> evaluateBudgetProjectionIntern(CategoryWrapper categoryWrapper) {
-
+		
 		List<BudgetEvaluation> evaluationResult = new ArrayList<BudgetEvaluation>();
 
 		String initialAppeareance = getInitialAppeareanceOfCategory(categoryWrapper.getCategory());
@@ -442,7 +440,6 @@ public class AccountingManager {
 				}
 			}
 		}
-
 		return evaluationResult;
 	}
 
