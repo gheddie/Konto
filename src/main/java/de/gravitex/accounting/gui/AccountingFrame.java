@@ -12,19 +12,19 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
-import javax.swing.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -37,16 +37,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
-
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
-import de.gravitex.accounting.AccountingUtil;
-import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
@@ -55,9 +47,6 @@ import de.gravitex.accounting.model.AccountingResultMonthModel;
 import de.gravitex.accounting.wrapper.CategoryWrapper;
 import lombok.Data;
 
-/**
- * @author Stefan Schulz
- */
 @Data
 public class AccountingFrame extends JFrame {
 
@@ -85,6 +74,12 @@ public class AccountingFrame extends JFrame {
 							.withMessage(AlertMessageType.ERROR, "Saldo error: " + accountingException.getMessage())
 							.getAlertMessages());
 				}
+			}
+		});
+		btnPrepareBudgets.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AccountingManager.getInstance().prepareBudgets();
 			}
 		});
 		btnReloadData.addActionListener(new ActionListener() {
@@ -187,8 +182,9 @@ public class AccountingFrame extends JFrame {
 
 	@SuppressWarnings("unchecked")
 	private void fillAccountingMonths() {
+		
 		final DefaultListModel<String> monthKeyModel = new DefaultListModel<String>();
-		for (String monthKey : manager.getResult().keySet()) {
+		for (String monthKey : manager.getAccountingData().keySet()) {
 			monthKeyModel.addElement(monthKey);
 		}
 		accountingMonthList.setModel(monthKeyModel);
@@ -198,6 +194,7 @@ public class AccountingFrame extends JFrame {
 				System.out.println(accountingMonthList.getSelectedValue());
 				String monthKey = String.valueOf(accountingMonthList.getSelectedValue());
 				monthModel = manager.getAccountingResultMonthModel(monthKey);
+				clearMessages();
 				fillCategoriesForMonth(monthModel);
 				BigDecimal overallSum = monthModel.calculateOverallSum();
 				tfMonthOverall.setText(overallSum.toString());
@@ -207,90 +204,94 @@ public class AccountingFrame extends JFrame {
 					tfMonthOverall.setBackground(Color.RED);
 				}
 			}
-
-			private void fillCategoriesForMonth(AccountingResultMonthModel accountingResultMonthModel) {
-				final DefaultListModel<CategoryWrapper> categoriesByMonthModel = new DefaultListModel<CategoryWrapper>();
-				for (String category : accountingResultMonthModel.getDistinctCategories()) {
-					categoriesByMonthModel.addElement(CategoryWrapper.fromValues(category,
-							manager.initPaymentModality(accountingResultMonthModel.getMonthKey(), category)));
-				}
-				categoriesByMonthList.setModel(categoriesByMonthModel);
-				categoriesByMonthList.addListSelectionListener(new ListSelectionListener() {
-					@Override
-					public void valueChanged(ListSelectionEvent e) {
-						CategoryWrapper categoryWrapper = (CategoryWrapper) categoriesByMonthList.getSelectedValue();
-						if (categoryWrapper == null) {
-							return;
-						}
-						AccountingResultCategoryModel categoryModel = monthModel
-								.getCategoryModel(categoryWrapper.getCategory());
-						fillCategoryEntries(categoryModel);
-						updatePaymentModality(categoryWrapper.getPaymentModality());
-						if (manager.getAccountManagerSettings().isBudgetProjectionsEnabled()) {
-							List<String> evaluationResult = manager.evaluateBudgetProjection(categoryWrapper);
-							if (evaluationResult.size() > 0) {
-								AlertMessagesBuilder builder = new AlertMessagesBuilder();
-								for (String message : evaluationResult) {
-									builder.withMessage(AlertMessageType.WARNING, message);
-								}
-								pushMessages(builder.getAlertMessages());
-							} else {
-								clearMessages();
-							}
-						}
-					}
-
-					private void updatePaymentModality(PaymentModality paymentModality) {
-						switch (paymentModality.getPaymentType()) {
-						case INCOMING:
-							rbIncoming.setSelected(true);
-							rbOutgoing.setSelected(false);
-							break;
-						case OUTGOING:
-							rbIncoming.setSelected(false);
-							rbOutgoing.setSelected(true);
-							break;
-						}
-						tfPaymentPeriod.setText(paymentModality.getPaymentPeriod().getTranslation());
-					}
-
-					@SuppressWarnings("static-access")
-					private void fillCategoryEntries(AccountingResultCategoryModel categoryModel) {
-
-						if (categoryModel == null) {
-							return;
-						}
-
-						DefaultTableModel tablemodel = new DefaultTableModel();
-						for (String col : categoryModel.getHeaders()) {
-							tablemodel.addColumn(col);
-						}
-						for (AccountingResultModelRow row : categoryModel.getAccountingResultModelRows()) {
-							tablemodel.addRow(row.asTableRow());
-						}
-						categoryEntriesTable.setModel(tablemodel);
-						handleSumType(categoryModel.getCategory(), categoryModel.getMonthKey());
-						tfSum.setText(categoryModel.getSum().toString());
-						tfBudget.setText(
-								categoryModel.getBudget() != null ? categoryModel.getBudget().toString() : "---");
-
-						updateBudgetAlert(categoryModel.inBudget());
-					}
-
-					private void updateBudgetAlert(boolean inBudget) {
-						if (!inBudget) {
-							categoryEntriesTable.setBackground(Color.RED);
-						} else {
-							categoryEntriesTable.setBackground(Color.WHITE);
-						}
-					}
-				});
-			}
 		});
+	}
+	
+	private void fillCategoriesForMonth(AccountingResultMonthModel accountingResultMonthModel) {
+		try {
+			final DefaultListModel<CategoryWrapper> categoriesByMonthModel = new DefaultListModel<CategoryWrapper>();
+			for (String category : accountingResultMonthModel.getDistinctCategories()) {
+				categoriesByMonthModel.addElement(CategoryWrapper.fromValues(category,
+						manager.initPaymentModality(accountingResultMonthModel.getMonthKey(), category)));
+			}
+			categoriesByMonthList.setModel(categoriesByMonthModel);
+			categoriesByMonthList.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					CategoryWrapper categoryWrapper = (CategoryWrapper) categoriesByMonthList.getSelectedValue();
+					if (categoryWrapper == null) {
+						return;
+					}
+					AccountingResultCategoryModel categoryModel = monthModel
+							.getCategoryModel(categoryWrapper.getCategory());
+					fillCategoryEntries(categoryModel);
+					updatePaymentModality(categoryWrapper.getPaymentModality());
+					if (manager.getAccountManagerSettings().isBudgetProjectionsEnabled()) {
+						List<String> evaluationResult = manager.evaluateBudgetProjection(categoryWrapper);
+						if (evaluationResult.size() > 0) {
+							AlertMessagesBuilder builder = new AlertMessagesBuilder();
+							for (String message : evaluationResult) {
+								builder.withMessage(AlertMessageType.WARNING, message);
+							}
+							pushMessages(builder.getAlertMessages());
+						} else {
+							clearMessages();
+						}
+					}
+				}
+			});			
+		} catch (AccountingException e) {
+			pushMessages(
+					new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, e.getMessage()).getAlertMessages());
+		}
+	}
+	
+	private void updatePaymentModality(PaymentModality paymentModality) {
+		switch (paymentModality.getPaymentType()) {
+		case INCOMING:
+			rbIncoming.setSelected(true);
+			rbOutgoing.setSelected(false);
+			break;
+		case OUTGOING:
+			rbIncoming.setSelected(false);
+			rbOutgoing.setSelected(true);
+			break;
+		}
+		tfPaymentPeriod.setText(paymentModality.getPaymentPeriod().getTranslation());
 	}
 
 	public void clearMessages() {
 		pushMessages(new AlertMessagesBuilder().getAlertMessages());
+	}
+	
+	@SuppressWarnings("static-access")
+	private void fillCategoryEntries(AccountingResultCategoryModel categoryModel) {
+
+		if (categoryModel == null) {
+			return;
+		}
+
+		DefaultTableModel tablemodel = new DefaultTableModel();
+		for (String col : categoryModel.getHeaders()) {
+			tablemodel.addColumn(col);
+		}
+		for (AccountingResultModelRow row : categoryModel.getAccountingResultModelRows()) {
+			tablemodel.addRow(row.asTableRow());
+		}
+		categoryEntriesTable.setModel(tablemodel);
+		handleSumType(categoryModel.getCategory(), categoryModel.getMonthKey());
+		tfSum.setText(categoryModel.getSum().toString());
+		tfBudget.setText(categoryModel.getBudget() != null ? categoryModel.getBudget().toString() : "---");
+
+		updateBudgetAlert(categoryModel.inBudget());
+	}
+	
+	private void updateBudgetAlert(boolean inBudget) {
+		if (!inBudget) {
+			categoryEntriesTable.setBackground(Color.RED);
+		} else {
+			categoryEntriesTable.setBackground(Color.WHITE);
+		}
 	}
 
 	public void pushMessages(List<AlertMessage> messages) {
@@ -339,6 +340,7 @@ public class AccountingFrame extends JFrame {
 		panel1 = new JPanel();
 		scrollPane5 = new JScrollPane();
 		budgetPlanningList = new JList();
+		btnPrepareBudgets = new JButton();
 		panel3 = new JPanel();
 		pnlChart = new JPanel();
 		percentageBar = new JProgressBar();
@@ -382,12 +384,12 @@ public class AccountingFrame extends JFrame {
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.border.
-				EmptyBorder(0,0,0,0), "JF\u006frmDes\u0069gner \u0045valua\u0074ion",javax.swing.border.TitledBorder.CENTER,javax.swing
-				.border.TitledBorder.BOTTOM,new java.awt.Font("D\u0069alog",java.awt.Font.BOLD,12),
-				java.awt.Color.red),pnlData. getBorder()));pnlData. addPropertyChangeListener(new java.beans.PropertyChangeListener()
-				{@Override public void propertyChange(java.beans.PropertyChangeEvent e){if("\u0062order".equals(e.getPropertyName()))
-				throw new RuntimeException();}});
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border
+				. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDes\u0069gner \u0045valua\u0074ion", javax. swing. border. TitledBorder. CENTER, javax
+				. swing. border. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069alog" ,java .awt .Font .BOLD ,
+				12 ), java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans
+				. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062order" .equals (e .
+				getPropertyName () )) throw new RuntimeException( ); }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -525,15 +527,21 @@ public class AccountingFrame extends JFrame {
 					panel1.setBorder(new TitledBorder("Verf\u00fcgbare Planungen"));
 					panel1.setLayout(new GridBagLayout());
 					((GridBagLayout)panel1.getLayout()).columnWidths = new int[] {216, 0};
-					((GridBagLayout)panel1.getLayout()).rowHeights = new int[] {0, 0};
+					((GridBagLayout)panel1.getLayout()).rowHeights = new int[] {0, 0, 0};
 					((GridBagLayout)panel1.getLayout()).columnWeights = new double[] {0.0, 1.0E-4};
-					((GridBagLayout)panel1.getLayout()).rowWeights = new double[] {1.0, 1.0E-4};
+					((GridBagLayout)panel1.getLayout()).rowWeights = new double[] {1.0, 0.0, 1.0E-4};
 
 					//======== scrollPane5 ========
 					{
 						scrollPane5.setViewportView(budgetPlanningList);
 					}
 					panel1.add(scrollPane5, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(0, 0, 0, 0), 0, 0));
+
+					//---- btnPrepareBudgets ----
+					btnPrepareBudgets.setText("Prepare Budgets");
+					panel1.add(btnPrepareBudgets, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 				}
@@ -650,6 +658,7 @@ public class AccountingFrame extends JFrame {
 	private JPanel panel1;
 	private JScrollPane scrollPane5;
 	private JList budgetPlanningList;
+	private JButton btnPrepareBudgets;
 	private JPanel panel3;
 	private JPanel pnlChart;
 	private JProgressBar percentageBar;

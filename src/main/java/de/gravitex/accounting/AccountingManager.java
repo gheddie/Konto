@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import de.gravitex.accounting.dao.AccountingDao;
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
@@ -67,21 +68,21 @@ public class AccountingManager {
 	private static AccountingManager instance;
 
 	// hashmap month to rows...
-	private HashMap<String, AccountingMonth> result;
+	private AccountingData accountingData;
 
-	private AccountManagerSettings accountManagerSettings = AccountManagerSettings.fromValues(true, 12, true);
+	private AccountManagerSettings accountManagerSettings = AccountManagerSettings.fromValues(true, 24, true);
 
 	private AccountingManager() {
 		initialize();
 	}
 
 	public void initialize() {
-		result = new HashMap<String, AccountingMonth>();
+		accountingData = new AccountingData();
 		HashMap<String, List<AccountingRow>> fileData = readFileData();
 		readBudgetPlannings();
 		readCategories();
 		for (String key : fileData.keySet()) {
-			result.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
+			accountingData.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
 		}
 	}
 
@@ -255,7 +256,7 @@ public class AccountingManager {
 
 	public void printCategory(String category) {
 		List<AccountingRow> resultsByCategory = new ArrayList<AccountingRow>();
-		for (AccountingMonth month : result.values()) {
+		for (AccountingMonth month : accountingData.getAccountingMonths()) {
 			resultsByCategory.addAll(month.getRowObjectsByCategory(category));
 		}
 		for (AccountingRow accountingRow : resultsByCategory) {
@@ -268,7 +269,7 @@ public class AccountingManager {
 		System.out.println(" --------------------- SALDO CHECK --------------------- ");
 
 		List<AccountingRow> results = new ArrayList<AccountingRow>();
-		for (AccountingMonth month : result.values()) {
+		for (AccountingMonth month : accountingData.getAccountingMonths()) {
 			results.addAll(month.getRowObjects());
 		}
 		Collections.sort(results);
@@ -345,7 +346,7 @@ public class AccountingManager {
 	}
 
 	public AccountingResultMonthModel getAccountingResultMonthModel(String monthKey) {
-		AccountingMonth accountingMonth = result.get(monthKey);
+		AccountingMonth accountingMonth = accountingData.get(monthKey);
 		AccountingResultMonthModel result = new AccountingResultMonthModel();
 		result.setMonthKey(monthKey);
 		for (String category : accountingMonth.getDistinctCategories()) {
@@ -355,7 +356,7 @@ public class AccountingManager {
 	}
 
 	public AccountingResultCategoryModel getAccountingResultCategoryModel(String monthKey, String category) {
-		AccountingMonth accountingMonth = result.get(monthKey);
+		AccountingMonth accountingMonth = accountingData.get(monthKey);
 		List<AccountingRow> rowsByCategory = accountingMonth.getRowObjectsByCategory(category);
 		AccountingResultCategoryModel categoryModel = new AccountingResultCategoryModel();
 		categoryModel.setMonthKey(monthKey);
@@ -382,27 +383,6 @@ public class AccountingManager {
 		paymentModality.setCategory(category);
 		paymentModality.prepare();
 		return paymentModality;
-	}
-
-	public Set<String> getAllCategories() {
-		Set<String> allCategories = new HashSet<String>();
-		AccountingMonth accountingMonth = null;
-		for (String key : result.keySet()) {
-			accountingMonth = result.get(key);
-			allCategories.addAll(accountingMonth.getDistinctCategories());
-		}
-		return allCategories;
-	}
-
-	public List<AccountingRow> getAllEntriesForCategory(String category) {
-		List<AccountingRow> allEntriesForCategory = new ArrayList<AccountingRow>();
-		for (String key : result.keySet()) {
-			for (AccountingRow accountingRow : result.get(key).getRowObjectsByCategory(category)) {
-				allEntriesForCategory.add(accountingRow);
-			}
-		}
-		Collections.sort(allEntriesForCategory);
-		return allEntriesForCategory;
 	}
 
 	public AccountManagerSettings getAccountManagerSettings() {
@@ -478,7 +458,7 @@ public class AccountingManager {
 	}
 
 	private String getInitialAppeareanceOfCategory(String category) {
-		List<AccountingRow> allEntries = getAllEntriesForCategory(category);
+		List<AccountingRow> allEntries = AccountingDao.getAllEntriesForCategory(accountingData, category);
 		if (allEntries == null || allEntries.size() == 0) {
 			return null;
 		}
@@ -492,7 +472,7 @@ public class AccountingManager {
 	}
 
 	public HashMap<String, BigDecimal> getCategorySums(String monthKey) {
-		AccountingMonth monthData = result.get(monthKey);
+		AccountingMonth monthData = accountingData.get(monthKey);
 		if (monthData == null) {
 			return null;
 		}
@@ -505,5 +485,17 @@ public class AccountingManager {
 			categorySums.put(category, categorySum);
 		}
 		return categorySums;
+	}
+
+	public void prepareBudgets() {
+		// TODO Auto-generated method stub
+	}
+
+	public Set<String> getAllCategories() {
+		return AccountingDao.getAllCategories(accountingData);
+	}
+
+	public List<AccountingRow> getAllEntriesForCategory(String category) {
+		return AccountingDao.getAllEntriesForCategory(accountingData, category);
 	}
 }

@@ -181,7 +181,7 @@ new FormModel {
 					name: "pnlChartHolder"
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 						"$columnSpecs": "216"
-						"$rowSpecs": "0:1.0"
+						"$rowSpecs": "0:1.0, 0"
 						"$alignTop": true
 						"$alignLeft": true
 					} ) {
@@ -193,6 +193,12 @@ new FormModel {
 								name: "budgetPlanningList"
 							} )
 						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "btnPrepareBudgets"
+							"text": "Prepare Budgets"
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+						} )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridheight": 2
 					} )
