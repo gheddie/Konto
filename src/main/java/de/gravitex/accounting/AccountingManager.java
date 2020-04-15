@@ -3,11 +3,8 @@ package de.gravitex.accounting;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -543,19 +540,6 @@ public class AccountingManager {
 			existingBudgetPlannings.put(budgetEvaluation.getCategory(), new BigDecimal(100).toString());
 		}
 		return existingBudgetPlannings;
-		
-		/*
-		try {
-			URL url = this.getClass().getResource("/rp");
-			File parentDirectory = new File(new URI(url.toString()));
-			existingBudgetPlannings.store(new FileOutputStream(
-					new File(parentDirectory, "RP_" + monthKey.getMonth() + "_" + monthKey.getYear() + ".properties")),
-					null);
-		} catch (IOException | URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
 	}
 	
 	public Set<String> getAllPartners() {
