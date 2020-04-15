@@ -233,13 +233,26 @@ new FormModel {
 					"$alignLeft": true
 					"$alignTop": true
 				} ) {
-					name: "panel2"
+					name: "pnlSettings"
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "chkRealValuesInBudgets"
 						"text": "Realwerte in Budgetplanung"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 				}, new FormLayoutConstraints( null ) {
 					"title": "Einstellungen"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+					name: "pnlOutput"
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane6"
+						add( new FormComponent( "javax.swing.JTextArea" ) {
+							name: "taOutput"
+						} )
+					}, new FormLayoutConstraints( class java.lang.String ) {
+						"value": "Center"
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Ausgabe"
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 1

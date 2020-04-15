@@ -56,7 +56,7 @@ public class AccountingGuiHelper {
 	private static void displayBudgetPercentage(AccountingFrame accountingFrame, MonthKey monthKey) {
 
 		BigDecimal availableIncome = AccountingManager.getInstance().getAvailableIncome(monthKey);
-		Properties budgetPlanningForMonth = AccountingManager.getInstance().getBudgetPlannings().get(monthKey);
+		Properties budgetPlanningForMonth = AccountingManager.getInstance().getBudgetPlannings().get(monthKey).getProperties();
 		int totalyPlanned = 0;
 		for (Object categoryBudget : budgetPlanningForMonth.keySet()) {
 			totalyPlanned += Integer.parseInt(String.valueOf(budgetPlanningForMonth.get(categoryBudget)));
@@ -97,7 +97,7 @@ public class AccountingGuiHelper {
 
 	private static void addMonthData(MonthKey monthKey, DefaultCategoryDataset dataset, HashMap<String, BigDecimal> categorySums) {
 		
-		Properties budgetPlanningForMonth = AccountingManager.getInstance().getBudgetPlannings().get(monthKey);
+		Properties budgetPlanningForMonth = AccountingManager.getInstance().getBudgetPlannings().get(monthKey).getProperties();
 
 		int categoryBudget = 0;
 		for (Object categoryBudgetKey : budgetPlanningForMonth.keySet()) {

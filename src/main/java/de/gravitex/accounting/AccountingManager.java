@@ -68,7 +68,7 @@ public class AccountingManager {
 
 	private static List<String> header;
 
-	private HashMap<MonthKey, Properties> budgetPlannings = new HashMap<MonthKey, Properties>();
+	private HashMap<MonthKey, BudgetPlanning> budgetPlannings = new HashMap<MonthKey, BudgetPlanning>();
 
 	private static AccountingManager instance;
 
@@ -137,7 +137,7 @@ public class AccountingManager {
 			Properties budgetPlanningForMonth = new Properties();
 			try {
 				budgetPlanningForMonth.load(new FileInputStream(resourcePlanningFile.getAbsolutePath()));
-				applyBudgetPlanningForMonth(budgetPlanningForMonth, resourcePlanningFile.getName());
+				applyBudgetPlanningForMonth(BudgetPlanning.fromValues(budgetPlanningForMonth), resourcePlanningFile.getName());
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -148,7 +148,7 @@ public class AccountingManager {
 		}
 	}
 
-	private void applyBudgetPlanningForMonth(Properties budgetPlanningForMonth, String fileName) {
+	private void applyBudgetPlanningForMonth(BudgetPlanning budgetPlanningForMonth, String fileName) {
 		String[] spl = FilenameUtils.removeExtension(fileName).split("_");
 		MonthKey monthKey = MonthKey.fromValues(Integer.parseInt(spl[1]), Integer.parseInt(spl[2]));
 		budgetPlannings.put(monthKey, budgetPlanningForMonth);
@@ -310,7 +310,7 @@ public class AccountingManager {
 		if (monthKey == null || category == null) {
 			throw new AccountingException("request limit --> both month key and category must be set!!", null, null);
 		}
-		Properties properties = budgetPlannings.get(monthKey);
+		Properties properties = budgetPlannings.get(monthKey).getProperties();
 		if (properties == null) {
 			throw new AccountingException(
 					"request limit --> no budget planning available for month key [" + monthKey + "]!!", null, null);
@@ -411,6 +411,7 @@ public class AccountingManager {
 		if (initialAppeareance == null) {
 			return null;
 		}
+		
 		TimelineProjectonResult timelineProjectonResult = TimelineProjector
 				.fromValues(initialAppeareance, category.getPaymentModality().getPaymentPeriod(),
 						accountManagerSettings.getProjectionDurationInMonths())
@@ -452,11 +453,11 @@ public class AccountingManager {
 	}
 
 	private boolean budgetPlanningAvailableFor(MonthKey monthKey, String category) {
-		Properties budgetPlanningForMonth = budgetPlannings.get(monthKey);
+		BudgetPlanning budgetPlanningForMonth = budgetPlannings.get(monthKey);
 		if (budgetPlanningForMonth == null) {
 			return false;
 		}
-		return (budgetPlanningForMonth.keySet().contains(category));
+		return (budgetPlanningForMonth.getProperties().keySet().contains(category));
 	}
 
 	private MonthKey getInitialAppeareanceOfCategory(String category) {
@@ -489,7 +490,10 @@ public class AccountingManager {
 		return categorySums;
 	}
 
-	public void prepareBudgets() {
+	public HashMap<MonthKey, Properties> prepareBudgets() {
+		
+		HashMap<MonthKey, Properties> extendedProperties = new HashMap<MonthKey, Properties>();
+		
 		HashMap<MonthKey, Set<BudgetEvaluation>> failuresPerMonth = new HashMap<MonthKey, Set<BudgetEvaluation>>();
 		Set<Category> allCategories = getAllCategories();
 		for (Category category : allCategories) {
@@ -503,20 +507,29 @@ public class AccountingManager {
 				}
 			}
 		}
+		
+		Set<BudgetEvaluation> additionalBudgetEvaluations = null;
 		for (MonthKey monthKey : failuresPerMonth.keySet()) {
-			completeBudgetPlanning(monthKey, failuresPerMonth.get(monthKey));
+			additionalBudgetEvaluations = failuresPerMonth.get(monthKey);
+			if (additionalBudgetEvaluations.size() > 0) {
+				extendedProperties.put(monthKey, completeBudgetPlanning(monthKey, additionalBudgetEvaluations));				
+			}
 		}
+		
+		return extendedProperties;
 	}
 
-	private void completeBudgetPlanning(MonthKey monthKey, Set<BudgetEvaluation> additionalBudgetEvaluations) {
+	private Properties completeBudgetPlanning(MonthKey monthKey, Set<BudgetEvaluation> additionalBudgetEvaluations) {
 		
 		// get existing categories
-		Properties existingBudgetPlannings = budgetPlannings.get(monthKey);
+		Properties existingBudgetPlannings = budgetPlannings.get(monthKey).getProperties();
 		for (BudgetEvaluation budgetEvaluation : additionalBudgetEvaluations) {
 			// TODO which amount?!?
 			existingBudgetPlannings.put(budgetEvaluation.getCategory(), new BigDecimal(100).toString());
 		}
+		return existingBudgetPlannings;
 		
+		/*
 		try {
 			URL url = this.getClass().getResource("/rp");
 			File parentDirectory = new File(new URI(url.toString()));
@@ -527,6 +540,7 @@ public class AccountingManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	public Set<Category> getAllCategories() {

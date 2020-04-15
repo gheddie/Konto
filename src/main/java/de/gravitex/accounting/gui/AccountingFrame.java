@@ -11,8 +11,12 @@ import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
+import javax.swing.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -53,6 +57,11 @@ import lombok.Data;
 public class AccountingFrame extends JFrame {
 
 	private static final long serialVersionUID = -8241085588080811229L;
+	
+	private static final int TAB_INDEX_DATA = 0;
+	private static final int TAB_INDEX_BUDGET = 1;
+	private static final int TAB_INDEX_SETTINGS = 2;
+	private static final int TAB_INDEX_OUTPUT = 3;
 
 	private AccountingManager manager;
 
@@ -81,7 +90,21 @@ public class AccountingFrame extends JFrame {
 		btnPrepareBudgets.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AccountingManager.getInstance().prepareBudgets();
+				HashMap<MonthKey, Properties> extendedBudgets = AccountingManager.getInstance().prepareBudgets();
+				tbpMain.setSelectedIndex(TAB_INDEX_OUTPUT);
+				StringBuffer buffer = new StringBuffer();
+				for (MonthKey monthKey : extendedBudgets.keySet()) {
+					buffer.append(monthKey + "\n");
+					buffer.append("------------------------------------------------------\n");
+					Properties properties = extendedBudgets.get(monthKey);
+					for (Entry<Object, Object> entry : properties.entrySet()) {
+						buffer.append(entry.getKey() + "=" + entry.getValue() + "\n");
+					}
+					buffer.append("\n");
+				}
+				taOutput.setText(buffer.toString());
+				pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Budgets vorbereitet!!")
+						.getAlertMessages());
 			}
 		});
 		btnReloadData.addActionListener(new ActionListener() {
@@ -349,8 +372,11 @@ public class AccountingFrame extends JFrame {
 		panel3 = new JPanel();
 		pnlChart = new JPanel();
 		percentageBar = new JProgressBar();
-		panel2 = new JPanel();
+		pnlSettings = new JPanel();
 		chkRealValuesInBudgets = new JCheckBox();
+		pnlOutput = new JPanel();
+		scrollPane6 = new JScrollPane();
+		taOutput = new JTextArea();
 		panelAlerts = new JPanel();
 		scrollPane2 = new JScrollPane();
 		messagesTable = new JTable();
@@ -389,12 +415,11 @@ public class AccountingFrame extends JFrame {
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border
-				. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDes\u0069gner \u0045valua\u0074ion", javax. swing. border. TitledBorder. CENTER, javax
-				. swing. border. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069alog" ,java .awt .Font .BOLD ,
-				12 ), java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans
-				. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062order" .equals (e .
-				getPropertyName () )) throw new RuntimeException( ); }} );
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder( 0
+				, 0, 0, 0) , "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax. swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM
+				, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ), java. awt. Color. red) ,
+				pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e
+				) {if ("\u0062ord\u0065r" .equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -580,21 +605,33 @@ public class AccountingFrame extends JFrame {
 			}
 			tbpMain.addTab("Budget", pnlChartHolder);
 
-			//======== panel2 ========
+			//======== pnlSettings ========
 			{
-				panel2.setLayout(new GridBagLayout());
-				((GridBagLayout)panel2.getLayout()).columnWidths = new int[] {74, 0};
-				((GridBagLayout)panel2.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
-				((GridBagLayout)panel2.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
-				((GridBagLayout)panel2.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+				pnlSettings.setLayout(new GridBagLayout());
+				((GridBagLayout)pnlSettings.getLayout()).columnWidths = new int[] {74, 0};
+				((GridBagLayout)pnlSettings.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
+				((GridBagLayout)pnlSettings.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
+				((GridBagLayout)pnlSettings.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
 
 				//---- chkRealValuesInBudgets ----
 				chkRealValuesInBudgets.setText("Realwerte in Budgetplanung");
-				panel2.add(chkRealValuesInBudgets, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+				pnlSettings.add(chkRealValuesInBudgets, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 0), 0, 0));
 			}
-			tbpMain.addTab("Einstellungen", panel2);
+			tbpMain.addTab("Einstellungen", pnlSettings);
+
+			//======== pnlOutput ========
+			{
+				pnlOutput.setLayout(new BorderLayout());
+
+				//======== scrollPane6 ========
+				{
+					scrollPane6.setViewportView(taOutput);
+				}
+				pnlOutput.add(scrollPane6, BorderLayout.CENTER);
+			}
+			tbpMain.addTab("Ausgabe", pnlOutput);
 		}
 		contentPane.add(tbpMain, new GridBagConstraints(0, 1, 1, 5, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -667,8 +704,11 @@ public class AccountingFrame extends JFrame {
 	private JPanel panel3;
 	private JPanel pnlChart;
 	private JProgressBar percentageBar;
-	private JPanel panel2;
+	private JPanel pnlSettings;
 	private JCheckBox chkRealValuesInBudgets;
+	private JPanel pnlOutput;
+	private JScrollPane scrollPane6;
+	private JTextArea taOutput;
 	private JPanel panelAlerts;
 	private JScrollPane scrollPane2;
 	private JTable messagesTable;
