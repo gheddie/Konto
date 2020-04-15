@@ -120,31 +120,19 @@ public class AccountingFrame extends JFrame {
 			}
 		});
 		fillAccountingMonths();
+		fillAllPartners();
+		cbAllPartners.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("partner: " + cbAllPartners.getSelectedItem());
+				fillAllPartnerEntries(cbAllPartners.getSelectedItem().toString());
+			}
+		});
 		fillAllCategories();
 		cbAllCategories.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				fillAllCategoryEntries(cbAllCategories.getSelectedItem().toString());
-			}
-
-			private void fillAllCategoryEntries(String category) {
-				categoryEntriesTable.setBackground(Color.WHITE);
-				System.out.println("fillAllCategoryEntries : " + cbAllCategories.getSelectedItem());
-				List<AccountingRow> allEntriesForCategory = AccountingManager.getInstance()
-						.getAllEntriesForCategory(category);
-				DefaultTableModel tablemodel = new DefaultTableModel();
-				for (String col : AccountingResultCategoryModel.getHeaders()) {
-					tablemodel.addColumn(col);
-				}
-				BigDecimal sum = new BigDecimal(0);
-				for (AccountingRow row : allEntriesForCategory) {
-					tablemodel.addRow(row.asTableRow());
-					sum = sum.add(row.getAmount());
-				}
-				categoryEntriesTable.setModel(tablemodel);
-				handleSumType(category, null);
-				tfSum.setText(sum.toString());
-				tfBudget.setText("---");
 			}
 		});
 		fillBudgetPlannings();
@@ -152,6 +140,15 @@ public class AccountingFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
+	private void fillAllPartners() {
+		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		Set<String> allCategories = AccountingManager.getInstance().getAllPartners();
+		for (String partner : allCategories) {
+			model.addElement(partner);
+		}
+		cbAllPartners.setModel(model);
+	}
+
 	private void initSettings() {
 		chkRealValuesInBudgets.setSelected(
 				AccountingManager.getInstance().getAccountManagerSettings().isShowActualValuesInBidgetPlanning());
@@ -203,6 +200,40 @@ public class AccountingFrame extends JFrame {
 			model.addElement(category.getCategory());
 		}
 		cbAllCategories.setModel(model);
+	}
+	
+	private void fillAllPartnerEntries(String partner) {
+		List<AccountingRow> allEntriesForPartner = AccountingManager.getInstance()
+				.getAllEntriesForPartner(partner);
+		DefaultTableModel tablemodel = new DefaultTableModel();
+		for (String col : AccountingResultCategoryModel.getHeaders()) {
+			tablemodel.addColumn(col);
+		}
+		BigDecimal sum = new BigDecimal(0);
+		for (AccountingRow row : allEntriesForPartner) {
+			tablemodel.addRow(row.asTableRow());
+		}
+		categoryEntriesTable.setModel(tablemodel);
+	}
+	
+	private void fillAllCategoryEntries(String category) {
+		categoryEntriesTable.setBackground(Color.WHITE);
+		System.out.println("fillAllCategoryEntries : " + cbAllCategories.getSelectedItem());
+		List<AccountingRow> allEntriesForCategory = AccountingManager.getInstance()
+				.getAllEntriesForCategory(category);
+		DefaultTableModel tablemodel = new DefaultTableModel();
+		for (String col : AccountingResultCategoryModel.getHeaders()) {
+			tablemodel.addColumn(col);
+		}
+		BigDecimal sum = new BigDecimal(0);
+		for (AccountingRow row : allEntriesForCategory) {
+			tablemodel.addRow(row.asTableRow());
+			sum = sum.add(row.getAmount());
+		}
+		categoryEntriesTable.setModel(tablemodel);
+		handleSumType(category, null);
+		tfSum.setText(sum.toString());
+		tfBudget.setText("---");
 	}
 
 	@SuppressWarnings("unchecked")

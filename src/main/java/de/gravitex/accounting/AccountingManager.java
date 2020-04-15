@@ -233,7 +233,7 @@ public class AccountingManager {
 				break;
 			case COL_PARTNER:
 				// 4
-				rowObject.setParrtner(AccountingUtil.getCellValue(String.class, cell));
+				rowObject.setPartner(AccountingUtil.getCellValue(String.class, cell));
 				break;
 			case COL_TEXT:
 				// 5
@@ -557,6 +557,10 @@ public class AccountingManager {
 		}
 		*/
 	}
+	
+	public Set<String> getAllPartners() {
+		return AccountingDao.getAllPartners(accountingData);
+	}
 
 	public Set<Category> getAllCategories() {
 		return AccountingDao.getAllCategories(accountingData);
@@ -564,5 +568,9 @@ public class AccountingManager {
 
 	public List<AccountingRow> getAllEntriesForCategory(String category) {
 		return AccountingDao.getAllEntriesForCategory(accountingData, category);
+	}
+	
+	public List<AccountingRow> getAllEntriesForPartner(String partner) {
+		return AccountingDao.getAllEntriesForPartner(accountingData, partner);
 	}
 }

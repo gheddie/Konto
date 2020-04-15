@@ -50,6 +50,16 @@ public class AccountingMonth {
 		}
 		return result;
 	}
+	
+	public List<AccountingRow> getRowObjectsByPartner(String partner) {
+		List<AccountingRow> result = new ArrayList<AccountingRow>();
+		for (AccountingRow accountingRow : rowObjects) {
+			if (accountingRow.hasPartner(partner)) {
+				result.add(accountingRow);
+			}
+		}
+		return result;
+	}
 
 	public Set<String> getDistinctCategories() {
 		HashSet<String> result = new HashSet<String>();

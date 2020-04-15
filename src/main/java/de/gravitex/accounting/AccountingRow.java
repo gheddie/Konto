@@ -13,13 +13,17 @@ public class AccountingRow implements Comparable<AccountingRow> {
 	private LocalDate date;
 	private BigDecimal amount;
 	private BigDecimal saldo;
-	private String parrtner;
+	private String partner;
 	private String text;
 	private String category;
 	private String alarm;
 
 	public boolean hasCategory(String aCategory) {
 		return (category.equals(aCategory));
+	}
+	
+	public boolean hasPartner(String aPartner) {
+		return (partner != null && partner.equals(aPartner));
 	}
 
 	public int compareTo(AccountingRow accountingRow) {

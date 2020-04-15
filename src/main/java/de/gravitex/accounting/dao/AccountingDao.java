@@ -27,6 +27,18 @@ public class AccountingDao {
 		}
 		return allCategories;
 	}
+	
+	public static Set<String> getAllPartners(AccountingData accountingData) {
+		Set<String> allPartners = new HashSet<String>();
+		for (AccountingMonth accountingMonth : accountingData.getAccountingMonths()) {
+			for (AccountingRow accountingRow : accountingMonth.getRowObjects()) {
+				if (accountingRow.getPartner() != null && accountingRow.getPartner().length() > 0) {
+					allPartners.add(accountingRow.getPartner());
+				}
+			}
+		}
+		return allPartners;
+	}
 
 	public static List<AccountingRow> getAllEntriesForCategory(AccountingData accountingData, String category) {
 		List<AccountingRow> allEntriesForCategory = new ArrayList<AccountingRow>();
@@ -37,5 +49,16 @@ public class AccountingDao {
 		}
 		Collections.sort(allEntriesForCategory);
 		return allEntriesForCategory;
+	}
+
+	public static List<AccountingRow> getAllEntriesForPartner(AccountingData accountingData, String partner) {
+		List<AccountingRow> allEntriesForPartner = new ArrayList<AccountingRow>();
+		for (MonthKey key : accountingData.keySet()) {
+			for (AccountingRow accountingRow : accountingData.get(key).getRowObjectsByPartner(partner)) {
+				allEntriesForPartner.add(accountingRow);
+			}
+		}
+		Collections.sort(allEntriesForPartner);
+		return allEntriesForPartner;
 	}
 }
