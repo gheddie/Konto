@@ -13,8 +13,10 @@ public class AccountingRow implements Comparable<AccountingRow> {
 	private LocalDate date;
 	private BigDecimal amount;
 	private BigDecimal saldo;
+	private String parrtner;
 	private String text;
 	private String category;
+	private String alarm;
 
 	public boolean hasCategory(String aCategory) {
 		return (category.equals(aCategory));

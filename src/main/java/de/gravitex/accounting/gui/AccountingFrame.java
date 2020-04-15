@@ -355,6 +355,9 @@ public class AccountingFrame extends JFrame {
 		tfPaymentPeriod = new JTextField();
 		label1 = new JLabel();
 		cbAllCategories = new JComboBox();
+		button1 = new JButton();
+		label4 = new JLabel();
+		cbAllPartners = new JComboBox();
 		categoryEntriesParent = new JPanel();
 		scrollPane4 = new JScrollPane();
 		categoryEntriesTable = new JTable();
@@ -380,6 +383,7 @@ public class AccountingFrame extends JFrame {
 		panelAlerts = new JPanel();
 		scrollPane2 = new JScrollPane();
 		messagesTable = new JTable();
+		label3 = new JLabel();
 
 		//======== this ========
 		setTitle("Accounting Manager");
@@ -415,16 +419,19 @@ public class AccountingFrame extends JFrame {
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder( 0
-				, 0, 0, 0) , "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax. swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM
-				, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ), java. awt. Color. red) ,
-				pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e
-				) {if ("\u0062ord\u0065r" .equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
+				pnlData.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(
+				new javax.swing.border.EmptyBorder(0,0,0,0), "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn"
+				,javax.swing.border.TitledBorder.CENTER,javax.swing.border.TitledBorder.BOTTOM
+				,new java.awt.Font("Dia\u006cog",java.awt.Font.BOLD,12)
+				,java.awt.Color.red),pnlData. getBorder()));pnlData. addPropertyChangeListener(
+				new java.beans.PropertyChangeListener(){@Override public void propertyChange(java.beans.PropertyChangeEvent e
+				){if("\u0062ord\u0065r".equals(e.getPropertyName()))throw new RuntimeException()
+				;}});
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
-				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 106, 0, 0, 0, 0};
+				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0, 106, 0, 0, 0, 0};
 				((GridBagLayout)pnlData.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0, 0.0, 1.0E-4};
-				((GridBagLayout)pnlData.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0E-4};
+				((GridBagLayout)pnlData.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0E-4};
 
 				//======== scrollPane1 ========
 				{
@@ -481,9 +488,24 @@ public class AccountingFrame extends JFrame {
 				pnlData.add(label1, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
-				pnlData.add(cbAllCategories, new GridBagConstraints(1, 4, 3, 1, 0.0, 0.0,
+				pnlData.add(cbAllCategories, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 5, 0), 0, 0));
+					new Insets(0, 0, 5, 5), 0, 0));
+
+				//---- button1 ----
+				button1.setText("Alarme");
+				pnlData.add(button1, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 5), 0, 0));
+
+				//---- label4 ----
+				label4.setText("Per Partner (\u00fcbergreifend):");
+				pnlData.add(label4, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 5), 0, 0));
+				pnlData.add(cbAllPartners, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 5), 0, 0));
 
 				//======== categoryEntriesParent ========
 				{
@@ -502,43 +524,43 @@ public class AccountingFrame extends JFrame {
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 				}
-				pnlData.add(categoryEntriesParent, new GridBagConstraints(0, 5, 4, 1, 0.0, 0.0,
+				pnlData.add(categoryEntriesParent, new GridBagConstraints(0, 6, 4, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 0), 0, 0));
 
 				//---- lblSum ----
 				lblSum.setText("Summe:");
-				pnlData.add(lblSum, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0,
+				pnlData.add(lblSum, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 
 				//---- tfSum ----
 				tfSum.setEditable(false);
-				pnlData.add(tfSum, new GridBagConstraints(1, 6, 3, 1, 0.0, 0.0,
+				pnlData.add(tfSum, new GridBagConstraints(1, 7, 3, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 0), 0, 0));
 
 				//---- lblBudget ----
 				lblBudget.setText("Budget:");
-				pnlData.add(lblBudget, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0,
+				pnlData.add(lblBudget, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 
 				//---- tfBudget ----
 				tfBudget.setEditable(false);
-				pnlData.add(tfBudget, new GridBagConstraints(1, 7, 3, 1, 0.0, 0.0,
+				pnlData.add(tfBudget, new GridBagConstraints(1, 8, 3, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 0), 0, 0));
 
 				//---- label2 ----
 				label2.setText("Monatsabschluss:");
-				pnlData.add(label2, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0,
+				pnlData.add(label2, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 0, 5), 0, 0));
 
 				//---- tfMonthOverall ----
 				tfMonthOverall.setEditable(false);
-				pnlData.add(tfMonthOverall, new GridBagConstraints(1, 8, 3, 1, 0.0, 0.0,
+				pnlData.add(tfMonthOverall, new GridBagConstraints(1, 9, 3, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 0, 0), 0, 0));
 			}
@@ -659,6 +681,9 @@ public class AccountingFrame extends JFrame {
 			new Insets(0, 0, 0, 0), 0, 0));
 		pack();
 		setLocationRelativeTo(getOwner());
+
+		//---- label3 ----
+		label3.setText("Per Kategorie (\u00fcbergreifend):");
 		// JFormDesigner - End of component initialization //GEN-END:initComponents
 	}
 
@@ -687,6 +712,9 @@ public class AccountingFrame extends JFrame {
 	private JTextField tfPaymentPeriod;
 	private JLabel label1;
 	private JComboBox cbAllCategories;
+	private JButton button1;
+	private JLabel label4;
+	private JComboBox cbAllPartners;
 	private JPanel categoryEntriesParent;
 	private JScrollPane scrollPane4;
 	private JTable categoryEntriesTable;
@@ -712,5 +740,6 @@ public class AccountingFrame extends JFrame {
 	private JPanel panelAlerts;
 	private JScrollPane scrollPane2;
 	private JTable messagesTable;
+	private JLabel label3;
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 }

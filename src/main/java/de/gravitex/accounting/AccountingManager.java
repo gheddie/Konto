@@ -60,7 +60,9 @@ public class AccountingManager {
 	private static final int COL_DATUM = 1;
 	private static final int COL_BETRAG = 2;
 	private static final int COL_SALDO = 3;
-	private static final int COL_TEXT = 4;
+	private static final int COL_PARTNER = 4;
+	private static final int COL_TEXT = 5;
+	private static final int COL_ALARM = 6;
 
 	private static final BigDecimal AVAILABLE_INCOME = new BigDecimal(2400);
 
@@ -214,19 +216,32 @@ public class AccountingManager {
 			int columnIndex = cell.getColumnIndex();
 			switch (columnIndex) {
 			case COL_RUNNING_INDEX:
+				// 0
 				rowObject.setRunningIndex(AccountingUtil.getCellValue(Integer.class, cell));
 				break;
 			case COL_DATUM:
+				// 1
 				rowObject.setDate(AccountingUtil.getCellValue(LocalDate.class, cell));
 				break;
 			case COL_BETRAG:
+				// 2
 				rowObject.setAmount(AccountingUtil.getCellValue(BigDecimal.class, cell));
 				break;
 			case COL_SALDO:
+				// 3
 				rowObject.setSaldo(AccountingUtil.getCellValue(BigDecimal.class, cell));
 				break;
+			case COL_PARTNER:
+				// 4
+				rowObject.setParrtner(AccountingUtil.getCellValue(String.class, cell));
+				break;
 			case COL_TEXT:
+				// 5
 				rowObject.setText(AccountingUtil.getCellValue(String.class, cell));
+				break;
+			case COL_ALARM:
+				// 6
+				rowObject.setAlarm(AccountingUtil.getCellValue(String.class, cell));
 				break;
 			}
 		}
