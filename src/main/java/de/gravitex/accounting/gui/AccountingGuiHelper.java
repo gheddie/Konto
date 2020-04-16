@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import org.jfree.chart.ChartFactory;
@@ -60,6 +61,16 @@ public class AccountingGuiHelper {
 		int totalyPlanned = 0;
 		for (Object categoryBudget : budgetPlanningForMonth.keySet()) {
 			totalyPlanned += Integer.parseInt(String.valueOf(budgetPlanningForMonth.get(categoryBudget)));
+		}
+		
+		if (totalyPlanned > availableIncome.intValue()) {
+			JOptionPane.showMessageDialog(accountingFrame,
+					"Budget überplant (" + availableIncome.intValue() + " verfügbar, " + totalyPlanned + " verplant)",
+					"Achtung", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(accountingFrame,
+					"Noch "+(availableIncome.intValue()-totalyPlanned)+" Euro verfügbar!!",
+					"Info", JOptionPane.INFORMATION_MESSAGE);
 		}
 		
 		int percentage = (int) AccountingUtil.getPercentage(totalyPlanned, availableIncome.doubleValue());
