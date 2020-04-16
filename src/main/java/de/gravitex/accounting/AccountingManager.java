@@ -480,6 +480,14 @@ public class AccountingManager {
 		LocalDate initalDate = allEntries.get(0).getDate();
 		return MonthKey.fromValues(initalDate.getMonthValue(), initalDate.getYear());
 	}
+	
+	private AccountingRow getLastAppearanceOfCategory(String category) {
+		List<AccountingRow> allEntries = AccountingDao.getAllEntriesForCategory(accountingData, category);
+		if (allEntries == null || allEntries.size() == 0) {
+			return null;
+		}
+		return allEntries.get(allEntries.size() - 1);
+	}
 
 	public BigDecimal getAvailableIncome(MonthKey monthKey) {
 		// TODO
@@ -521,7 +529,10 @@ public class AccountingManager {
 		}
 		
 		Set<BudgetEvaluation> additionalBudgetEvaluations = null;
-		for (MonthKey monthKey : failuresPerMonth.keySet()) {
+		Set<MonthKey> keySet = failuresPerMonth.keySet();
+		List<MonthKey> monthKeyList = new ArrayList<MonthKey>(keySet);
+		Collections.sort(monthKeyList);
+		for (MonthKey monthKey : monthKeyList) {
 			additionalBudgetEvaluations = failuresPerMonth.get(monthKey);
 			if (additionalBudgetEvaluations.size() > 0) {
 				extendedProperties.put(monthKey, completeBudgetPlanning(monthKey, additionalBudgetEvaluations));				
@@ -534,14 +545,17 @@ public class AccountingManager {
 	private Properties completeBudgetPlanning(MonthKey monthKey, Set<BudgetEvaluation> additionalBudgetEvaluations) {
 		
 		// get existing categories
-		Properties existingBudgetPlannings = budgetPlannings.get(monthKey).getProperties();
+		// Properties existingBudgetPlannings = budgetPlannings.get(monthKey).getProperties();
+		
+		// only the missing!!
+		Properties existingBudgetPlannings = new Properties();
+		
 		for (BudgetEvaluation budgetEvaluation : additionalBudgetEvaluations) {
-			// TODO which amount?!?
-			existingBudgetPlannings.put(budgetEvaluation.getCategory(), new BigDecimal(100).toString());
+			existingBudgetPlannings.put(budgetEvaluation.getCategory(), getLastAppearanceOfCategory(budgetEvaluation.getCategory()).getAmount().toString());
 		}
 		return existingBudgetPlannings;
 	}
-	
+
 	public Set<String> getAllPartners() {
 		return AccountingDao.getAllPartners(accountingData);
 	}
