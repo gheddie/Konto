@@ -557,4 +557,8 @@ public class AccountingManager {
 	public List<AccountingRow> getAllEntriesForPartner(String partner) {
 		return AccountingDao.getAllEntriesForPartner(accountingData, partner);
 	}
+
+	public List<AccountingRow> getAllEntries() {
+		return AccountingDao.getAllEntries(accountingData);
+	}
 }

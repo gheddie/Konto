@@ -17,34 +17,17 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import javax.swing.*;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.gui.component.*;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
@@ -138,9 +121,16 @@ public class AccountingFrame extends JFrame {
 		});
 		fillBudgetPlannings();
 		initSettings();
+		fillFilterTable();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
+	private void prepareFilterTable() {
+		
+		TableColumn col = filterTable.getColumnModel().getColumn(0);
+		col.setCellEditor(new DefaultCellEditor(new JCheckBox()));
+	}
+
 	private void fillAllPartners() {
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 		Set<String> allCategories = AccountingManager.getInstance().getAllPartners();
@@ -201,6 +191,20 @@ public class AccountingFrame extends JFrame {
 			model.addElement(category.getCategory());
 		}
 		cbAllCategories.setModel(model);
+	}
+	
+	public void fillFilterTable() {
+		
+		List<AccountingRow> allEntries = AccountingManager.getInstance().getAllEntries();
+		DefaultTableModel tablemodel = new DefaultTableModel();
+		for (String col : AccountingResultCategoryModel.getHeaders()) {
+			tablemodel.addColumn(col);
+		}
+		BigDecimal sum = new BigDecimal(0);
+		for (AccountingRow row : allEntries) {
+			tablemodel.addRow(row.asTableRow());
+		}
+		filterTable.setModel(tablemodel);
 	}
 	
 	private void fillAllPartnerEntries(String partner) {
@@ -406,7 +410,7 @@ public class AccountingFrame extends JFrame {
 		label1 = new JLabel();
 		cbAllCategories = new JComboBox();
 		scFilterTable = new JScrollPane();
-		filterTable = new JTable();
+		filterTable = new FilterTable();
 		label4 = new JLabel();
 		cbAllPartners = new JComboBox();
 		label5 = new JLabel();
@@ -458,11 +462,11 @@ public class AccountingFrame extends JFrame {
 			//======== pnlData ========
 			{
 				pnlData.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.
-				swing.border.EmptyBorder(0,0,0,0), "JFor\u006dDesi\u0067ner \u0045valu\u0061tion",javax.swing.border
+				swing.border.EmptyBorder(0,0,0,0), "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn",javax.swing.border
 				.TitledBorder.CENTER,javax.swing.border.TitledBorder.BOTTOM,new java.awt.Font("Dia\u006cog"
 				,java.awt.Font.BOLD,12),java.awt.Color.red),pnlData. getBorder
 				()));pnlData. addPropertyChangeListener(new java.beans.PropertyChangeListener(){@Override public void propertyChange(java
-				.beans.PropertyChangeEvent e){if("bord\u0065r".equals(e.getPropertyName()))throw new RuntimeException
+				.beans.PropertyChangeEvent e){if("\u0062ord\u0065r".equals(e.getPropertyName()))throw new RuntimeException
 				();}});
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
@@ -801,7 +805,7 @@ public class AccountingFrame extends JFrame {
 	private JLabel label1;
 	private JComboBox cbAllCategories;
 	private JScrollPane scFilterTable;
-	private JTable filterTable;
+	private FilterTable filterTable;
 	private JLabel label4;
 	private JComboBox cbAllPartners;
 	private JLabel label5;

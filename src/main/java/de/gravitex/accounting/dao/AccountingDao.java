@@ -61,4 +61,15 @@ public class AccountingDao {
 		Collections.sort(allEntriesForPartner);
 		return allEntriesForPartner;
 	}
+
+	public static List<AccountingRow> getAllEntries(AccountingData accountingData) {
+		List<AccountingRow> allEntries = new ArrayList<AccountingRow>();
+		for (MonthKey key : accountingData.keySet()) {
+			for (AccountingRow accountingRow : accountingData.get(key).getRowObjects()) {
+				allEntries.add(accountingRow);
+			}
+		}
+		Collections.sort(allEntries);
+		return allEntries;
+	}
 }
