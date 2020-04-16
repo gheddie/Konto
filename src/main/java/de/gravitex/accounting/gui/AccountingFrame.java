@@ -410,7 +410,7 @@ public class AccountingFrame extends JFrame {
 		label1 = new JLabel();
 		cbAllCategories = new JComboBox();
 		scFilterTable = new JScrollPane();
-		filterTable = new FilterTable();
+		filterTable = new JTable();
 		label4 = new JLabel();
 		cbAllPartners = new JComboBox();
 		label5 = new JLabel();
@@ -461,13 +461,13 @@ public class AccountingFrame extends JFrame {
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.
-				swing.border.EmptyBorder(0,0,0,0), "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn",javax.swing.border
-				.TitledBorder.CENTER,javax.swing.border.TitledBorder.BOTTOM,new java.awt.Font("Dia\u006cog"
-				,java.awt.Font.BOLD,12),java.awt.Color.red),pnlData. getBorder
-				()));pnlData. addPropertyChangeListener(new java.beans.PropertyChangeListener(){@Override public void propertyChange(java
-				.beans.PropertyChangeEvent e){if("\u0062ord\u0065r".equals(e.getPropertyName()))throw new RuntimeException
-				();}});
+				pnlData.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax
+				.swing.border.EmptyBorder(0,0,0,0), "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn",javax.swing
+				.border.TitledBorder.CENTER,javax.swing.border.TitledBorder.BOTTOM,new java.awt.
+				Font("Dia\u006cog",java.awt.Font.BOLD,12),java.awt.Color.red
+				),pnlData. getBorder()));pnlData. addPropertyChangeListener(new java.beans.PropertyChangeListener(){@Override
+				public void propertyChange(java.beans.PropertyChangeEvent e){if("\u0062ord\u0065r".equals(e.getPropertyName(
+				)))throw new RuntimeException();}});
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -805,7 +805,7 @@ public class AccountingFrame extends JFrame {
 	private JLabel label1;
 	private JComboBox cbAllCategories;
 	private JScrollPane scFilterTable;
-	private FilterTable filterTable;
+	private JTable filterTable;
 	private JLabel label4;
 	private JComboBox cbAllPartners;
 	private JLabel label5;
