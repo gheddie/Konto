@@ -45,6 +45,7 @@ import javax.swing.table.TableColumn;
 
 import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.AccountingManager;
+import de.gravitex.accounting.AccountingMonth;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.exception.AccountingException;
@@ -277,7 +278,7 @@ public class AccountingFrame extends JFrame {
 			public void valueChanged(ListSelectionEvent e) {
 				System.out.println(accountingMonthList.getSelectedValue());
 				MonthKey monthKey = (MonthKey) accountingMonthList.getSelectedValue();
-				monthModel = singleton.getAccountingResultMonthModel(monthKey);
+				monthModel = singleton.getAccountingManager().getAccountingResultMonthModel(monthKey);
 				clearMessages();
 				fillCategoriesForMonth(monthModel);
 				BigDecimal overallSum = monthModel.calculateOverallSum();
@@ -423,6 +424,7 @@ public class AccountingFrame extends JFrame {
 		scrollPane5 = new JScrollPane();
 		budgetPlanningList = new JList();
 		btnPrepareBudgets = new JButton();
+		checkBox2 = new JCheckBox();
 		panel3 = new JPanel();
 		pnlChart = new JPanel();
 		percentageBar = new JProgressBar();
@@ -481,12 +483,12 @@ public class AccountingFrame extends JFrame {
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing.
-				border. EmptyBorder( 0, 0, 0, 0) , "JFor\u006dDesi\u0067ner \u0045valu\u0061tion", javax. swing. border. TitledBorder. CENTER
-				, javax. swing. border. TitledBorder. BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font
-				.BOLD ,12 ), java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (
-				new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("bord\u0065r"
-				.equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border
+				. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDesi\u0067ner Ev\u0061luatio\u006e", javax. swing. border. TitledBorder. CENTER, javax
+				. swing. border. TitledBorder. BOTTOM, new java .awt .Font ("Dialo\u0067" ,java .awt .Font .BOLD ,
+				12 ), java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans
+				. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("borde\u0072" .equals (e .
+				getPropertyName () )) throw new RuntimeException( ); }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -614,22 +616,28 @@ public class AccountingFrame extends JFrame {
 				{
 					panel1.setBorder(new TitledBorder("Verf\u00fcgbare Planungen"));
 					panel1.setLayout(new GridBagLayout());
-					((GridBagLayout)panel1.getLayout()).columnWidths = new int[] {216, 0};
+					((GridBagLayout)panel1.getLayout()).columnWidths = new int[] {154, 62, 0};
 					((GridBagLayout)panel1.getLayout()).rowHeights = new int[] {0, 0, 0};
-					((GridBagLayout)panel1.getLayout()).columnWeights = new double[] {0.0, 1.0E-4};
+					((GridBagLayout)panel1.getLayout()).columnWeights = new double[] {1.0, 0.0, 1.0E-4};
 					((GridBagLayout)panel1.getLayout()).rowWeights = new double[] {1.0, 0.0, 1.0E-4};
 
 					//======== scrollPane5 ========
 					{
 						scrollPane5.setViewportView(budgetPlanningList);
 					}
-					panel1.add(scrollPane5, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+					panel1.add(scrollPane5, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 
 					//---- btnPrepareBudgets ----
 					btnPrepareBudgets.setText("Prepare Budgets");
 					panel1.add(btnPrepareBudgets, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(0, 0, 0, 0), 0, 0));
+
+					//---- checkBox2 ----
+					checkBox2.setText("komplett");
+					panel1.add(checkBox2, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 				}
@@ -817,6 +825,7 @@ public class AccountingFrame extends JFrame {
 	private JScrollPane scrollPane5;
 	private JList budgetPlanningList;
 	private JButton btnPrepareBudgets;
+	private JCheckBox checkBox2;
 	private JPanel panel3;
 	private JPanel pnlChart;
 	private JProgressBar percentageBar;

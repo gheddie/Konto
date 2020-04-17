@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.gravitex.accounting.enumeration.AccountingError;
+import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.util.CategoryResultPrinter;
 import de.gravitex.accounting.util.MonthKey;
 import lombok.Data;
@@ -67,5 +69,15 @@ public class AccountingMonth {
 			result.add(accountingRow.getCategory());
 		}
 		return result;
+	}
+
+	public void validate() {
+		AccountingError error = null;
+		for (AccountingRow accountingRow : rowObjects) {
+			error = accountingRow.getError();
+			if (error != null) {
+				throw new AccountingException("error on validating accounting month!!", error, accountingRow);
+			}
+		}
 	}
 }

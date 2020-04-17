@@ -37,6 +37,6 @@ public abstract class OutgoingPaymentModality extends PaymentModality {
 	@Override
 	public void prepare() {
 		// request limit
-		setLimit(AccountingSingleton.getInstance().requestLimit(getMonthKey(), getCategory()));
+		setLimit(AccountingSingleton.getInstance().getAccountingManager().requestLimit(getMonthKey(), getCategory()));
 	}
 }

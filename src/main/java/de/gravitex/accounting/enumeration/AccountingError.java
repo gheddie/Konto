@@ -18,5 +18,7 @@ public enum AccountingError {
 	
 	INVALID_SALDO_REF,
 	
-	BUDGET_OVERPLANNED
+	BUDGET_OVERPLANNED,
+	
+	NO_AMOUNT
 }

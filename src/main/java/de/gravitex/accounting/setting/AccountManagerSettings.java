@@ -9,17 +9,21 @@ public class AccountManagerSettings {
 	
 	private boolean showActualValuesInBidgetPlanning;
 	
+	private boolean completeBudgetsWithExisiting;
+	
 	private int projectionDurationInMonths;
 
 	private AccountManagerSettings() {
 		// ...
 	}
 
-	public static AccountManagerSettings fromValues(boolean aBudgetProjectionsEnabled, int aProjectionDurationInMonths, boolean aShowActualValuesInBidgetPlanning) {
+	public static AccountManagerSettings fromValues(boolean aBudgetProjectionsEnabled, int aProjectionDurationInMonths,
+			boolean aShowActualValuesInBidgetPlanning, boolean aCompleteBudgetsWithExisiting) {
 		AccountManagerSettings accountManagerSettings = new AccountManagerSettings();
 		accountManagerSettings.setBudgetProjectionsEnabled(aBudgetProjectionsEnabled);
 		accountManagerSettings.setShowActualValuesInBidgetPlanning(aShowActualValuesInBidgetPlanning);
 		accountManagerSettings.setProjectionDurationInMonths(aProjectionDurationInMonths);
+		accountManagerSettings.setCompleteBudgetsWithExisiting(aCompleteBudgetsWithExisiting);
 		return accountManagerSettings;
 	}
 }

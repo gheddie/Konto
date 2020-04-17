@@ -42,6 +42,9 @@ public class AccountingRow implements Comparable<AccountingRow> {
 		if (category == null) {
 			return AccountingError.NO_CATEGORY;
 		}
+		if (amount == null) {
+			return AccountingError.NO_AMOUNT;
+		}
 		// undefined without without a text
 		if (category.equals(AccountingSingleton.UNDEFINED_CATEGORY) && (text == null || text.length() == 0)) {
 			return AccountingError.UNDEF_NO_TEXT;

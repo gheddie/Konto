@@ -22,6 +22,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import de.gravitex.accounting.dao.AccountingDao;
+import de.gravitex.accounting.dao.AccoutingDataProvider;
+import de.gravitex.accounting.dao.IAccoutingDataProvider;
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
@@ -30,9 +32,6 @@ import de.gravitex.accounting.modality.FixedPeriodIncomingPaymentModality;
 import de.gravitex.accounting.modality.FixedPeriodOutgoingPaymentModality;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.modality.UndefinedPeriodOutgoingPaymentModality;
-import de.gravitex.accounting.model.AccountingResultCategoryModel;
-import de.gravitex.accounting.model.AccountingResultModelRow;
-import de.gravitex.accounting.model.AccountingResultMonthModel;
 import de.gravitex.accounting.setting.AccountManagerSettings;
 import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.wrapper.Category;
@@ -61,9 +60,11 @@ public class AccountingSingleton {
 
 	private static AccountingSingleton instance;
 
-	private AccountManagerSettings accountManagerSettings = AccountManagerSettings.fromValues(true, 24, true);
+	private AccountManagerSettings accountManagerSettings = AccountManagerSettings.fromValues(true, 24, true, true);
 
 	private AccountingManager accountingManager;
+	
+	private IAccoutingDataProvider accoutingDataProvider = new AccoutingDataProvider();
 
 	private AccountingSingleton() {
 		initialize();
@@ -76,7 +77,7 @@ public class AccountingSingleton {
 			data.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
 		}
 		accountingManager = new AccountingManager().withAccountingData(data).withBudgetPlannings(readBudgetPlannings())
-				.withPaymentModalitys(readPaymentModalitys()).withSettings(AccountManagerSettings.fromValues(true, 24, true));
+				.withPaymentModalitys(readPaymentModalitys()).withSettings(AccountManagerSettings.fromValues(true, 24, true, true));
 	}
 
 	public static AccountingSingleton getInstance() {
@@ -305,72 +306,6 @@ public class AccountingSingleton {
 			}
 		}
 		System.out.println("saldo check ok...");
-	}
-
-	public Integer requestLimit(MonthKey monthKey, String category) {
-		if (monthKey == null || category == null) {
-			throw new AccountingException("request limit --> both month key and category must be set!!", null, null);
-		}
-		Properties properties = accountingManager.getBudgetPlannings().get(monthKey).getProperties();
-		if (properties == null) {
-			throw new AccountingException(
-					"request limit --> no budget planning available for month key [" + monthKey + "]!!", null, null);
-		}
-		Object entry = properties.get(category);
-		if (entry == null) {
-			return null;
-			/*
-			 * throw new
-			 * AccountingException("request limit --> no budget planning available for category ["
-			 * + category + "] in month key [" + monthKey + "]!!", null, null);
-			 */
-		}
-		String value = String.valueOf(properties.get(category));
-		if (value == null || value.length() == 0) {
-			throw new AccountingException("request limit --> no value set for budget planning for month [" + monthKey
-					+ "] available and category [" + category + "]!!", null, null);
-		}
-		int limit = 0;
-		try {
-			limit = Integer.parseInt(String.valueOf(value));
-		} catch (Exception e) {
-			throw new AccountingException(
-					"request limit --> unparsable numeric value [" + value + "] set for budget planning for month ["
-							+ monthKey + "] available and category [" + category + "]!!",
-					null, null);
-		}
-		return limit;
-	}
-
-	public AccountingResultMonthModel getAccountingResultMonthModel(MonthKey monthKey) {
-		AccountingMonth accountingMonth = accountingManager.getAccountingData().get(monthKey);
-		AccountingResultMonthModel result = new AccountingResultMonthModel();
-		result.setMonthKey(monthKey);
-		for (String category : accountingMonth.getDistinctCategories()) {
-			result.addCategoryModel(getAccountingResultCategoryModel(monthKey, category));
-		}
-		return result;
-	}
-
-	public AccountingResultCategoryModel getAccountingResultCategoryModel(MonthKey monthKey, String category) {
-		AccountingMonth accountingMonth = accountingManager.getAccountingData().get(monthKey);
-		List<AccountingRow> rowsByCategory = accountingMonth.getRowObjectsByCategory(category);
-		AccountingResultCategoryModel categoryModel = new AccountingResultCategoryModel();
-		categoryModel.setMonthKey(monthKey);
-		categoryModel.setCategory(category);
-		List<AccountingResultModelRow> accountingResultModelRows = new ArrayList<AccountingResultModelRow>();
-		BigDecimal sum = new BigDecimal(0);
-		for (AccountingRow accountingRow : rowsByCategory) {
-			accountingResultModelRows.add(AccountingResultModelRow.fromValues(accountingRow.getRunningIndex(),
-					accountingRow.getAmount(), accountingRow.getDate(), accountingRow.getText()));
-			sum = sum.add(accountingRow.getAmount());
-		}
-		categoryModel.setAccountingResultModelRows(accountingResultModelRows);
-		categoryModel.setSum(sum);
-		// initPaymentModality(monthKey, category);
-		Integer limit = requestLimit(monthKey, category);
-		categoryModel.setBudget(limit != null ? new BigDecimal(limit) : null);
-		return categoryModel;
 	}
 
 	public AccountManagerSettings getAccountManagerSettings() {

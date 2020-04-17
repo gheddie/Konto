@@ -10,7 +10,7 @@ public class BudgetPlanning {
 	private Properties properties;
 	
 	private BudgetPlanning() {
-		
+		// ...
 	}
 	
 	public static BudgetPlanning fromValues(Properties aProperties) {

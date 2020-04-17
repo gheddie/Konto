@@ -59,4 +59,10 @@ public class AccountingData {
 		Collections.sort(result);
 		return result;
 	}
+
+	public void validate() {
+		for (AccountingMonth accountingMonth : data.values()) {
+			accountingMonth.validate();
+		}
+	}
 }
