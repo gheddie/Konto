@@ -99,7 +99,9 @@ public class AccountingFrame extends JFrame {
 						.prepareBudgets();
 				tbpMain.setSelectedIndex(TAB_INDEX_OUTPUT);
 				StringBuffer buffer = new StringBuffer();
-				for (MonthKey monthKey : extendedBudgets.keySet()) {
+				List<MonthKey> keyList = new ArrayList<MonthKey>(extendedBudgets.keySet());
+				Collections.sort(keyList);
+				for (MonthKey monthKey : keyList) {
 					buffer.append(monthKey + "\n");
 					buffer.append("------------------------------------------------------\n");
 					Properties properties = extendedBudgets.get(monthKey);
