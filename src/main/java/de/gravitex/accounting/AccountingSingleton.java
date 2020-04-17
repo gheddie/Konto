@@ -50,8 +50,11 @@ public class AccountingSingleton {
 		for (MonthKey key : fileData.keySet()) {
 			data.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
 		}
-		accountingManager = new AccountingManager().withAccountingData(data).withBudgetPlannings(readBudgetPlannings())
-				.withPaymentModalitys(readPaymentModalitys()).withSettings(AccountManagerSettings.fromValues(true, 24, true, true)).withIncome(readIncome());
+		accountingManager = new AccountingManager().withAccountingData(data)
+				.withBudgetPlannings(accoutingDataProvider.readBudgetPlannings())
+				.withPaymentModalitys(accoutingDataProvider.readPaymentModalitys())
+				.withSettings(AccountManagerSettings.fromValues(true, 24, true, true))
+				.withIncome(accoutingDataProvider.readIncome());
 	}
 
 	public static AccountingSingleton getInstance() {
@@ -61,83 +64,6 @@ public class AccountingSingleton {
 		return instance;
 	}
 	
-	private Income readIncome() {
-		Properties prop = new Properties();
-		try {
-			prop.load(AccountingSingleton.class.getClassLoader().getResourceAsStream(IAccoutingDataProvider.INCOME_PROPERTIES));
-			return Income.fromValues(prop);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	private HashMap<String, PaymentModality> readPaymentModalitys() {
-		Properties prop = new Properties();
-		HashMap<String, PaymentModality> result = new HashMap<String, PaymentModality>();
-		try {
-			prop.load(AccountingSingleton.class.getClassLoader().getResourceAsStream(IAccoutingDataProvider.MODALITIES_PROPERTIES));
-			String key = null;
-			for (Object keyValue : prop.keySet()) {
-				key = String.valueOf(keyValue);
-				System.out.println(keyValue + " ---> " + prop.getProperty(key));
-				createCategory(key, prop.getProperty(key), result);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	private void createCategory(String categoryKey, String paymentInfo,
-			HashMap<String, PaymentModality> aPaymentModalitys) {
-		String[] spl = paymentInfo.split("#");
-		PaymentPeriod paymentPeriod = PaymentPeriod.valueOf(spl[1]);
-		switch (PaymentType.valueOf(spl[0])) {
-		case INCOMING:
-			aPaymentModalitys.put(categoryKey, new FixedPeriodIncomingPaymentModality(paymentPeriod));
-			break;
-		case OUTGOING:
-			if (paymentPeriod.equals(paymentPeriod.UNDEFINED)) {
-				aPaymentModalitys.put(categoryKey, new UndefinedPeriodOutgoingPaymentModality());
-			} else {
-				aPaymentModalitys.put(categoryKey, new FixedPeriodOutgoingPaymentModality(paymentPeriod));
-			}
-			break;
-		}
-	}
-
-	private HashMap<MonthKey, BudgetPlanning> readBudgetPlannings() {
-		HashMap<MonthKey, BudgetPlanning> result = new HashMap<MonthKey, BudgetPlanning>();
-		for (File resourcePlanningFile : getResourceFolderFiles(IAccoutingDataProvider.RESOURCE_PLANNING_FOLDER)) {
-			System.out.println("reading resource planning: " + resourcePlanningFile.getName());
-			Properties budgetPlanningForMonth = new Properties();
-			try {
-				budgetPlanningForMonth.load(new FileInputStream(resourcePlanningFile.getAbsolutePath()));
-				String[] spl = FilenameUtils.removeExtension(resourcePlanningFile.getName()).split("_");
-				MonthKey monthKey = MonthKey.fromValues(Integer.parseInt(spl[1]), Integer.parseInt(spl[2]));
-				result.put(monthKey, BudgetPlanning.fromValues(budgetPlanningForMonth));
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-
-	private static File[] getResourceFolderFiles(String folder) {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		URL url = loader.getResource(folder);
-		String path = url.getPath();
-		File[] result = new File(path).listFiles();
-		return result;
-	}
-
 	public void printCategory(String category) {
 		List<AccountingRow> resultsByCategory = new ArrayList<AccountingRow>();
 		for (AccountingMonth month : accountingManager.getAccountingData().getAccountingMonths()) {
