@@ -164,11 +164,11 @@ public class AccountingFrame extends JFrame {
 
 	private void initSettings() {
 		chkRealValuesInBudgets.setSelected(
-				AccountingSingleton.getInstance().getAccountManagerSettings().isShowActualValuesInBidgetPlanning());
+				AccountingSingleton.getInstance().getAccountingManager().getAccountManagerSettings().isShowActualValuesInBidgetPlanning());
 		chkRealValuesInBudgets.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AccountingSingleton.getInstance().getAccountManagerSettings()
+				AccountingSingleton.getInstance().getAccountingManager().getAccountManagerSettings()
 						.setShowActualValuesInBidgetPlanning(chkRealValuesInBudgets.isSelected());
 			}
 		});
@@ -311,7 +311,7 @@ public class AccountingFrame extends JFrame {
 							.getCategoryModel(categoryWrapper.getCategory());
 					fillCategoryEntries(categoryModel);
 					updatePaymentModality(categoryWrapper.getPaymentModality());
-					if (singleton.getAccountManagerSettings().isBudgetProjectionsEnabled()) {
+					if (singleton.getAccountingManager().getAccountManagerSettings().isBudgetProjectionsEnabled()) {
 						List<BudgetEvaluation> evaluationResult = AccountingSingleton.getInstance().getAccountingManager().evaluateBudgetProjection(categoryWrapper);
 						if (evaluationResult.size() > 0) {
 							AlertMessagesBuilder builder = new AlertMessagesBuilder();

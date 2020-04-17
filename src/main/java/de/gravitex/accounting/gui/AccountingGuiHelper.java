@@ -118,7 +118,7 @@ public class AccountingGuiHelper {
 			if (categorySums != null) {
 				BigDecimal categorySum = categorySums.get((String) categoryBudgetKey);
 				if (categorySum != null) {
-					if (AccountingSingleton.getInstance().getAccountManagerSettings().isShowActualValuesInBidgetPlanning()) {
+					if (AccountingSingleton.getInstance().getAccountingManager().getAccountManagerSettings().isShowActualValuesInBidgetPlanning()) {
 						dataset.addValue(Math.abs(categorySum.intValue()), monthKey + " (aktuell)",
 								(String) categoryBudgetKey);						
 					}

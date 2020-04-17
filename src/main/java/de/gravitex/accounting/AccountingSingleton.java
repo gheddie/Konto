@@ -60,8 +60,6 @@ public class AccountingSingleton {
 
 	private static AccountingSingleton instance;
 
-	private AccountManagerSettings accountManagerSettings = AccountManagerSettings.fromValues(true, 24, true, true);
-
 	private AccountingManager accountingManager;
 	
 	private IAccoutingDataProvider accoutingDataProvider = new AccoutingDataProvider();
@@ -306,10 +304,6 @@ public class AccountingSingleton {
 			}
 		}
 		System.out.println("saldo check ok...");
-	}
-
-	public AccountManagerSettings getAccountManagerSettings() {
-		return accountManagerSettings;
 	}
 
 	public HashMap<String, BigDecimal> getCategorySums(MonthKey monthKey) {
