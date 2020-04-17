@@ -22,6 +22,10 @@ public class AccountingResultCategoryModel {
 	public static String[] getHeaders() {
 		return new String[] {"Lfd. Nr.", "Datum", "Betrag", "Text"};
 	}
+	
+	public static String[] getHeadersFromUntil() {
+		return new String[] {"Lfd. Nr.", "Datum", "Betrag", "von", "bis", "Text"};
+	}
 
 	public boolean inBudget() {
 		if (budget == null) {

@@ -44,7 +44,9 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	private static final int COL_SALDO = 3;
 	private static final int COL_PARTNER = 4;
 	private static final int COL_TEXT = 5;
-	private static final int COL_ALARM = 6;
+	private static final int COL_VALID_FROM = 6;
+	private static final int COL_VALID_UNTIL = 7;
+	private static final int COL_ALARM = 8;
 
 	private static List<String> header;
 
@@ -114,8 +116,16 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 				// 5
 				rowObject.setText(AccountingUtil.getCellValue(String.class, cell));
 				break;
-			case COL_ALARM:
+			case COL_VALID_FROM:
 				// 6
+				rowObject.setValidFrom(AccountingUtil.getCellValue(LocalDate.class, cell));
+				break;
+			case COL_VALID_UNTIL:
+				// 7
+				rowObject.setValidUntil(AccountingUtil.getCellValue(LocalDate.class, cell));
+				break;
+			case COL_ALARM:
+				// 8
 				rowObject.setAlarm(AccountingUtil.getCellValue(String.class, cell));
 				break;
 			}

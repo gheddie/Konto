@@ -16,6 +16,8 @@ public class AccountingRow implements Comparable<AccountingRow> {
 	private String partner;
 	private String text;
 	private String category;
+	private LocalDate validFrom;
+	private LocalDate validUntil;
 	private String alarm;
 
 	public boolean hasCategory(String aCategory) {
@@ -52,7 +54,11 @@ public class AccountingRow implements Comparable<AccountingRow> {
 		return null;
 	}
 
-	public String[] asTableRow() {
-		return new String[] {String.valueOf(runningIndex), date.toString(), amount.toString(), text};
+	public String[] asTableRow(boolean withValidity) {
+		if (withValidity) {
+			return new String[] {String.valueOf(runningIndex), date.toString(), amount.toString(), validFrom != null ? validFrom.toString() : "", validUntil != null ? validUntil.toString() : "", text};	
+		} else {
+			return new String[] {String.valueOf(runningIndex), date.toString(), amount.toString(), text};
+		}
 	}
 }

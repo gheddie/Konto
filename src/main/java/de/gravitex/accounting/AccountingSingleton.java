@@ -1,31 +1,17 @@
 package de.gravitex.accounting;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
-
-import org.apache.commons.io.FilenameUtils;
 
 import de.gravitex.accounting.dao.AccountingDao;
 import de.gravitex.accounting.dao.AccoutingDataProvider;
 import de.gravitex.accounting.dao.IAccoutingDataProvider;
 import de.gravitex.accounting.enumeration.AccountingError;
-import de.gravitex.accounting.enumeration.PaymentPeriod;
-import de.gravitex.accounting.enumeration.PaymentType;
 import de.gravitex.accounting.exception.AccountingException;
-import de.gravitex.accounting.modality.FixedPeriodIncomingPaymentModality;
-import de.gravitex.accounting.modality.FixedPeriodOutgoingPaymentModality;
-import de.gravitex.accounting.modality.PaymentModality;
-import de.gravitex.accounting.modality.UndefinedPeriodOutgoingPaymentModality;
 import de.gravitex.accounting.setting.AccountManagerSettings;
 import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.wrapper.Category;
