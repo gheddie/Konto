@@ -43,7 +43,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import de.gravitex.accounting.AccountingManager;
+import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.exception.AccountingException;
@@ -66,13 +66,13 @@ public class AccountingFrame extends JFrame {
 	private static final int TAB_INDEX_SETTINGS = 3;
 	private static final int TAB_INDEX_OUTPUT = 4;
 
-	private AccountingManager manager;
+	private AccountingSingleton manager;
 
 	protected AccountingResultMonthModel monthModel;
 
 	public AccountingFrame() {
 		initComponents();
-		manager = AccountingManager.getInstance();
+		manager = AccountingSingleton.getInstance();
 		accountingMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		categoriesByMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		budgetPlanningList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -93,7 +93,7 @@ public class AccountingFrame extends JFrame {
 		btnPrepareBudgets.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				HashMap<MonthKey, Properties> extendedBudgets = AccountingManager.getInstance().prepareBudgets();
+				HashMap<MonthKey, Properties> extendedBudgets = AccountingSingleton.getInstance().prepareBudgets();
 				tbpMain.setSelectedIndex(TAB_INDEX_OUTPUT);
 				StringBuffer buffer = new StringBuffer();
 				for (MonthKey monthKey : extendedBudgets.keySet()) {
@@ -113,7 +113,7 @@ public class AccountingFrame extends JFrame {
 		btnReloadData.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AccountingManager.getInstance().initialize();
+				AccountingSingleton.getInstance().initialize();
 			}
 		});
 		btnClose.addActionListener(new ActionListener() {
@@ -152,7 +152,7 @@ public class AccountingFrame extends JFrame {
 
 	private void fillAllPartners() {
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		Set<String> allCategories = AccountingManager.getInstance().getAllPartners();
+		Set<String> allCategories = AccountingSingleton.getInstance().getAllPartners();
 		for (String partner : allCategories) {
 			model.addElement(partner);
 		}
@@ -161,11 +161,11 @@ public class AccountingFrame extends JFrame {
 
 	private void initSettings() {
 		chkRealValuesInBudgets.setSelected(
-				AccountingManager.getInstance().getAccountManagerSettings().isShowActualValuesInBidgetPlanning());
+				AccountingSingleton.getInstance().getAccountManagerSettings().isShowActualValuesInBidgetPlanning());
 		chkRealValuesInBudgets.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AccountingManager.getInstance().getAccountManagerSettings()
+				AccountingSingleton.getInstance().getAccountManagerSettings()
 						.setShowActualValuesInBidgetPlanning(chkRealValuesInBudgets.isSelected());
 			}
 		});
@@ -205,7 +205,7 @@ public class AccountingFrame extends JFrame {
 	
 	private void fillAllCategories() {
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		Set<Category> allCategories = AccountingManager.getInstance().getAllCategories();
+		Set<Category> allCategories = AccountingSingleton.getInstance().getAllCategories();
 		for (Category category : allCategories) {
 			model.addElement(category.getCategory());
 		}
@@ -214,7 +214,7 @@ public class AccountingFrame extends JFrame {
 	
 	public void fillFilterTable() {
 		
-		List<AccountingRow> allEntries = AccountingManager.getInstance().getAllEntries();
+		List<AccountingRow> allEntries = AccountingSingleton.getInstance().getAllEntries();
 		DefaultTableModel tablemodel = new DefaultTableModel();
 		for (String col : AccountingResultCategoryModel.getHeaders()) {
 			tablemodel.addColumn(col);
@@ -227,7 +227,7 @@ public class AccountingFrame extends JFrame {
 	}
 	
 	private void fillAllPartnerEntries(String partner) {
-		List<AccountingRow> allEntriesForPartner = AccountingManager.getInstance()
+		List<AccountingRow> allEntriesForPartner = AccountingSingleton.getInstance()
 				.getAllEntriesForPartner(partner);
 		DefaultTableModel tablemodel = new DefaultTableModel();
 		for (String col : AccountingResultCategoryModel.getHeaders()) {
@@ -243,7 +243,7 @@ public class AccountingFrame extends JFrame {
 	private void fillAllCategoryEntries(String category) {
 		categoryEntriesTable.setBackground(Color.WHITE);
 		System.out.println("fillAllCategoryEntries : " + cbAllCategories.getSelectedItem());
-		List<AccountingRow> allEntriesForCategory = AccountingManager.getInstance()
+		List<AccountingRow> allEntriesForCategory = AccountingSingleton.getInstance()
 				.getAllEntriesForCategory(category);
 		DefaultTableModel tablemodel = new DefaultTableModel();
 		for (String col : AccountingResultCategoryModel.getHeaders()) {

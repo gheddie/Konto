@@ -1,6 +1,6 @@
 package de.gravitex.accounting.modality;
 
-import de.gravitex.accounting.AccountingManager;
+import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
 import lombok.Data;
@@ -37,6 +37,6 @@ public abstract class OutgoingPaymentModality extends PaymentModality {
 	@Override
 	public void prepare() {
 		// request limit
-		setLimit(AccountingManager.getInstance().requestLimit(getMonthKey(), getCategory()));
+		setLimit(AccountingSingleton.getInstance().requestLimit(getMonthKey(), getCategory()));
 	}
 }
