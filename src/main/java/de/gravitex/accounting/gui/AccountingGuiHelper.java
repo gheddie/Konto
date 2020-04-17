@@ -18,20 +18,21 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.AccountingUtil;
 import de.gravitex.accounting.util.MonthKey;
 
 public class AccountingGuiHelper {
 
-	public static void displayBudgetChart(AccountingFrame accountingFrame, List<MonthKey> monthKeys) {
+	public static void displayBudgetChart(AccountingFrame accountingFrame, List<MonthKey> monthKeys, AccountingManager manager) {
 
 		System.out.println("displayBudgetChart: " + monthKeys);
 
 		String title = "";
 		if (monthKeys.size() == 1) {
-			displayBudgetPercentage(accountingFrame, monthKeys.get(0));
-			title = "Budgetplanung (verfügbar: " + AccountingSingleton.getInstance().getAvailableIncome(monthKeys.get(0))
+			displayBudgetPercentage(accountingFrame, monthKeys.get(0), manager);
+			title = "Budgetplanung (verfügbar: " + manager.getAvailableIncome(monthKeys.get(0))
 					+ " Euro)";
 		} else {
 			title = "Budgetplanung";
@@ -40,7 +41,7 @@ public class AccountingGuiHelper {
 
 		accountingFrame.getPnlChart().removeAll();
 		
-		JFreeChart chart = ChartFactory.createBarChart(title, "Kategorie", "Aufwand", createDataset(monthKeys),
+		JFreeChart chart = ChartFactory.createBarChart(title, "Kategorie", "Aufwand", createDataset(monthKeys, manager),
 				PlotOrientation.HORIZONTAL, true, true, false);
 		
 		chart.setRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
@@ -54,10 +55,10 @@ public class AccountingGuiHelper {
 		accountingFrame.getPercentageBar().setValue(0);
 	}
 
-	private static void displayBudgetPercentage(AccountingFrame accountingFrame, MonthKey monthKey) {
+	private static void displayBudgetPercentage(AccountingFrame accountingFrame, MonthKey monthKey, AccountingManager manager) {
 
-		BigDecimal availableIncome = AccountingSingleton.getInstance().getAvailableIncome(monthKey);
-		Properties budgetPlanningForMonth = AccountingSingleton.getInstance().getBudgetPlannings().get(monthKey).getProperties();
+		BigDecimal availableIncome = manager.getAvailableIncome(monthKey);
+		Properties budgetPlanningForMonth = manager.getBudgetPlannings().get(monthKey).getProperties();
 		int totalyPlanned = 0;
 		for (Object categoryBudget : budgetPlanningForMonth.keySet()) {
 			totalyPlanned += Integer.parseInt(String.valueOf(budgetPlanningForMonth.get(categoryBudget)));
@@ -92,7 +93,7 @@ public class AccountingGuiHelper {
 		percentageBar.setStringPainted(true);
 	}
 
-	private static CategoryDataset createDataset(List<MonthKey> monthKeys) {
+	private static CategoryDataset createDataset(List<MonthKey> monthKeys, AccountingManager manager) {
 		
 		HashMap<String, BigDecimal> categorySums = null;
 		if (monthKeys.size() == 1) {
@@ -101,14 +102,14 @@ public class AccountingGuiHelper {
 
 		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (MonthKey monthKey : monthKeys) {
-			addMonthData(monthKey, dataset, categorySums);
+			addMonthData(monthKey, dataset, categorySums, manager);
 		}
 		return dataset;
 	}
 
-	private static void addMonthData(MonthKey monthKey, DefaultCategoryDataset dataset, HashMap<String, BigDecimal> categorySums) {
+	private static void addMonthData(MonthKey monthKey, DefaultCategoryDataset dataset, HashMap<String, BigDecimal> categorySums, AccountingManager mananger) {
 		
-		Properties budgetPlanningForMonth = AccountingSingleton.getInstance().getBudgetPlannings().get(monthKey).getProperties();
+		Properties budgetPlanningForMonth = mananger.getBudgetPlannings().get(monthKey).getProperties();
 
 		int categoryBudget = 0;
 		for (Object categoryBudgetKey : budgetPlanningForMonth.keySet()) {

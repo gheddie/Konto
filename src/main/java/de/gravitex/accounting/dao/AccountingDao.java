@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.gravitex.accounting.AccountingData;
-import de.gravitex.accounting.AccountingSingleton;
+import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingMonth;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.util.MonthKey;
@@ -15,14 +15,14 @@ import de.gravitex.accounting.wrapper.Category;
 
 public class AccountingDao {
 
-	public static Set<Category> getAllCategories(AccountingData accountingData) {
+	public static Set<Category> getAllCategories(AccountingData accountingData, AccountingManager manager) {
 		Set<Category> allCategories = new HashSet<Category>();
 		AccountingMonth accountingMonth = null;
 		for (MonthKey key : accountingData.keySet()) {
 			accountingMonth = accountingData.get(key);
 			Set<String> distinctCategories = accountingMonth.getDistinctCategories();
 			for (String category : distinctCategories) {
-				allCategories.add(Category.fromValues(category, AccountingSingleton.getInstance().getPaymentModality(category)));	
+				allCategories.add(Category.fromValues(category, manager.getPaymentModality(category)));	
 			}
 		}
 		return allCategories;

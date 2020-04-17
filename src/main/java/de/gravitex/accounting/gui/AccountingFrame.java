@@ -44,6 +44,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import de.gravitex.accounting.AccountingSingleton;
+import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.exception.AccountingException;
@@ -66,13 +67,13 @@ public class AccountingFrame extends JFrame {
 	private static final int TAB_INDEX_SETTINGS = 3;
 	private static final int TAB_INDEX_OUTPUT = 4;
 
-	private AccountingSingleton manager;
+	private AccountingSingleton singleton;
 
 	protected AccountingResultMonthModel monthModel;
-
+	
 	public AccountingFrame() {
 		initComponents();
-		manager = AccountingSingleton.getInstance();
+		singleton = AccountingSingleton.getInstance();
 		accountingMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		categoriesByMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		budgetPlanningList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -80,7 +81,7 @@ public class AccountingFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					manager.saldoCheck();
+					singleton.saldoCheck();
 					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Saldo OK!!")
 							.getAlertMessages());
 				} catch (AccountingException accountingException) {
@@ -93,7 +94,8 @@ public class AccountingFrame extends JFrame {
 		btnPrepareBudgets.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				HashMap<MonthKey, Properties> extendedBudgets = AccountingSingleton.getInstance().prepareBudgets();
+				HashMap<MonthKey, Properties> extendedBudgets = AccountingSingleton.getInstance().getAccountingManager()
+						.prepareBudgets();
 				tbpMain.setSelectedIndex(TAB_INDEX_OUTPUT);
 				StringBuffer buffer = new StringBuffer();
 				for (MonthKey monthKey : extendedBudgets.keySet()) {
@@ -152,7 +154,7 @@ public class AccountingFrame extends JFrame {
 
 	private void fillAllPartners() {
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		Set<String> allCategories = AccountingSingleton.getInstance().getAllPartners();
+		Set<String> allCategories = AccountingSingleton.getInstance().getAccountingManager().getDistinctPartners();
 		for (String partner : allCategories) {
 			model.addElement(partner);
 		}
@@ -183,7 +185,7 @@ public class AccountingFrame extends JFrame {
 	
 	private void fillBudgetPlannings() {
 		final DefaultListModel<MonthKey> budgetPlanningModel = new DefaultListModel<MonthKey>();
-		Set<MonthKey> keySet = manager.getBudgetPlannings().keySet();
+		Set<MonthKey> keySet = AccountingSingleton.getInstance().getAccountingManager().getBudgetPlannings().keySet();
 		ArrayList<MonthKey> keyList = new ArrayList<MonthKey>(keySet);
 		Collections.sort(keyList);
 		for (MonthKey budgetKey : keyList) {
@@ -198,14 +200,14 @@ public class AccountingFrame extends JFrame {
 				for (Object value : selectedValues) {
 					selectedValueList.add((MonthKey) value);
 				}
-				AccountingGuiHelper.displayBudgetChart(AccountingFrame.this, selectedValueList);
+				AccountingGuiHelper.displayBudgetChart(AccountingFrame.this, selectedValueList, AccountingSingleton.getInstance().getAccountingManager());
 			}
 		});
 	}
 	
 	private void fillAllCategories() {
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		Set<Category> allCategories = AccountingSingleton.getInstance().getAllCategories();
+		Set<Category> allCategories = AccountingSingleton.getInstance().getAccountingManager().getAccountingData().getDistinctCategories();
 		for (Category category : allCategories) {
 			model.addElement(category.getCategory());
 		}
@@ -227,8 +229,7 @@ public class AccountingFrame extends JFrame {
 	}
 	
 	private void fillAllPartnerEntries(String partner) {
-		List<AccountingRow> allEntriesForPartner = AccountingSingleton.getInstance()
-				.getAllEntriesForPartner(partner);
+		List<AccountingRow> allEntriesForPartner = AccountingSingleton.getInstance().getAccountingManager().getAllEntriesForPartner(partner);
 		DefaultTableModel tablemodel = new DefaultTableModel();
 		for (String col : AccountingResultCategoryModel.getHeaders()) {
 			tablemodel.addColumn(col);
@@ -236,14 +237,16 @@ public class AccountingFrame extends JFrame {
 		BigDecimal sum = new BigDecimal(0);
 		for (AccountingRow row : allEntriesForPartner) {
 			tablemodel.addRow(row.asTableRow());
+			sum = sum.add(row.getAmount());
 		}
 		filterTable.setModel(tablemodel);
+		tfFilterSum.setText(sum.toString());
 	}
 	
 	private void fillAllCategoryEntries(String category) {
 		categoryEntriesTable.setBackground(Color.WHITE);
 		System.out.println("fillAllCategoryEntries : " + cbAllCategories.getSelectedItem());
-		List<AccountingRow> allEntriesForCategory = AccountingSingleton.getInstance()
+		List<AccountingRow> allEntriesForCategory = AccountingSingleton.getInstance().getAccountingManager()
 				.getAllEntriesForCategory(category);
 		DefaultTableModel tablemodel = new DefaultTableModel();
 		for (String col : AccountingResultCategoryModel.getHeaders()) {
@@ -255,16 +258,14 @@ public class AccountingFrame extends JFrame {
 			sum = sum.add(row.getAmount());
 		}
 		filterTable.setModel(tablemodel);
-		handleSumType(category, null);
 		tfFilterSum.setText(sum.toString());
-		tfBudget.setText("---");
 	}
 
 	@SuppressWarnings("unchecked")
 	private void fillAccountingMonths() {
 		
 		final DefaultListModel<MonthKey> monthKeyModel = new DefaultListModel<MonthKey>();
-		Set<MonthKey> keySet = manager.getAccountingData().keySet();
+		Set<MonthKey> keySet = AccountingSingleton.getInstance().getAccountingManager().getAccountingData().keySet();
 		List<MonthKey> keyList = new ArrayList<MonthKey>(keySet);
 		Collections.sort(keyList);
 		for (MonthKey monthKey : keyList) {
@@ -276,7 +277,7 @@ public class AccountingFrame extends JFrame {
 			public void valueChanged(ListSelectionEvent e) {
 				System.out.println(accountingMonthList.getSelectedValue());
 				MonthKey monthKey = (MonthKey) accountingMonthList.getSelectedValue();
-				monthModel = manager.getAccountingResultMonthModel(monthKey);
+				monthModel = singleton.getAccountingResultMonthModel(monthKey);
 				clearMessages();
 				fillCategoriesForMonth(monthModel);
 				BigDecimal overallSum = monthModel.calculateOverallSum();
@@ -295,7 +296,7 @@ public class AccountingFrame extends JFrame {
 			final DefaultListModel<Category> categoriesByMonthModel = new DefaultListModel<Category>();
 			for (String category : accountingResultMonthModel.getDistinctCategories()) {
 				categoriesByMonthModel.addElement(Category.fromValues(category,
-						manager.initPaymentModality(accountingResultMonthModel.getMonthKey(), category)));
+						AccountingSingleton.getInstance().getAccountingManager().initPaymentModality(accountingResultMonthModel.getMonthKey(), category)));
 			}
 			categoriesByMonthList.setModel(categoriesByMonthModel);
 			categoriesByMonthList.addListSelectionListener(new ListSelectionListener() {
@@ -309,8 +310,8 @@ public class AccountingFrame extends JFrame {
 							.getCategoryModel(categoryWrapper.getCategory());
 					fillCategoryEntries(categoryModel);
 					updatePaymentModality(categoryWrapper.getPaymentModality());
-					if (manager.getAccountManagerSettings().isBudgetProjectionsEnabled()) {
-						List<BudgetEvaluation> evaluationResult = manager.evaluateBudgetProjection(categoryWrapper);
+					if (singleton.getAccountManagerSettings().isBudgetProjectionsEnabled()) {
+						List<BudgetEvaluation> evaluationResult = AccountingSingleton.getInstance().getAccountingManager().evaluateBudgetProjection(categoryWrapper);
 						if (evaluationResult.size() > 0) {
 							AlertMessagesBuilder builder = new AlertMessagesBuilder();
 							for (BudgetEvaluation budgetEvaluation : evaluationResult) {
