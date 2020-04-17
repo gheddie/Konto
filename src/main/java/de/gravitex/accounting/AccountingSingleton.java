@@ -51,7 +51,7 @@ public class AccountingSingleton {
 			data.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
 		}
 		accountingManager = new AccountingManager().withAccountingData(data).withBudgetPlannings(readBudgetPlannings())
-				.withPaymentModalitys(readPaymentModalitys()).withSettings(AccountManagerSettings.fromValues(true, 24, true, true));
+				.withPaymentModalitys(readPaymentModalitys()).withSettings(AccountManagerSettings.fromValues(true, 24, true, true)).withIncome(readIncome());
 	}
 
 	public static AccountingSingleton getInstance() {
@@ -59,6 +59,18 @@ public class AccountingSingleton {
 			instance = new AccountingSingleton();
 		}
 		return instance;
+	}
+	
+	private Income readIncome() {
+		Properties prop = new Properties();
+		try {
+			prop.load(AccountingSingleton.class.getClassLoader().getResourceAsStream(IAccoutingDataProvider.INCOME_PROPERTIES));
+			return Income.fromValues(prop);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	private HashMap<String, PaymentModality> readPaymentModalitys() {

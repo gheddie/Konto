@@ -29,8 +29,6 @@ import lombok.Data;
 @Data
 public class AccountingManager {
 	
-	private static final BigDecimal AVAILABLE_INCOME = new BigDecimal(2400);
-	
 	public static final String UNDEFINED_CATEGORY = "Undefiniert";
 	
 	private AccountingData accountingData;
@@ -40,6 +38,8 @@ public class AccountingManager {
 	private HashMap<MonthKey, BudgetPlanning> budgetPlannings = new HashMap<MonthKey, BudgetPlanning>();
 
 	private AccountManagerSettings accountManagerSettings;
+
+	private Income income;
 
 	public AccountingManager withAccountingData(AccountingData accountingData) {
 		this.accountingData = accountingData;
@@ -59,6 +59,11 @@ public class AccountingManager {
 	
 	public AccountingManager withSettings(AccountManagerSettings accountManagerSettings) {
 		this.accountManagerSettings = accountManagerSettings;
+		return this;
+	}
+	
+	public AccountingManager withIncome(Income aIncome) {
+		this.income = aIncome;
 		return this;
 	}
 	
@@ -199,8 +204,7 @@ public class AccountingManager {
 	}
 
 	public BigDecimal getAvailableIncome(MonthKey monthKey) {
-		// TODO
-		return AVAILABLE_INCOME;
+		return income.getIncomeForMonth(monthKey);
 	}
 
 	public List<AccountingRow> getAllEntriesForCategory(String category) {

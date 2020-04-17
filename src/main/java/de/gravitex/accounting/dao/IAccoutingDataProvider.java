@@ -12,5 +12,7 @@ public interface IAccoutingDataProvider {
 
 	public static final String MODALITIES_PROPERTIES = "modalities.properties";
 
+	public static final String INCOME_PROPERTIES = "income.properties";
+
 	HashMap<MonthKey, List<AccountingRow>> readAccountingData();
 }

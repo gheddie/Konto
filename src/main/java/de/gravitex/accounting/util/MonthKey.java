@@ -22,6 +22,11 @@ public class MonthKey implements Comparable<MonthKey> {
 		return monthKey;
 	}
 	
+	public static MonthKey fromString(String s) {
+		String[] spl = s.split("/");
+		return fromValues(Integer.parseInt(spl[0]), Integer.parseInt(spl[1]));
+	}
+	
 	public String toString() {
 		return month + "/" + year;
 	}
@@ -37,5 +42,13 @@ public class MonthKey implements Comparable<MonthKey> {
 	@Override
 	public int compareTo(MonthKey monthKey) {
 		return toDate().compareTo(monthKey.toDate());
+	}
+
+	public boolean isBefore(MonthKey monthKey) {
+		return toDate().isBefore(monthKey.toDate());
+	}
+	
+	public boolean isAfter(MonthKey monthKey) {
+		return toDate().isAfter(monthKey.toDate());
 	}
 }
