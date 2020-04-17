@@ -68,10 +68,16 @@ public class AccountingManager {
 	}
 	
 	private boolean budgetPlanningPresentFor(MonthKey monthKey) {
+		if (budgetPlannings == null) {
+			return false;
+		}
 		return budgetPlannings.keySet().contains(monthKey);
 	}
 
 	private boolean budgetPlanningAvailableFor(MonthKey monthKey, String category) {
+		if (budgetPlannings == null) {
+			return false;
+		}
 		BudgetPlanning budgetPlanningForMonth = budgetPlannings.get(monthKey);
 		if (budgetPlanningForMonth == null) {
 			return false;
@@ -79,7 +85,7 @@ public class AccountingManager {
 		return (budgetPlanningForMonth.getProperties().keySet().contains(category));
 	}
 	
-	public List<BudgetEvaluation> evaluateBudgetProjection(Category category) {
+	public List<BudgetEvaluation> evaluateBudgetProjection(Category category, LocalDate startingDate) {
 
 		if (!category.getPaymentModality().isProjectable()) {
 			System.out.println("payment modiality '" + category.getPaymentModality().getClass().getSimpleName()
@@ -103,8 +109,7 @@ public class AccountingManager {
 				.getResult();
 		// search in budget plannings...
 		int months = 0;
-		LocalDate now = LocalDate.now();
-		MonthKey actualAppearance = MonthKey.fromValues(now.getMonthValue(), now.getYear());
+		MonthKey actualAppearance = MonthKey.fromValues(startingDate.getMonthValue(), startingDate.getYear());
 		boolean budgetPlanningAvailable = false;
 		while (months < accountManagerSettings.getProjectionDurationInMonths()) {
 			actualAppearance = AccountingUtil.nextMonthlyTimeStamp(actualAppearance, PaymentPeriod.MONTH);
@@ -147,13 +152,13 @@ public class AccountingManager {
 		return paymentModality;
 	}
 	
-	public HashMap<MonthKey, Properties> prepareBudgets() {
+	public HashMap<MonthKey, Properties> prepareBudgets(LocalDate startingDate, boolean complete) {
 
 		HashMap<MonthKey, Properties> extendedProperties = new HashMap<MonthKey, Properties>();
 		HashMap<MonthKey, Set<BudgetEvaluation>> failuresPerMonth = new HashMap<MonthKey, Set<BudgetEvaluation>>();
 		for (Category category : accountingData.getDistinctCategories()) {
 			category.setPaymentModality(paymentModalitys.get(category.getCategory()));
-			List<BudgetEvaluation> evaluation = evaluateBudgetProjection(category);
+			List<BudgetEvaluation> evaluation = evaluateBudgetProjection(category, startingDate);
 			for (BudgetEvaluation budgetEvaluation : evaluation) {
 				if (budgetEvaluation.getBudgetEvaluationResult().equals(BudgetEvaluationResult.MISSING_BUDGET)) {
 					if (failuresPerMonth.get(budgetEvaluation.getMonthKey()) == null) {
@@ -171,25 +176,30 @@ public class AccountingManager {
 		for (MonthKey monthKey : monthKeyList) {
 			additionalBudgetEvaluations = failuresPerMonth.get(monthKey);
 			if (additionalBudgetEvaluations.size() > 0) {
-				extendedProperties.put(monthKey, completeBudgetPlanning(monthKey, additionalBudgetEvaluations));
+				extendedProperties.put(monthKey, completeBudgetPlanning(monthKey, additionalBudgetEvaluations, complete));
 			}
 		}
 
 		return extendedProperties;
 	}
 	
-	private Properties completeBudgetPlanning(MonthKey monthKey, Set<BudgetEvaluation> additionalBudgetEvaluations) {
-
-		// get existing categories
-		// Properties existingBudgetPlannings =
-		// budgetPlannings.get(monthKey).getProperties();
-
-		// only the missing!!
-		Properties existingBudgetPlannings = new Properties();
-
+	private Properties completeBudgetPlanning(MonthKey monthKey, Set<BudgetEvaluation> additionalBudgetEvaluations, boolean complete) {
+		
+		Properties existingBudgetPlannings = null;
+		if (complete) {
+			BudgetPlanning budgetPlanningForMonth = budgetPlannings.get(monthKey);
+			existingBudgetPlannings = budgetPlanningForMonth.getProperties();
+			if (existingBudgetPlannings == null) {
+				// not existing
+				existingBudgetPlannings = new Properties();	
+			}
+		} else {
+			// only the missing!!
+			existingBudgetPlannings = new Properties();	
+		}
 		for (BudgetEvaluation budgetEvaluation : additionalBudgetEvaluations) {
-			existingBudgetPlannings.put(budgetEvaluation.getCategory(),
-					getLastAppearanceOfCategory(budgetEvaluation.getCategory()).getAmount().toString());
+			BigDecimal amount = getLastAppearanceOfCategory(budgetEvaluation.getCategory()).getAmount();
+			existingBudgetPlannings.put(budgetEvaluation.getCategory(), String.valueOf(Math.abs(amount.intValue())));
 		}
 		return existingBudgetPlannings;
 	}

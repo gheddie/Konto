@@ -9,6 +9,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -96,7 +97,7 @@ public class AccountingFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				HashMap<MonthKey, Properties> extendedBudgets = AccountingSingleton.getInstance().getAccountingManager()
-						.prepareBudgets();
+						.prepareBudgets(LocalDate.now(), false);
 				tbpMain.setSelectedIndex(TAB_INDEX_OUTPUT);
 				StringBuffer buffer = new StringBuffer();
 				List<MonthKey> keyList = new ArrayList<MonthKey>(extendedBudgets.keySet());
@@ -314,7 +315,8 @@ public class AccountingFrame extends JFrame {
 					fillCategoryEntries(categoryModel);
 					updatePaymentModality(categoryWrapper.getPaymentModality());
 					if (singleton.getAccountingManager().getAccountManagerSettings().isBudgetProjectionsEnabled()) {
-						List<BudgetEvaluation> evaluationResult = AccountingSingleton.getInstance().getAccountingManager().evaluateBudgetProjection(categoryWrapper);
+						List<BudgetEvaluation> evaluationResult = AccountingSingleton.getInstance()
+								.getAccountingManager().evaluateBudgetProjection(categoryWrapper, LocalDate.now());
 						if (evaluationResult.size() > 0) {
 							AlertMessagesBuilder builder = new AlertMessagesBuilder();
 							for (BudgetEvaluation budgetEvaluation : evaluationResult) {
