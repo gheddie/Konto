@@ -31,6 +31,8 @@ public class AccountingManager {
 	
 	private static final BigDecimal AVAILABLE_INCOME = new BigDecimal(2400);
 	
+	public static final String UNDEFINED_CATEGORY = "Undefiniert";
+	
 	private AccountingData accountingData;
 	
 	private HashMap<String, PaymentModality> paymentModalitys = new HashMap<String, PaymentModality>();
