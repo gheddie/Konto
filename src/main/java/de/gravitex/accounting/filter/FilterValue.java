@@ -1,4 +1,4 @@
-package de.gravitex.accounting;
+package de.gravitex.accounting.filter;
 
 import lombok.Data;
 

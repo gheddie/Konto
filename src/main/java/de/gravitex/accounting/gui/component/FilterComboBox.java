@@ -5,9 +5,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 
-import de.gravitex.accounting.FilterValue;
-import de.gravitex.accounting.FilterValueProvider;
-import de.gravitex.accounting.FilteredValueReceiver;
+import de.gravitex.accounting.filter.FilterValue;
+import de.gravitex.accounting.filter.FilterValueProvider;
+import de.gravitex.accounting.filter.FilteredValueReceiver;
 
 public class FilterComboBox extends JComboBox<String> implements FilterValueProvider {
 
@@ -20,7 +20,7 @@ public class FilterComboBox extends JComboBox<String> implements FilterValueProv
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(null, getSelectedItem()));
+				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(null, getSelectedFilterValue()));
 			}
 		});
 	}
@@ -28,5 +28,10 @@ public class FilterComboBox extends JComboBox<String> implements FilterValueProv
 	@Override
 	public void acceptFilterReceiver(FilteredValueReceiver filteredValueReceiver) {
 		this.filteredValueReceiver = filteredValueReceiver;
+	}
+
+	@Override
+	public Object getSelectedFilterValue() {
+		return getSelectedItem();
 	}
 }

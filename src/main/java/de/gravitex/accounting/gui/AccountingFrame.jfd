@@ -227,7 +227,7 @@ new FormModel {
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 					"$columnSpecs": "0, 0, 0, 0:1.0"
-					"$rowSpecs": "0, 0, 0, 0:1.0, 0"
+					"$rowSpecs": "0, 0, 0, 0, 0:1.0, 0"
 					"$hGap": 5
 					"$vGap": 5
 					"$alignLeft": true
@@ -250,7 +250,7 @@ new FormModel {
 						} )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
-						"gridheight": 4
+						"gridheight": 5
 						"gridwidth": 2
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
@@ -266,30 +266,42 @@ new FormModel {
 						"gridx": 1
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label7"
+						"text": "Zeitraum"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 2
+					} )
+					add( new FormComponent( "de.gravitex.accounting.gui.component.FromToDateFilter" ) {
+						name: "fromToDateFilter"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 2
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label5"
 						"text": "Alarm"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 2
+						"gridy": 3
 					} )
 					add( new FormComponent( "de.gravitex.accounting.gui.component.FilterCheckBox" ) {
 						name: "cbFilterAlarm"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
-						"gridy": 2
+						"gridy": 3
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label6"
 						"text": "Summe:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
-						"gridy": 4
+						"gridy": 5
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "tfFilterSum"
 						"editable": false
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 3
-						"gridy": 4
+						"gridy": 5
 					} )
 				}, new FormLayoutConstraints( null ) {
 					"title": "Filter"

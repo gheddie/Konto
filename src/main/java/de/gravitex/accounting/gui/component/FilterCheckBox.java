@@ -5,9 +5,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 
-import de.gravitex.accounting.FilterValue;
-import de.gravitex.accounting.FilterValueProvider;
-import de.gravitex.accounting.FilteredValueReceiver;
+import de.gravitex.accounting.filter.FilterValue;
+import de.gravitex.accounting.filter.FilterValueProvider;
+import de.gravitex.accounting.filter.FilteredValueReceiver;
 
 public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 
@@ -20,7 +20,7 @@ public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(null, isSelected()));
+				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(null, getSelectedFilterValue()));
 			}
 		});
 	}
@@ -28,5 +28,10 @@ public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 	@Override
 	public void acceptFilterReceiver(FilteredValueReceiver filteredValueReceiver) {
 		this.filteredValueReceiver = filteredValueReceiver;
+	}
+
+	@Override
+	public Object getSelectedFilterValue() {
+		return isSelected();
 	}
 }
