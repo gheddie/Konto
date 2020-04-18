@@ -31,7 +31,6 @@ new FormModel {
 				add( new FormComponent( "javax.swing.JButton" ) {
 					name: "btnCheckValidities"
 					"text": "Zeiträume prüfen"
-					"enabled": false
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {

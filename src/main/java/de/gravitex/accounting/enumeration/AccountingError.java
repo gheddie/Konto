@@ -22,5 +22,5 @@ public enum AccountingError {
 	
 	NO_AMOUNT,
 	
-	NO_COMPLETE_PERIOD
+	NO_VALID_PERIOD
 }

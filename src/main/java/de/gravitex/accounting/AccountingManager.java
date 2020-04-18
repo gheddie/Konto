@@ -15,12 +15,16 @@ import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.BudgetEvaluationResult;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.gui.AlertMessage;
+import de.gravitex.accounting.gui.AlertMessageType;
+import de.gravitex.accounting.gui.AlertMessagesBuilder;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
 import de.gravitex.accounting.setting.AccountManagerSettings;
 import de.gravitex.accounting.util.MonthKey;
+import de.gravitex.accounting.util.OverlapChecker;
 import de.gravitex.accounting.util.TimelineProjectonResult;
 import de.gravitex.accounting.util.TimelineProjector;
 import de.gravitex.accounting.wrapper.Category;
@@ -328,13 +332,35 @@ public class AccountingManager {
 			return;
 		}
 		List<AccountingRow> entries = getAllEntriesForCategory(category);
+		OverlapChecker checker = new OverlapChecker();
 		for (AccountingRow accountingRow : entries) {
-			// all must have start and end set!!
-			if (!accountingRow.checkPeriod()) {
-				throw new AccountingException(
-						"no complete or invalid period {"+accountingRow.getValidFrom()+" - "+accountingRow.getValidUntil()+"} [" + accountingRow.getRunningIndex() + "]!!",
-						AccountingError.NO_COMPLETE_PERIOD, accountingRow);
+			checker.withPeriod(accountingRow.getValidFrom(), accountingRow.getValidUntil());
+		}
+		if (!checker.check()) {
+			AlertMessagesBuilder builder = new AlertMessagesBuilder();
+			if (checker.isInvalidPeriodFlag()) {
+				builder.withMessage(AlertMessageType.ERROR, "Mindestens ein ungültiger Zeitraum!!");
+			}
+			if (checker.isOverlapFlag()) {
+				builder.withMessage(AlertMessageType.ERROR, "Überschneidung von Zeiträumen!!");
+			}
+			if (checker.getRemainingDays().size() > 0) {
+				builder.withMessage(AlertMessageType.ERROR,
+						"Zeiträumen-Lücken von insgesamt " + checker.getRemainingDays().size() + " Tagen entdeckt!!");
+			}
+			throw new AccountingException("check validity error!!", AccountingError.NO_VALID_PERIOD, null,
+					builder.getAlertMessages());			
+		}
+	}
+
+	public List<Category> getPeriodicalPaymentCategories() {
+		List<Category> result = new ArrayList<Category>();
+		Set<Category> distinctCategories = getAccountingData().getDistinctCategories();
+		for (Category category : distinctCategories) {
+			if (getPaymentModality(category.getCategory()).isPeriodically()) {
+				result.add(category);
 			}
 		}
+		return result;
 	}
 }

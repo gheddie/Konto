@@ -96,15 +96,32 @@ public class AccountingFrame extends JFrame {
 		btnCheckValidities.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				tbpMain.setSelectedIndex(TAB_INDEX_OUTPUT);
+				StringBuffer buffer = new StringBuffer();
+				AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
+				for (Category category : accountingManager
+						.getPeriodicalPaymentCategories()) {
+					buffer.append("------------ "+category.getCategory()+" ------------\n");
+					try {
+						accountingManager.checkValidities(category.getCategory());	
+						buffer.append("OK\n");
+					} catch (AccountingException e2) {
+						buffer.append(e2.asStringBuffer());
+					}
+				}
+				taOutput.setText(buffer.toString());
+				
+				/*
 				try {
-					AccountingSingleton.getInstance().getAccountingManager()
+					accountingManager
 					.checkValidities(String.valueOf(categoriesByMonthList.getSelectedValue()));
 					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Zeiträume geprüft!!")
 							.getAlertMessages());
 				} catch (AccountingException e2) {
-					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, e2.getMessage())
-							.getAlertMessages());
+					pushMessages(e2.getAlertMessages());
 				}
+				*/
 			}
 		});
 		btnPrepareBudgets.addActionListener(new ActionListener() {
@@ -375,8 +392,10 @@ public class AccountingFrame extends JFrame {
 			return;
 		}
 		
+		/*
 		boolean categoryPeriodically = AccountingSingleton.getInstance().getAccountingManager().isCategoryPeriodically(categoryModel.getCategory());
 		btnCheckValidities.setEnabled(categoryPeriodically);
+		*/
 
 		DefaultTableModel tablemodel = new DefaultTableModel();
 		for (String col : categoryModel.getHeaders()) {
@@ -499,7 +518,6 @@ public class AccountingFrame extends JFrame {
 
 			//---- btnCheckValidities ----
 			btnCheckValidities.setText("Zeitr\u00e4ume pr\u00fcfen");
-			btnCheckValidities.setEnabled(false);
 			tbMain.add(btnCheckValidities);
 		}
 		contentPane.add(tbMain, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
@@ -511,12 +529,12 @@ public class AccountingFrame extends JFrame {
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax . swing. border .EmptyBorder
-				( 0, 0 ,0 , 0) ,  "JF\u006frmDesi\u0067ner Ev\u0061luatio\u006e" , javax. swing .border . TitledBorder. CENTER ,javax . swing. border
-				.TitledBorder . BOTTOM, new java. awt .Font ( "Dialo\u0067", java .awt . Font. BOLD ,12 ) ,java . awt
-				. Color .red ) ,pnlData. getBorder () ) ); pnlData. addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override public void
-				propertyChange (java . beans. PropertyChangeEvent e) { if( "borde\u0072" .equals ( e. getPropertyName () ) )throw new RuntimeException( )
-				;} } );
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border
+				. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax. swing. border. TitledBorder. CENTER, javax
+				. swing. border. TitledBorder. BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,
+				12 ), java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans
+				. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062ord\u0065r" .equals (e .
+				getPropertyName () )) throw new RuntimeException( ); }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};

@@ -17,4 +17,9 @@ public class FixedPeriodOutgoingPaymentModality extends OutgoingPaymentModality 
 	public boolean isProjectable() {
 		return true;
 	}
+	
+	@Override
+	public boolean isPeriodically() {
+		return true;
+	}
 }

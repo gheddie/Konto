@@ -19,4 +19,8 @@ public class AlertMessage {
 		alertMessage.setText(aText);
 		return alertMessage;
 	}
+	
+	public String toString() {
+		return "["+alertMessageType+"] --> " + text;
+	}
 }
