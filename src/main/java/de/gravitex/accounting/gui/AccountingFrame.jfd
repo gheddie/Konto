@@ -277,17 +277,12 @@ new FormModel {
 						"gridx": 1
 						"gridy": 2
 					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label5"
-						"text": "Alarm"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "btnReloadFilter"
+						"text": "Neu laden"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 3
-					} )
-					add( new FormComponent( "de.gravitex.accounting.gui.component.FilterCheckBox" ) {
-						name: "cbFilterAlarm"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 1
-						"gridy": 3
+						"gridwidth": 2
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label6"

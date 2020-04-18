@@ -15,8 +15,10 @@ import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.BudgetEvaluationResult;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.FilterValue;
 import de.gravitex.accounting.filter.FilteredValueReceiver;
+import de.gravitex.accounting.filter.impl.EqualFilter;
 import de.gravitex.accounting.gui.AlertMessageType;
 import de.gravitex.accounting.gui.AlertMessagesBuilder;
 import de.gravitex.accounting.modality.PaymentModality;
@@ -34,6 +36,10 @@ import lombok.Data;
 @Data
 public class AccountingManager implements FilteredValueReceiver {
 	
+	public static final String ATTR_PARTNER = "partner";
+	public static final String ATTR_CATEGORY = "category";
+	public static final String ATTR_ALARM = "alarm";
+
 	public static final String UNDEFINED_CATEGORY = "Undefiniert";
 	
 	private AccountingData accountingData;
@@ -45,7 +51,13 @@ public class AccountingManager implements FilteredValueReceiver {
 	private AccountManagerSettings accountManagerSettings;
 
 	private Income income;
-
+	
+	private static final EntityFilter<AccountingRow> entityFilter = new EntityFilter<AccountingRow>();
+	static {
+		entityFilter.registerFilter(new EqualFilter(ATTR_CATEGORY));
+		entityFilter.registerFilter(new EqualFilter(ATTR_PARTNER));
+	}
+	
 	public AccountingManager withAccountingData(AccountingData accountingData) {
 		this.accountingData = accountingData;
 		accountingData.validate();
@@ -368,5 +380,10 @@ public class AccountingManager implements FilteredValueReceiver {
 	@Override
 	public void receiveFilterValue(FilterValue filterValue) {
 		System.out.println("receiveFilterValue: " + filterValue);
+		entityFilter.setFilter(filterValue.getAttributeName(), filterValue.getValue());
+	}
+
+	public List<AccountingRow> getFilteredEntries() {
+		return entityFilter.filterItems(AccountingDao.getAllEntries(getAccountingData()));
 	}
 }

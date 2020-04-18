@@ -8,12 +8,16 @@ import javax.swing.JCheckBox;
 import de.gravitex.accounting.filter.FilterValue;
 import de.gravitex.accounting.filter.FilterValueProvider;
 import de.gravitex.accounting.filter.FilteredValueReceiver;
+import lombok.Data;
 
+@Data
 public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 
 	private static final long serialVersionUID = 3310334350858853081L;
 	
 	private FilteredValueReceiver filteredValueReceiver;
+	
+	private String attributeName;
 	
 	public FilterCheckBox() {
 		super();
@@ -33,5 +37,9 @@ public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 	@Override
 	public Object getSelectedFilterValue() {
 		return isSelected();
+	}
+	
+	public void setAttributeName(String attributeName) {
+		this.attributeName = attributeName;
 	}
 }

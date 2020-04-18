@@ -25,6 +25,8 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider {
 	private JDatePickerImpl datePickerTo;
 
 	private FilteredValueReceiver filteredValueReceiver;
+	
+	private String attributeName;
 
 	public FromToDateFilter() {
 		setLayout(new BorderLayout());
@@ -62,5 +64,9 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider {
 	@Override
 	public Object getSelectedFilterValue() {
 		return "KUH";
+	}
+	
+	public void setAttributeName(String attributeName) {
+		this.attributeName = attributeName;
 	}
 }

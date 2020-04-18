@@ -1,5 +1,7 @@
 package de.gravitex.accounting.filter.impl;
 
+import de.gravitex.accounting.filter.impl.base.AbstractItemFilter;
+
 public class EqualFilter extends AbstractItemFilter {
 
 	public EqualFilter(String attributeName) {
@@ -8,6 +10,8 @@ public class EqualFilter extends AbstractItemFilter {
 
 	@Override
 	public boolean accept(Object item) {
-		return getAttributeValue(item).equals(getFilterValue());
+		Object attributeValue = getAttributeValue(item);
+		// return attributeValue.equals(getFilterValue());
+		return doValuesEqual(attributeValue, getFilterValue());
 	}
 }

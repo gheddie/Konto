@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.impl.EqualFilter;
 
 public class FilterTest {
@@ -31,7 +32,7 @@ public class FilterTest {
 		entityFilter.setFilter(ATTR_INTEGER, 11);
 		assertEquals(1, entityFilter.filterItems(testItems).size());
 		
-		entityFilter.resetFilter(ATTR_STRING);
+		entityFilter.setFilter(ATTR_STRING, EntityFilter.NO_FILTER);
 		assertEquals(3, entityFilter.filterItems(testItems).size());
 	}
 	

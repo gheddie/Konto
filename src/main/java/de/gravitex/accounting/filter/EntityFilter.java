@@ -1,14 +1,16 @@
-package de.gravitex.accounting;
+package de.gravitex.accounting.filter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.gravitex.accounting.filter.impl.AbstractItemFilter;
+import de.gravitex.accounting.filter.impl.base.AbstractItemFilter;
 
 public class EntityFilter<T> {
 	
 	private HashMap<String, AbstractItemFilter> registeredFilters = new HashMap<String, AbstractItemFilter>();
+	
+	public static final String NO_FILTER = "[kein Eintrag]";
 
 	public List<T> filterItems(List<T> itemsToFilter) {
 		List<T> result = new ArrayList<T>();
@@ -21,9 +23,13 @@ public class EntityFilter<T> {
 	}
 	
 	public void setFilter(String attributeName, Object value) {
-		AbstractItemFilter filter = registeredFilters.get(attributeName);
-		filter.setActive(true);
-		filter.setFilterValue(value);
+		if (value.equals(NO_FILTER)) {
+			resetFilter(attributeName);
+		} else {
+			AbstractItemFilter filter = registeredFilters.get(attributeName);
+			filter.setActive(true);
+			filter.setFilterValue(value);	
+		}
 	}
 
 	private boolean matchesFilters(T item) {
@@ -39,7 +45,7 @@ public class EntityFilter<T> {
 		registeredFilters.put(filter.getAttributeName(), filter);
 	}
 
-	public void resetFilter(String attributeName) {
+	private void resetFilter(String attributeName) {
 		registeredFilters.get(attributeName).setActive(false);
 	}
 }

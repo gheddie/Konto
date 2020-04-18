@@ -132,4 +132,8 @@ public class AccountingSingleton {
 	public List<AccountingRow> getAllEntries() {
 		return AccountingDao.getAllEntries(accountingManager.getAccountingData());
 	}
+
+	public List<AccountingRow> getFilteredEntries() {
+		return accountingManager.getFilteredEntries();
+	}
 }
