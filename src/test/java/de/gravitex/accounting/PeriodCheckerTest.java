@@ -8,10 +8,30 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
+import de.gravitex.accounting.util.OverlapChecker;
+
 public class PeriodCheckerTest {
 	
 	@Test
 	public void testPeriodCheckerWithPeriodicalGaps() {
+		
+		OverlapChecker checker = new OverlapChecker()
+				.withPeriod(LocalDate.of(2017, 2, 10), LocalDate.of(2017, 2, 12))
+				.withPeriod(LocalDate.of(2017, 2, 15), LocalDate.of(2017, 2, 18))
+				.withPeriod(LocalDate.of(2017, 2, 23), LocalDate.of(2017, 2, 26));
+		
+		/**
+		 * gaps:
+		 * 
+		 * 13-14
+		 * 19-22
+		 */
+		
+		assertFalse(checker.check());
+		assertFalse(checker.isOverlapFlag());
+		assertFalse(checker.isInvalidPeriodFlag());
+		assertEquals(6, checker.getRemainingDays().size());
+		
 		
 	}
 	

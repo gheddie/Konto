@@ -1,8 +1,10 @@
-package de.gravitex.accounting;
+package de.gravitex.accounting.util;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.Data;
 
 public class OverlapChecker {
 	
@@ -34,9 +36,9 @@ public class OverlapChecker {
 				latest = myPeriod.getEnd();
 			}
 		}
-		for (LocalDate day : MyPeriod.fromValues(earliest, latest).getDays()) {
+		for (LocalDate day : new MyPeriod(earliest, latest).getDays()) {
 			System.out.println(day);
-			markers.add(LocalDateMarker.fromValues(day));
+			markers.add(new LocalDateMarker(day));
 		}
 		for (MyPeriod period : periods) {
 			for (LocalDate day : period.getDays()) {
@@ -80,7 +82,7 @@ public class OverlapChecker {
 	}
 
 	public OverlapChecker withPeriod(LocalDate aStart, LocalDate aEnd) {
-		periods.add(MyPeriod.fromValues(aStart, aEnd));
+		periods.add(new MyPeriod(aStart, aEnd));
 		return this;
 	}
 
@@ -107,5 +109,62 @@ public class OverlapChecker {
 
 	public boolean isInvalidPeriodFlag() {
 		return invalidPeriodFlag;
+	}
+	
+	@Data
+	private class LocalDateMarker {
+		
+		private LocalDate mark;
+		
+		private Boolean marked;
+		
+		private LocalDateMarker(LocalDate aMark) {
+			super();
+			this.mark = aMark;
+			this.marked = false;
+		}
+
+		public void check() throws Exception {
+			if (marked) {
+				throw new Exception();
+			}
+			marked = true;
+		}
+	}
+	
+	@Data
+	private class MyPeriod {
+		
+		private LocalDate start;
+		
+		private LocalDate end;
+
+		private MyPeriod(LocalDate aStart, LocalDate aEnd) {
+			super();
+			this.start = aStart;
+			this.end = aEnd;
+		}
+
+		public List<LocalDate> getDays() {
+			
+			List<LocalDate> result = new ArrayList<LocalDate>();
+			LocalDate actual = start;
+			while (!actual.isEqual(end)) {
+				result.add(actual);
+				actual = actual.plusDays(1);
+			}
+			result.add(actual);
+			return result;
+		}
+
+		public boolean valid() {
+			if (start == null || end == null) {
+				return false;	
+			}
+			if (end.isBefore(start)) {
+				return false;	
+			}
+			return true;
+		}
 	}
 }
