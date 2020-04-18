@@ -31,7 +31,7 @@ import de.gravitex.accounting.wrapper.Category;
 import lombok.Data;
 
 @Data
-public class AccountingManager {
+public class AccountingManager implements FilteredValueReceiver {
 	
 	public static final String UNDEFINED_CATEGORY = "Undefiniert";
 	
@@ -362,5 +362,10 @@ public class AccountingManager {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public void receiveFilterValue(FilterValue filterValue) {
+		System.out.println("receiveFilterValue: " + filterValue);
 	}
 }
