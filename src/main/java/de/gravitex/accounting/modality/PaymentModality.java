@@ -41,4 +41,8 @@ public abstract class PaymentModality {
 		// to be overwritten...
 		return false;
 	}
+
+	public boolean isPeriodically() {
+		return false;
+	}
 }

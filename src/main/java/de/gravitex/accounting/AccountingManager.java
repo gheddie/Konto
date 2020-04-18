@@ -224,6 +224,7 @@ public class AccountingManager {
 				result.add(accountingRow);
 			}
 		}
+		Collections.sort(result);
 		return result;
 	}
 
@@ -316,5 +317,24 @@ public class AccountingManager {
 					null, null);
 		}
 		return limit;
+	}
+
+	public boolean isCategoryPeriodically(String category) {
+		return getPaymentModality(category).isPeriodically();
+	}
+
+	public void checkValidities(String category) {
+		if (!getPaymentModality(category).isPeriodically()) {
+			return;
+		}
+		List<AccountingRow> entries = getAllEntriesForCategory(category);
+		for (AccountingRow accountingRow : entries) {
+			// all must have start and end set!!
+			if (!accountingRow.checkPeriod()) {
+				throw new AccountingException(
+						"no complete or invalid period {"+accountingRow.getValidFrom()+" - "+accountingRow.getValidUntil()+"} [" + accountingRow.getRunningIndex() + "]!!",
+						AccountingError.NO_COMPLETE_PERIOD, accountingRow);
+			}
+		}
 	}
 }

@@ -144,7 +144,7 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 		Cell cell = null;
 		while (cellIterator.hasNext()) {
 			cell = cellIterator.next();
-			if (cell.getColumnIndex() > COL_TEXT) {
+			if (cell.getColumnIndex() > COL_ALARM) {
 				if (AccountingUtil.getCellValue(Boolean.class, cell)) {
 					categorys.add(header.get(cell.getColumnIndex()));
 				}

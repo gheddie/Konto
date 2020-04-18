@@ -93,6 +93,20 @@ public class AccountingFrame extends JFrame {
 				}
 			}
 		});
+		btnCheckValidities.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					AccountingSingleton.getInstance().getAccountingManager()
+					.checkValidities(String.valueOf(categoriesByMonthList.getSelectedValue()));
+					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Zeiträume geprüft!!")
+							.getAlertMessages());
+				} catch (AccountingException e2) {
+					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, e2.getMessage())
+							.getAlertMessages());
+				}
+			}
+		});
 		btnPrepareBudgets.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -248,6 +262,7 @@ public class AccountingFrame extends JFrame {
 	}
 	
 	private void fillAllCategoryEntries(String category) {
+		
 		categoryEntriesTable.setBackground(Color.WHITE);
 		System.out.println("fillAllCategoryEntries : " + cbAllCategories.getSelectedItem());
 		List<AccountingRow> allEntriesForCategory = AccountingSingleton.getInstance().getAccountingManager()
@@ -359,6 +374,9 @@ public class AccountingFrame extends JFrame {
 		if (categoryModel == null) {
 			return;
 		}
+		
+		boolean categoryPeriodically = AccountingSingleton.getInstance().getAccountingManager().isCategoryPeriodically(categoryModel.getCategory());
+		btnCheckValidities.setEnabled(categoryPeriodically);
 
 		DefaultTableModel tablemodel = new DefaultTableModel();
 		for (String col : categoryModel.getHeaders()) {
@@ -403,6 +421,7 @@ public class AccountingFrame extends JFrame {
 		btnCheckSaldo = new JButton();
 		btnReloadData = new JButton();
 		btnClose = new JButton();
+		btnCheckValidities = new JButton();
 		tbpMain = new JTabbedPane();
 		pnlData = new JPanel();
 		scrollPane1 = new JScrollPane();
@@ -467,16 +486,21 @@ public class AccountingFrame extends JFrame {
 			tbMain.setEnabled(false);
 
 			//---- btnCheckSaldo ----
-			btnCheckSaldo.setText("Check Saldo");
+			btnCheckSaldo.setText("Saldo pr\u00fcfen");
 			tbMain.add(btnCheckSaldo);
 
 			//---- btnReloadData ----
-			btnReloadData.setText("Reload Data");
+			btnReloadData.setText("Neu laden");
 			tbMain.add(btnReloadData);
 
 			//---- btnClose ----
-			btnClose.setText("Close");
+			btnClose.setText("Beenden");
 			tbMain.add(btnClose);
+
+			//---- btnCheckValidities ----
+			btnCheckValidities.setText("Zeitr\u00e4ume pr\u00fcfen");
+			btnCheckValidities.setEnabled(false);
+			tbMain.add(btnCheckValidities);
 		}
 		contentPane.add(tbMain, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -487,12 +511,12 @@ public class AccountingFrame extends JFrame {
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border.
-				EmptyBorder( 0, 0, 0, 0) , "JFor\u006dDesi\u0067ner \u0045valu\u0061tion", javax. swing. border. TitledBorder. CENTER, javax. swing
-				. border. TitledBorder. BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ),
-				java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( )
-				{ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("bord\u0065r" .equals (e .getPropertyName () ))
-				throw new RuntimeException( ); }} );
+				pnlData.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax . swing. border .EmptyBorder
+				( 0, 0 ,0 , 0) ,  "JF\u006frmDesi\u0067ner Ev\u0061luatio\u006e" , javax. swing .border . TitledBorder. CENTER ,javax . swing. border
+				.TitledBorder . BOTTOM, new java. awt .Font ( "Dialo\u0067", java .awt . Font. BOLD ,12 ) ,java . awt
+				. Color .red ) ,pnlData. getBorder () ) ); pnlData. addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override public void
+				propertyChange (java . beans. PropertyChangeEvent e) { if( "borde\u0072" .equals ( e. getPropertyName () ) )throw new RuntimeException( )
+				;} } );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -804,6 +828,7 @@ public class AccountingFrame extends JFrame {
 	private JButton btnCheckSaldo;
 	private JButton btnReloadData;
 	private JButton btnClose;
+	private JButton btnCheckValidities;
 	private JTabbedPane tbpMain;
 	private JPanel pnlData;
 	private JScrollPane scrollPane1;

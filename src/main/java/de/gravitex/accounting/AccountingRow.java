@@ -61,4 +61,14 @@ public class AccountingRow implements Comparable<AccountingRow> {
 			return new String[] {String.valueOf(runningIndex), date.toString(), amount.toString(), text};
 		}
 	}
+
+	public boolean checkPeriod() {
+		if (validFrom == null || validUntil == null) {
+			return false;
+		}
+		if (validUntil.isBefore(validFrom)) {
+			return false;
+		}
+		return true;
+	}
 }

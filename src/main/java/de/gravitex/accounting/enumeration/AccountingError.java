@@ -20,5 +20,7 @@ public enum AccountingError {
 	
 	BUDGET_OVERPLANNED,
 	
-	NO_AMOUNT
+	NO_AMOUNT,
+	
+	NO_COMPLETE_PERIOD
 }

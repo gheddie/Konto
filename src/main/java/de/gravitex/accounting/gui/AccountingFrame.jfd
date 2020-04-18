@@ -18,15 +18,20 @@ new FormModel {
 				"enabled": false
 				add( new FormComponent( "javax.swing.JButton" ) {
 					name: "btnCheckSaldo"
-					"text": "Check Saldo"
+					"text": "Saldo prüfen"
 				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
 					name: "btnReloadData"
-					"text": "Reload Data"
+					"text": "Neu laden"
 				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
 					name: "btnClose"
-					"text": "Close"
+					"text": "Beenden"
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "btnCheckValidities"
+					"text": "Zeiträume prüfen"
+					"enabled": false
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
