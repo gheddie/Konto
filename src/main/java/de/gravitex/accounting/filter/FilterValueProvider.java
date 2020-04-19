@@ -7,4 +7,6 @@ public interface FilterValueProvider {
 	void acceptFilterReceiver(FilteredValueReceiver filteredValueReceiver);
 	
 	Object getSelectedFilterValue();
+	
+	void setAttributeName(String attributeName);
 }
