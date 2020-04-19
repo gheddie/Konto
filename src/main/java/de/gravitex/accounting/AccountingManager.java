@@ -252,9 +252,11 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		return result;
 	}
 
+	/*
 	public Set<String> getDistinctPartners() {
 		return accountingData.getDistinctPartners();
 	}
+	*/
 	
 	public PaymentModality initPaymentModality(MonthKey monthKey, String category) {
 		PaymentModality paymentModality = getPaymentModality(category);
@@ -427,7 +429,6 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 	@Override
 	protected List<AccountingRow> loadAllItems() {
-		// TODO Auto-generated method stub
-		return null;
+		return accountingData.getAllEntriesSorted();
 	}
 }

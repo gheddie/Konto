@@ -23,7 +23,7 @@ public class EntityFilter<T> {
 	}
 	
 	public void setFilter(String attributeName, Object value) {
-		if (value.equals(NO_FILTER)) {
+		if (value != null && value.equals(NO_FILTER)) {
 			resetFilter(attributeName);
 		} else {
 			AbstractItemFilter filter = registeredFilters.get(attributeName);

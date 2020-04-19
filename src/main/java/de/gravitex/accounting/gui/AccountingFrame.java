@@ -158,13 +158,13 @@ public class AccountingFrame extends JFrame {
 				System.exit(0);
 			}
 		});
+		initFilters();
 		fillAccountingMonths();
 		fillAllPartners();
 		fillAllCategories();
 		fillBudgetPlannings();
 		initSettings();
 		filterTable.loadData();
-		initFilters();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
@@ -185,12 +185,7 @@ public class AccountingFrame extends JFrame {
 	}
 
 	private void fillAllPartners() {
-		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		Set<String> allCategories = AccountingSingleton.getInstance().getAccountingManager().getDistinctPartners();
-		for (String partner : allCategories) {
-			model.addElement(partner);
-		}
-		cbFilterAllPartners.setModel(model);
+		cbFilterAllPartners.initData();
 	}
 
 	private void initSettings() {
@@ -238,12 +233,7 @@ public class AccountingFrame extends JFrame {
 	}
 	
 	private void fillAllCategories() {
-		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		Set<Category> allCategories = AccountingSingleton.getInstance().getAccountingManager().getAccountingData().getDistinctCategories();
-		for (Category category : allCategories) {
-			model.addElement(category.getCategory());
-		}
-		cbFilterAllCategories.setModel(model);
+		cbFilterAllCategories.initData();
 	}
 	
 	private void fillAllPartnerEntries(String partner) {

@@ -16,7 +16,9 @@ public abstract class FilteredValueReceiver<T> implements IFilteredValueReceiver
 		Object attributeValue = null;
 		for (T item : loadAllItems()) {
 			attributeValue = FilterUitl.getAttributeValue(attributeName, item);
-			result.add(attributeValue);
+			if (attributeValue != null && !String.valueOf(attributeValue).isEmpty()) {
+				result.add(attributeValue);				
+			}
 		}
 		return result;
 	}

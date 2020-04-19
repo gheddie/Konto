@@ -40,7 +40,8 @@ public class AccountingData {
 		}
 		return result;
 	}
-	
+
+	/*
 	public Set<String> getDistinctPartners() {
 		Set<String> result = new HashSet<String>();
 		for (AccountingRow accountingRow : getAllEntriesSorted()) {
@@ -50,6 +51,7 @@ public class AccountingData {
 		}
 		return result;
 	}
+	*/
 
 	public List<AccountingRow> getAllEntriesSorted() {
 		List<AccountingRow> result = new ArrayList<AccountingRow>();
