@@ -19,8 +19,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -41,7 +39,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 import org.apache.log4j.Logger;
 
@@ -51,9 +48,10 @@ import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.exception.AccountingException;
-import de.gravitex.accounting.gui.component.*;
+import de.gravitex.accounting.filter.interfacing.FilterDataChangedListener;
 import de.gravitex.accounting.gui.component.FilterCheckBox;
 import de.gravitex.accounting.gui.component.FilterComboBox;
+import de.gravitex.accounting.gui.component.FilterTable;
 import de.gravitex.accounting.gui.component.FromToDateFilter;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
@@ -64,7 +62,7 @@ import de.gravitex.accounting.wrapper.Category;
 import lombok.Data;
 
 @Data
-public class AccountingFrame extends JFrame {
+public class AccountingFrame extends JFrame implements FilterDataChangedListener {
 	
 	private static final Logger logger = Logger.getLogger(AccountingFrame.class);
 
@@ -160,8 +158,8 @@ public class AccountingFrame extends JFrame {
 		});
 		initFilters();
 		fillAccountingMonths();
-		fillAllPartners();
-		fillAllCategories();
+		cbFilterAllPartners.initData();
+		cbFilterAllCategories.initData();
 		fillBudgetPlannings();
 		initSettings();
 		filterTable.loadData();
@@ -176,19 +174,12 @@ public class AccountingFrame extends JFrame {
 		cbFilterAllCategories.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_CATEGORY);
 		cbFilterAllPartners.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_PARTNER);
 		fromToDateFilter.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_DATE);
-	}
-
-	private void prepareFilterTable() {
 		
-		TableColumn col = filterTable.getColumnModel().getColumn(0);
-		col.setCellEditor(new DefaultCellEditor(new JCheckBox()));
-	}
-
-	private void fillAllPartners() {
-		cbFilterAllPartners.initData();
+		filterTable.acceptDataChagedListener(this);
 	}
 
 	private void initSettings() {
+		
 		chkRealValuesInBudgets.setSelected(
 				AccountingSingleton.getInstance().getAccountingManager().getAccountManagerSettings().isShowActualValuesInBidgetPlanning());
 		chkRealValuesInBudgets.addActionListener(new ActionListener() {
@@ -232,44 +223,6 @@ public class AccountingFrame extends JFrame {
 		});
 	}
 	
-	private void fillAllCategories() {
-		cbFilterAllCategories.initData();
-	}
-	
-	private void fillAllPartnerEntries(String partner) {
-		List<AccountingRow> allEntriesForPartner = AccountingSingleton.getInstance().getAccountingManager().getAllEntriesForPartner(partner);
-		DefaultTableModel tablemodel = new DefaultTableModel();
-		for (String col : AccountingResultCategoryModel.getHeadersFromUntil()) {
-			tablemodel.addColumn(col);
-		}
-		BigDecimal sum = new BigDecimal(0);
-		for (AccountingRow row : allEntriesForPartner) {
-			tablemodel.addRow(row.asTableRow(true));
-			sum = sum.add(row.getAmount());
-		}
-		filterTable.setModel(tablemodel);
-		tfFilterSum.setText(sum.toString());
-	}
-	
-	private void fillAllCategoryEntries(String category) {
-		
-		categoryEntriesTable.setBackground(Color.WHITE);
-		logger.info("fillAllCategoryEntries : " + cbFilterAllCategories.getSelectedItem());
-		List<AccountingRow> allEntriesForCategory = AccountingSingleton.getInstance().getAccountingManager()
-				.getAllEntriesForCategory(category);
-		DefaultTableModel tablemodel = new DefaultTableModel();
-		for (String col : AccountingResultCategoryModel.getHeadersFromUntil()) {
-			tablemodel.addColumn(col);
-		}
-		BigDecimal sum = new BigDecimal(0);
-		for (AccountingRow row : allEntriesForCategory) {
-			tablemodel.addRow(row.asTableRow(true));
-			sum = sum.add(row.getAmount());
-		}
-		filterTable.setModel(tablemodel);
-		tfFilterSum.setText(sum.toString());
-	}
-
 	@SuppressWarnings("unchecked")
 	private void fillAccountingMonths() {
 		
@@ -884,4 +837,14 @@ public class AccountingFrame extends JFrame {
 	private JTable messagesTable;
 	private JLabel label3;
 	// JFormDesigner - End of variables declaration //GEN-END:variables
+
+	@Override
+	public void filterDataChanged() {
+		logger.info("filter data changed...");
+		BigDecimal sum = new BigDecimal(0);
+		for (AccountingRow accountingRow : AccountingSingleton.getInstance().getAccountingManager().getFilteredEntries()) {
+			sum = sum.add(accountingRow.getAmount());
+		}
+		tfFilterSum.setText(sum.toString());
+	}
 }

@@ -20,6 +20,7 @@ import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.FilterValue;
 import de.gravitex.accounting.filter.FilteredValueReceiver;
+import de.gravitex.accounting.filter.impl.DateRangeFilter;
 import de.gravitex.accounting.filter.impl.EqualFilter;
 import de.gravitex.accounting.gui.AlertMessagesBuilder;
 import de.gravitex.accounting.modality.PaymentModality;
@@ -32,9 +33,7 @@ import de.gravitex.accounting.util.OverlapChecker;
 import de.gravitex.accounting.util.TimelineProjectonResult;
 import de.gravitex.accounting.util.TimelineProjector;
 import de.gravitex.accounting.wrapper.Category;
-import lombok.Data;
 
-@Data
 public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	
 	private static final Logger logger = Logger.getLogger(AccountingManager.class);
@@ -60,6 +59,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	static {
 		entityFilter.registerFilter(new EqualFilter(ATTR_CATEGORY));
 		entityFilter.registerFilter(new EqualFilter(ATTR_PARTNER));
+		entityFilter.registerFilter(new DateRangeFilter(ATTR_DATE));
 	}
 	
 	public AccountingManager withAccountingData(AccountingData accountingData) {
@@ -367,7 +367,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 	public List<Category> getPeriodicalPaymentCategories() {
 		List<Category> result = new ArrayList<Category>();
-		Set<Category> distinctCategories = getAccountingData().getDistinctCategories();
+		Set<Category> distinctCategories = accountingData.getDistinctCategories();
 		for (Category category : distinctCategories) {
 			if (getPaymentModality(category.getCategory()).isPeriodically()) {
 				result.add(category);
@@ -400,5 +400,17 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	@Override
 	protected List<AccountingRow> loadAllItems() {
 		return accountingData.getAllEntriesSorted();
+	}
+
+	public AccountManagerSettings getAccountManagerSettings() {
+		return accountManagerSettings;
+	}
+
+	public AccountingData getAccountingData() {
+		return accountingData;
+	}
+
+	public HashMap<MonthKey, BudgetPlanning> getBudgetPlannings() {
+		return budgetPlannings;
 	}
 }

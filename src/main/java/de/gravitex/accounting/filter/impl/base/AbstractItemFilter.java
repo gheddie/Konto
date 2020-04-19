@@ -1,15 +1,16 @@
 package de.gravitex.accounting.filter.impl.base;
 
+import de.gravitex.accounting.filter.FilterUitl;
 import lombok.Data;
 
 @Data
-public abstract class AbstractItemFilter {
+public abstract class AbstractItemFilter<T> {
 
 	private String attributeName;
 	
 	private boolean active = false;
 	
-	private Object filterValue;
+	private T filterValue;
 
 	public AbstractItemFilter(String attributeName) {
 		super();
@@ -17,4 +18,8 @@ public abstract class AbstractItemFilter {
 	}
 	
 	public abstract boolean accept(Object item);
+	
+	protected Object getAttributeValue(Object item) {
+		return FilterUitl.getAttributeValue(getAttributeName(), item);
+	}
 }

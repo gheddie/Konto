@@ -15,7 +15,7 @@ import de.gravitex.accounting.filter.interfacing.FilterValueProvider;
 import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
 import de.gravitex.accounting.filter.interfacing.IFilteredValueReceiver;
 
-public class FilterComboBox<T> extends JComboBox<T> implements FilterValueProvider {
+public class FilterComboBox<T> extends JComboBox<T> implements FilterValueProvider<Object> {
 
 	private static final long serialVersionUID = 9138045791347078807L;
 	
@@ -61,11 +61,12 @@ public class FilterComboBox<T> extends JComboBox<T> implements FilterValueProvid
 		return getSelectedItem();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initData() {
 		logger.debug("loading data...");
 		DefaultComboBoxModel<T> model = new DefaultComboBoxModel<T>();
-		for (Object o :filteredValueReceiver.loadDistinctItems(attributeName)) {
+		for (Object o : filteredValueReceiver.loadDistinctItems(attributeName)) {
 			model.addElement((T) o);
 		}
 		setModel(model);

@@ -10,8 +10,11 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import de.gravitex.accounting.filter.EntityFilter;
+import de.gravitex.accounting.filter.impl.DateRangeFilter;
 import de.gravitex.accounting.filter.impl.EqualFilter;
+import de.gravitex.accounting.filter.util.LocalDateRange;
 import de.gravitex.accounting.gui.component.FilterComboBox;
+import de.gravitex.accounting.gui.component.FromToDateFilter;
 import de.gravitex.accounting.util.FakedValueHolder;
 import de.gravitex.accounting.util.FilterTestDataProvider;
 
@@ -24,19 +27,38 @@ public class FilterTest {
 		
 		List<FilterTestItem> testItems = new ArrayList<FilterTestItem>();
 		
-		testItems.add(new FilterTestItem("A", 11, LocalDate.of(2020, 2, 20)));
-		testItems.add(new FilterTestItem("A", 12, LocalDate.of(2020, 2, 20)));
-		testItems.add(new FilterTestItem("A", 13, LocalDate.of(2020, 2, 20)));
+		testItems.add(new FilterTestItem("A", 11, LocalDate.of(2021, 2, 20)));
+		testItems.add(new FilterTestItem("A", 12, LocalDate.of(2022, 2, 20)));
+		testItems.add(new FilterTestItem("A", 13, LocalDate.of(2023, 2, 20)));
 		
-		testItems.add(new FilterTestItem("B", 11, LocalDate.of(2020, 2, 20)));
-		testItems.add(new FilterTestItem("B", 12, LocalDate.of(2020, 2, 20)));
-		testItems.add(new FilterTestItem("B", 13, LocalDate.of(2020, 2, 20)));
+		testItems.add(new FilterTestItem("B", 11, LocalDate.of(2024, 2, 20)));
+		testItems.add(new FilterTestItem("B", 12, LocalDate.of(2025, 2, 20)));
+		testItems.add(new FilterTestItem("B", 13, LocalDate.of(2026, 2, 20)));
 		
-		testItems.add(new FilterTestItem("C", 11, LocalDate.of(2020, 2, 20)));
-		testItems.add(new FilterTestItem("C", 12, LocalDate.of(2020, 2, 20)));
-		testItems.add(new FilterTestItem("C", 13, LocalDate.of(2020, 2, 20)));
+		testItems.add(new FilterTestItem("C", 11, LocalDate.of(2027, 2, 20)));
+		testItems.add(new FilterTestItem("C", 12, LocalDate.of(2028, 2, 20)));
+		testItems.add(new FilterTestItem("C", 13, LocalDate.of(2029, 2, 20)));
 		
 		filterTestData.setFilterTestItems(testItems);
+	}
+	
+	@Test
+	public void testDateFilter() {
+		
+		EntityFilter<FilterTestItem> entityFilter = new EntityFilter<FilterTestItem>();
+		
+		// register filters
+		entityFilter.registerFilter(new DateRangeFilter(FilterTestDataProvider.ATTR_LOCAL_DATE));
+		
+		// set up components
+		FromToDateFilter filterLocalDate = new FromToDateFilter();
+		FakedValueHolder fakedValueHolder = new FakedValueHolder();
+		filterLocalDate.setMvcData(filterTestData, fakedValueHolder, FilterTestDataProvider.ATTR_LOCAL_DATE);
+		filterLocalDate.initData();
+		
+		entityFilter.setFilter(FilterTestDataProvider.ATTR_LOCAL_DATE, LocalDateRange.fromValues(LocalDate.of(2024, 2, 20), LocalDate.of(2026, 2, 20)));
+		
+		assertEquals(3, entityFilter.filterItems(filterTestData.getFilterTestItems()).size());
 	}
 
 	@Test

@@ -3,10 +3,12 @@ package de.gravitex.accounting.gui.component;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.util.Properties;
 
 import javax.swing.JPanel;
 
+import org.jdatepicker.DateModel;
 import org.jdatepicker.impl.DateComponentFormatter;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -16,8 +18,9 @@ import de.gravitex.accounting.filter.FilterValue;
 import de.gravitex.accounting.filter.interfacing.FilterValueProvider;
 import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
 import de.gravitex.accounting.filter.interfacing.IFilteredValueReceiver;
+import de.gravitex.accounting.filter.util.LocalDateRange;
 
-public class FromToDateFilter extends JPanel implements FilterValueProvider {
+public class FromToDateFilter extends JPanel implements FilterValueProvider<LocalDateRange> {
 
 	private static final long serialVersionUID = -9222184285488288619L;
 
@@ -40,13 +43,14 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider {
 		datePickerFrom.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(null, getSelectedFilterValue()));
+				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(attributeName, getSelectedFilterValue()));
+				filteredValuesHolder.loadData();
 			}
 		});
 		datePickerTo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(null, getSelectedFilterValue()));
+				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(attributeName, getSelectedFilterValue()));
 				filteredValuesHolder.loadData();
 			}
 		});
@@ -69,8 +73,14 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider {
 	}
 
 	@Override
-	public Object getSelectedFilterValue() {
-		return "KUH";
+	public LocalDateRange getSelectedFilterValue() {
+		LocalDate aFrom = toLocalDate(datePickerFrom.getModel());
+		LocalDate aTo = toLocalDate(datePickerTo.getModel());
+		return LocalDateRange.fromValues(aFrom, aTo);
+	}
+
+	private LocalDate toLocalDate(DateModel<?> model) {
+		return LocalDate.of(model.getYear(), model.getMonth() + 1, model.getDay());
 	}
 
 	@Override

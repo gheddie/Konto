@@ -12,7 +12,7 @@ import de.gravitex.accounting.filter.interfacing.FilterValueProvider;
 import de.gravitex.accounting.filter.interfacing.IFilteredValueReceiver;
 import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
 
-public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
+public class FilterCheckBox extends JCheckBox implements FilterValueProvider<Boolean> {
 
 	private static final long serialVersionUID = 3310334350858853081L;
 	
@@ -42,7 +42,7 @@ public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 	}
 
 	@Override
-	public Object getSelectedFilterValue() {
+	public Boolean getSelectedFilterValue() {
 		return isSelected();
 	}
 
