@@ -21,6 +21,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.AccountingUtil;
+import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.util.MonthKey;
 
 public class AccountingGuiHelper {

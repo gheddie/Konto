@@ -47,7 +47,9 @@ import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.BudgetEvaluation;
+import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.gui.component.*;
 import de.gravitex.accounting.gui.component.FilterCheckBox;
 import de.gravitex.accounting.gui.component.FilterComboBox;
 import de.gravitex.accounting.gui.component.FromToDateFilter;
@@ -115,17 +117,6 @@ public class AccountingFrame extends JFrame {
 					}
 				}
 				taOutput.setText(buffer.toString());
-				
-				/*
-				try {
-					accountingManager
-					.checkValidities(String.valueOf(categoriesByMonthList.getSelectedValue()));
-					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Zeiträume geprüft!!")
-							.getAlertMessages());
-				} catch (AccountingException e2) {
-					pushMessages(e2.getAlertMessages());
-				}
-				*/
 			}
 		});
 		btnPrepareBudgets.addActionListener(new ActionListener() {
@@ -157,13 +148,6 @@ public class AccountingFrame extends JFrame {
 				AccountingSingleton.getInstance().initialize();
 			}
 		});
-		btnReloadFilter.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("reload");
-				fillFilterTable();
-			}
-		});
 		btnClose.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -172,45 +156,22 @@ public class AccountingFrame extends JFrame {
 		});
 		fillAccountingMonths();
 		fillAllPartners();
-		/*
-		cbFilterAllPartners.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("partner: " + cbFilterAllPartners.getSelectedItem());
-				fillAllPartnerEntries(cbFilterAllPartners.getSelectedItem().toString());
-			}
-		});
-		*/
 		fillAllCategories();
-		/*
-		cbFilterAllCategories.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fillAllCategoryEntries(cbFilterAllCategories.getSelectedItem().toString());
-			}
-		});
-		*/
 		fillBudgetPlannings();
 		initSettings();
-		fillFilterTable();
+		filterTable.loadData();
 		initFilters();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	private void initFilters() {
+		
 		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
 		
-		cbFilterAlarm.acceptFilterReceiver(accountingManager);
-		cbFilterAlarm.setAttributeName(AccountingManager.ATTR_ALARM);
-		
-		cbFilterAllCategories.acceptFilterReceiver(accountingManager);
-		cbFilterAllCategories.setAttributeName(AccountingManager.ATTR_CATEGORY);
-		
-		cbFilterAllPartners.acceptFilterReceiver(accountingManager);
-		cbFilterAllPartners.setAttributeName(AccountingManager.ATTR_PARTNER);
-		
-		fromToDateFilter.acceptFilterReceiver(accountingManager);
-		fromToDateFilter.setAttributeName(AccountingManager.ATTR_ALARM);
+		cbFilterAlarm.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_ALARM);
+		cbFilterAllCategories.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_CATEGORY);
+		cbFilterAllPartners.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_PARTNER);
+		fromToDateFilter.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_DATE);
 	}
 
 	private void prepareFilterTable() {
@@ -279,22 +240,6 @@ public class AccountingFrame extends JFrame {
 			model.addElement(category.getCategory());
 		}
 		cbFilterAllCategories.setModel(model);
-	}
-	
-	public void fillFilterTable() {
-		
-		List<AccountingRow> allEntries = AccountingSingleton.getInstance().getFilteredEntries();
-		DefaultTableModel tablemodel = new DefaultTableModel();
-		for (String col : AccountingResultCategoryModel.getHeadersFromUntil()) {
-			tablemodel.addColumn(col);
-		}
-		BigDecimal sum = new BigDecimal(0);
-		for (AccountingRow row : allEntries) {
-			sum = sum.add(row.getAmount());
-			tablemodel.addRow(row.asTableRow(true));
-		}
-		filterTable.setModel(tablemodel);
-		tfFilterSum.setText(sum.toString());
 	}
 	
 	private void fillAllPartnerEntries(String partner) {
@@ -508,14 +453,13 @@ public class AccountingFrame extends JFrame {
 		label1 = new JLabel();
 		cbFilterAllCategories = new FilterComboBox();
 		scFilterTable = new JScrollPane();
-		filterTable = new JTable();
+		filterTable = new FilterTable();
 		label4 = new JLabel();
 		cbFilterAllPartners = new FilterComboBox();
 		label7 = new JLabel();
 		fromToDateFilter = new FromToDateFilter();
 		label5 = new JLabel();
 		cbFilterAlarm = new FilterCheckBox();
-		btnReloadFilter = new JButton();
 		label6 = new JLabel();
 		tfFilterSum = new JTextField();
 		pnlSettings = new JPanel();
@@ -566,12 +510,13 @@ public class AccountingFrame extends JFrame {
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border.
-				EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDes\u0069gner \u0045valua\u0074ion", javax. swing. border. TitledBorder. CENTER, javax. swing
-				. border. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069alog" ,java .awt .Font .BOLD ,12 ),
-				java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( )
-				{ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062order" .equals (e .getPropertyName () ))
-				throw new RuntimeException( ); }} );
+				pnlData.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax
+				. swing. border .EmptyBorder ( 0, 0 ,0 , 0) ,  "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn" , javax. swing
+				.border . TitledBorder. CENTER ,javax . swing. border .TitledBorder . BOTTOM, new java. awt .
+				Font ( "Dia\u006cog", java .awt . Font. BOLD ,12 ) ,java . awt. Color .red
+				) ,pnlData. getBorder () ) ); pnlData. addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override
+				public void propertyChange (java . beans. PropertyChangeEvent e) { if( "\u0062ord\u0065r" .equals ( e. getPropertyName (
+				) ) )throw new RuntimeException( ) ;} } );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -758,9 +703,9 @@ public class AccountingFrame extends JFrame {
 			{
 				pnlFilter.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlFilter.getLayout()).columnWidths = new int[] {0, 0, 0, 0, 0};
-				((GridBagLayout)pnlFilter.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0, 0};
+				((GridBagLayout)pnlFilter.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0};
 				((GridBagLayout)pnlFilter.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0, 1.0E-4};
-				((GridBagLayout)pnlFilter.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0E-4};
+				((GridBagLayout)pnlFilter.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0E-4};
 
 				//---- label1 ----
 				label1.setText("Kategorie");
@@ -775,7 +720,7 @@ public class AccountingFrame extends JFrame {
 				{
 					scFilterTable.setViewportView(filterTable);
 				}
-				pnlFilter.add(scFilterTable, new GridBagConstraints(2, 0, 2, 6, 0.0, 0.0,
+				pnlFilter.add(scFilterTable, new GridBagConstraints(2, 0, 2, 5, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 0), 0, 0));
 
@@ -806,21 +751,15 @@ public class AccountingFrame extends JFrame {
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 
-				//---- btnReloadFilter ----
-				btnReloadFilter.setText("Neu laden");
-				pnlFilter.add(btnReloadFilter, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 5, 5), 0, 0));
-
 				//---- label6 ----
 				label6.setText("Summe:");
-				pnlFilter.add(label6, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0,
+				pnlFilter.add(label6, new GridBagConstraints(2, 5, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 0, 5), 0, 0));
 
 				//---- tfFilterSum ----
 				tfFilterSum.setEditable(false);
-				pnlFilter.add(tfFilterSum, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0,
+				pnlFilter.add(tfFilterSum, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 0, 0), 0, 0));
 			}
@@ -932,14 +871,13 @@ public class AccountingFrame extends JFrame {
 	private JLabel label1;
 	private FilterComboBox cbFilterAllCategories;
 	private JScrollPane scFilterTable;
-	private JTable filterTable;
+	private FilterTable filterTable;
 	private JLabel label4;
 	private FilterComboBox cbFilterAllPartners;
 	private JLabel label7;
 	private FromToDateFilter fromToDateFilter;
 	private JLabel label5;
 	private FilterCheckBox cbFilterAlarm;
-	private JButton btnReloadFilter;
 	private JLabel label6;
 	private JTextField tfFilterSum;
 	private JPanel pnlSettings;

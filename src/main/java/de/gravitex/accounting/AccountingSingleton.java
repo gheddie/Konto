@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import de.gravitex.accounting.dao.AccountingDao;
-import de.gravitex.accounting.dao.AccoutingDataProvider;
-import de.gravitex.accounting.dao.IAccoutingDataProvider;
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.provider.AccoutingDataProvider;
+import de.gravitex.accounting.provider.IAccoutingDataProvider;
 import de.gravitex.accounting.setting.AccountManagerSettings;
 import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.wrapper.Category;
@@ -114,23 +113,23 @@ public class AccountingSingleton {
 	}
 
 	public Set<String> getAllPartners(AccountingData accountingData) {
-		return AccountingDao.getAllPartners(accountingData);
+		return accountingManager.getAllPartners(accountingData);
 	}
 
 	public Set<Category> getAllCategories(AccountingData accountingData) {
-		return AccountingDao.getAllCategories(accountingData, accountingManager);
+		return accountingManager.getAllCategories(accountingData, accountingManager);
 	}
 
 	public List<AccountingRow> getAllEntriesForCategory(String category, AccountingData accountingData) {
-		return AccountingDao.getAllEntriesForCategory(accountingData, category);
+		return accountingManager.getAllEntriesForCategory(category);
 	}
 
 	public List<AccountingRow> getAllEntriesForPartner(String partner, AccountingData accountingData) {
-		return AccountingDao.getAllEntriesForPartner(accountingData, partner);
+		return accountingManager.getAllEntriesForPartner(partner);
 	}
 
 	public List<AccountingRow> getAllEntries() {
-		return AccountingDao.getAllEntries(accountingManager.getAccountingData());
+		return accountingManager.getAllEntries();
 	}
 
 	public List<AccountingRow> getFilteredEntries() {

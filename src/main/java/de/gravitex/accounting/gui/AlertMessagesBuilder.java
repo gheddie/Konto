@@ -3,6 +3,7 @@ package de.gravitex.accounting.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.gravitex.accounting.enumeration.AlertMessageType;
 import lombok.Data;
 
 @Data

@@ -1,5 +1,6 @@
 package de.gravitex.accounting.gui;
 
+import de.gravitex.accounting.enumeration.AlertMessageType;
 import lombok.Data;
 
 @Data

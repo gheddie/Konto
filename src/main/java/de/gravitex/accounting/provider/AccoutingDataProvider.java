@@ -1,4 +1,4 @@
-package de.gravitex.accounting.dao;
+package de.gravitex.accounting.provider;
 
 import java.io.File;
 import java.io.FileInputStream;

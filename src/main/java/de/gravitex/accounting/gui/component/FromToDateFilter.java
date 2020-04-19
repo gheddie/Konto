@@ -3,6 +3,7 @@ package de.gravitex.accounting.gui.component;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -13,8 +14,9 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import de.gravitex.accounting.filter.FilterValue;
-import de.gravitex.accounting.filter.FilterValueProvider;
-import de.gravitex.accounting.filter.FilteredValueReceiver;
+import de.gravitex.accounting.filter.interfacing.FilterValueProvider;
+import de.gravitex.accounting.filter.interfacing.FilteredValueReceiver;
+import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
 
 public class FromToDateFilter extends JPanel implements FilterValueProvider {
 
@@ -27,6 +29,8 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider {
 	private FilteredValueReceiver filteredValueReceiver;
 	
 	private String attributeName;
+
+	private FilteredValuesHolder filteredValuesHolder;
 
 	public FromToDateFilter() {
 		setLayout(new BorderLayout());
@@ -44,6 +48,7 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(null, getSelectedFilterValue()));
+				filteredValuesHolder.loadData();
 			}
 		});
 	}
@@ -57,16 +62,20 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider {
 	}
 
 	@Override
-	public void acceptFilterReceiver(FilteredValueReceiver filteredValueReceiver) {
+	public void setMvcData(FilteredValueReceiver filteredValueReceiver, FilteredValuesHolder filteredValuesHolder,
+			String attributeName) {
 		this.filteredValueReceiver = filteredValueReceiver;
+		this.filteredValuesHolder = filteredValuesHolder;
+		this.attributeName = attributeName;
 	}
 
 	@Override
 	public Object getSelectedFilterValue() {
 		return "KUH";
 	}
-	
-	public void setAttributeName(String attributeName) {
-		this.attributeName = attributeName;
+
+	@Override
+	public List<?> loadData() {
+		return null;
 	}
 }

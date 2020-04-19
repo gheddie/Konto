@@ -10,16 +10,15 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import de.gravitex.accounting.dao.AccountingDao;
 import de.gravitex.accounting.enumeration.AccountingError;
+import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.enumeration.BudgetEvaluationResult;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.FilterValue;
-import de.gravitex.accounting.filter.FilteredValueReceiver;
 import de.gravitex.accounting.filter.impl.EqualFilter;
-import de.gravitex.accounting.gui.AlertMessageType;
+import de.gravitex.accounting.filter.interfacing.FilteredValueReceiver;
 import de.gravitex.accounting.gui.AlertMessagesBuilder;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
@@ -39,6 +38,7 @@ public class AccountingManager implements FilteredValueReceiver {
 	public static final String ATTR_PARTNER = "partner";
 	public static final String ATTR_CATEGORY = "category";
 	public static final String ATTR_ALARM = "alarm";
+	public static final String ATTR_DATE = "date";
 
 	public static final String UNDEFINED_CATEGORY = "Undefiniert";
 	
@@ -84,13 +84,6 @@ public class AccountingManager implements FilteredValueReceiver {
 		return this;
 	}
 	
-	private boolean budgetPlanningPresentFor(MonthKey monthKey) {
-		if (budgetPlannings == null) {
-			return false;
-		}
-		return budgetPlannings.keySet().contains(monthKey);
-	}
-
 	private boolean budgetPlanningAvailableFor(MonthKey monthKey, String category) {
 		if (budgetPlannings == null) {
 			return false;
@@ -153,7 +146,7 @@ public class AccountingManager implements FilteredValueReceiver {
 	
 	public AccountingRow getLastAppearanceOfCategory(String category) {
 		
-		List<AccountingRow> allEntries = AccountingDao.getAllEntriesForCategory(accountingData, category);
+		List<AccountingRow> allEntries = getAllEntriesForCategory(category);
 		if (allEntries == null || allEntries.size() == 0) {
 			return null;
 		}
@@ -222,7 +215,7 @@ public class AccountingManager implements FilteredValueReceiver {
 	}
 	
 	private MonthKey getInitialAppeareanceOfCategory(String category) {
-		List<AccountingRow> allEntries = AccountingDao.getAllEntriesForCategory(accountingData, category);
+		List<AccountingRow> allEntries = getAllEntriesForCategory(category);
 		if (allEntries == null || allEntries.size() == 0) {
 			return null;
 		}
@@ -384,6 +377,48 @@ public class AccountingManager implements FilteredValueReceiver {
 	}
 
 	public List<AccountingRow> getFilteredEntries() {
-		return entityFilter.filterItems(AccountingDao.getAllEntries(getAccountingData()));
+		return entityFilter.filterItems(getAllEntries());
+	}
+	
+	public Set<Category> getAllCategories(AccountingData accountingData, AccountingManager manager) {
+		Set<Category> allCategories = new HashSet<Category>();
+		AccountingMonth accountingMonth = null;
+		for (MonthKey key : accountingData.keySet()) {
+			accountingMonth = accountingData.get(key);
+			Set<String> distinctCategories = accountingMonth.getDistinctCategories();
+			for (String category : distinctCategories) {
+				allCategories.add(Category.fromValues(category, manager.getPaymentModality(category)));	
+			}
+		}
+		return allCategories;
+	}
+	
+	public Set<String> getAllPartners(AccountingData accountingData) {
+		Set<String> allPartners = new HashSet<String>();
+		for (AccountingMonth accountingMonth : accountingData.getAccountingMonths()) {
+			for (AccountingRow accountingRow : accountingMonth.getRowObjects()) {
+				if (accountingRow.getPartner() != null && accountingRow.getPartner().length() > 0) {
+					allPartners.add(accountingRow.getPartner());
+				}
+			}
+		}
+		return allPartners;
+	}
+
+	public List<AccountingRow> getAllEntries() {
+		List<AccountingRow> allEntries = new ArrayList<AccountingRow>();
+		for (MonthKey key : accountingData.keySet()) {
+			for (AccountingRow accountingRow : accountingData.get(key).getRowObjects()) {
+				allEntries.add(accountingRow);
+			}
+		}
+		Collections.sort(allEntries);
+		return allEntries;
+	}
+
+	@Override
+	public List<?> loadDistinctItems(String attributeName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

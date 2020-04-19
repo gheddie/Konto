@@ -1,4 +1,4 @@
-package de.gravitex.accounting.dao;
+package de.gravitex.accounting.provider;
 
 import java.util.HashMap;
 import java.util.List;

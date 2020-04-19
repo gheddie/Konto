@@ -2,15 +2,15 @@ package de.gravitex.accounting.gui.component;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JCheckBox;
 
 import de.gravitex.accounting.filter.FilterValue;
-import de.gravitex.accounting.filter.FilterValueProvider;
-import de.gravitex.accounting.filter.FilteredValueReceiver;
-import lombok.Data;
+import de.gravitex.accounting.filter.interfacing.FilterValueProvider;
+import de.gravitex.accounting.filter.interfacing.FilteredValueReceiver;
+import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
 
-@Data
 public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 
 	private static final long serialVersionUID = 3310334350858853081L;
@@ -18,6 +18,8 @@ public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 	private FilteredValueReceiver filteredValueReceiver;
 	
 	private String attributeName;
+
+	private FilteredValuesHolder filteredValuesHolder;
 	
 	public FilterCheckBox() {
 		super();
@@ -25,21 +27,26 @@ public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(null, getSelectedFilterValue()));
+				filteredValuesHolder.loadData();
 			}
 		});
 	}
 
 	@Override
-	public void acceptFilterReceiver(FilteredValueReceiver filteredValueReceiver) {
+	public void setMvcData(FilteredValueReceiver filteredValueReceiver, FilteredValuesHolder filteredValuesHolder,
+			String attributeName) {
 		this.filteredValueReceiver = filteredValueReceiver;
+		this.filteredValuesHolder = filteredValuesHolder;
+		this.attributeName = attributeName;
 	}
 
 	@Override
 	public Object getSelectedFilterValue() {
 		return isSelected();
 	}
-	
-	public void setAttributeName(String attributeName) {
-		this.attributeName = attributeName;
+
+	@Override
+	public List<?> loadData() {
+		return filteredValueReceiver.loadDistinctItems(attributeName);
 	}
 }
