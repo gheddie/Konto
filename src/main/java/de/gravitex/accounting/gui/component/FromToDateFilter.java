@@ -3,7 +3,6 @@ package de.gravitex.accounting.gui.component;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -15,8 +14,8 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import de.gravitex.accounting.filter.FilterValue;
 import de.gravitex.accounting.filter.interfacing.FilterValueProvider;
-import de.gravitex.accounting.filter.interfacing.FilteredValueReceiver;
 import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
+import de.gravitex.accounting.filter.interfacing.IFilteredValueReceiver;
 
 public class FromToDateFilter extends JPanel implements FilterValueProvider {
 
@@ -26,7 +25,7 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider {
 
 	private JDatePickerImpl datePickerTo;
 
-	private FilteredValueReceiver filteredValueReceiver;
+	private IFilteredValueReceiver filteredValueReceiver;
 	
 	private String attributeName;
 
@@ -62,7 +61,7 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider {
 	}
 
 	@Override
-	public void setMvcData(FilteredValueReceiver filteredValueReceiver, FilteredValuesHolder filteredValuesHolder,
+	public void setMvcData(IFilteredValueReceiver filteredValueReceiver, FilteredValuesHolder filteredValuesHolder,
 			String attributeName) {
 		this.filteredValueReceiver = filteredValueReceiver;
 		this.filteredValuesHolder = filteredValuesHolder;
@@ -75,7 +74,7 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider {
 	}
 
 	@Override
-	public List<?> loadData() {
-		return null;
+	public void initData() {
+		// TODO Auto-generated method stub
 	}
 }

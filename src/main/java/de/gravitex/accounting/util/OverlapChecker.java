@@ -4,9 +4,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import de.gravitex.accounting.AccountingSingleton;
 import lombok.Data;
 
 public class OverlapChecker {
+	
+	private static final Logger logger = Logger.getLogger(OverlapChecker.class);
 	
 	private List<MyPeriod> periods = new ArrayList<MyPeriod>();
 	
@@ -37,17 +42,17 @@ public class OverlapChecker {
 			}
 		}
 		for (LocalDate day : new MyPeriod(earliest, latest).getDays()) {
-			System.out.println(day);
+			logger.info(day);
 			markers.add(new LocalDateMarker(day));
 		}
 		for (MyPeriod period : periods) {
 			for (LocalDate day : period.getDays()) {
-				System.out.println("checking: " + day);
+				logger.info("checking: " + day);
 				try {
 					LocalDateMarker foundMarker = findMarker(day);
 					foundMarker.check();
 				} catch (Exception e) {
-					System.out.println("day '" + day + "' already checked --> overlap!!");
+					logger.info("day '" + day + "' already checked --> overlap!!");
 					overlapFlag = true;
 					return false;
 				}

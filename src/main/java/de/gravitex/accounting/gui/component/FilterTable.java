@@ -29,6 +29,5 @@ public class FilterTable extends JTable implements FilteredValuesHolder {
 			tablemodel.addRow(row.asTableRow(true));
 		}
 		setModel(tablemodel);
-		// tfFilterSum.setText(sum.toString());
 	}
 }

@@ -43,6 +43,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import org.apache.log4j.Logger;
+
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.AccountingSingleton;
@@ -63,6 +65,8 @@ import lombok.Data;
 
 @Data
 public class AccountingFrame extends JFrame {
+	
+	private static final Logger logger = Logger.getLogger(AccountingFrame.class);
 
 	private static final long serialVersionUID = -8241085588080811229L;
 	
@@ -260,7 +264,7 @@ public class AccountingFrame extends JFrame {
 	private void fillAllCategoryEntries(String category) {
 		
 		categoryEntriesTable.setBackground(Color.WHITE);
-		System.out.println("fillAllCategoryEntries : " + cbFilterAllCategories.getSelectedItem());
+		logger.info("fillAllCategoryEntries : " + cbFilterAllCategories.getSelectedItem());
 		List<AccountingRow> allEntriesForCategory = AccountingSingleton.getInstance().getAccountingManager()
 				.getAllEntriesForCategory(category);
 		DefaultTableModel tablemodel = new DefaultTableModel();
@@ -290,7 +294,7 @@ public class AccountingFrame extends JFrame {
 		accountingMonthList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				System.out.println(accountingMonthList.getSelectedValue());
+				logger.info(accountingMonthList.getSelectedValue());
 				MonthKey monthKey = (MonthKey) accountingMonthList.getSelectedValue();
 				monthModel = singleton.getAccountingManager().getAccountingResultMonthModel(monthKey);
 				clearMessages();

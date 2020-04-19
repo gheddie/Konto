@@ -11,6 +11,7 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
+import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -25,10 +26,12 @@ import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.util.MonthKey;
 
 public class AccountingGuiHelper {
+	
+	private static final Logger logger = Logger.getLogger(AccountingGuiHelper.class);
 
 	public static void displayBudgetChart(AccountingFrame accountingFrame, List<MonthKey> monthKeys, AccountingManager manager) {
 
-		System.out.println("displayBudgetChart: " + monthKeys);
+		logger.info("displayBudgetChart: " + monthKeys);
 
 		String title = "";
 		if (monthKeys.size() == 1) {

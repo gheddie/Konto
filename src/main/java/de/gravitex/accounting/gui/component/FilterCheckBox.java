@@ -3,19 +3,20 @@ package de.gravitex.accounting.gui.component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JCheckBox;
 
 import de.gravitex.accounting.filter.FilterValue;
 import de.gravitex.accounting.filter.interfacing.FilterValueProvider;
-import de.gravitex.accounting.filter.interfacing.FilteredValueReceiver;
+import de.gravitex.accounting.filter.interfacing.IFilteredValueReceiver;
 import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
 
 public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 
 	private static final long serialVersionUID = 3310334350858853081L;
 	
-	private FilteredValueReceiver filteredValueReceiver;
+	private IFilteredValueReceiver filteredValueReceiver;
 	
 	private String attributeName;
 
@@ -33,7 +34,7 @@ public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 	}
 
 	@Override
-	public void setMvcData(FilteredValueReceiver filteredValueReceiver, FilteredValuesHolder filteredValuesHolder,
+	public void setMvcData(IFilteredValueReceiver filteredValueReceiver, FilteredValuesHolder filteredValuesHolder,
 			String attributeName) {
 		this.filteredValueReceiver = filteredValueReceiver;
 		this.filteredValuesHolder = filteredValuesHolder;
@@ -46,7 +47,7 @@ public class FilterCheckBox extends JCheckBox implements FilterValueProvider {
 	}
 
 	@Override
-	public List<?> loadData() {
-		return filteredValueReceiver.loadDistinctItems(attributeName);
+	public void initData() {
+		filteredValueReceiver.loadDistinctItems(attributeName);
 	}
 }

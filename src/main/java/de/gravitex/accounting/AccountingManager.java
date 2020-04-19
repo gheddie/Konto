@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.enumeration.BudgetEvaluationResult;
@@ -17,8 +19,8 @@ import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.FilterValue;
+import de.gravitex.accounting.filter.FilteredValueReceiver;
 import de.gravitex.accounting.filter.impl.EqualFilter;
-import de.gravitex.accounting.filter.interfacing.FilteredValueReceiver;
 import de.gravitex.accounting.gui.AlertMessagesBuilder;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
@@ -33,7 +35,9 @@ import de.gravitex.accounting.wrapper.Category;
 import lombok.Data;
 
 @Data
-public class AccountingManager implements FilteredValueReceiver {
+public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
+	
+	private static final Logger logger = Logger.getLogger(AccountingManager.class);
 	
 	public static final String ATTR_PARTNER = "partner";
 	public static final String ATTR_CATEGORY = "category";
@@ -98,12 +102,12 @@ public class AccountingManager implements FilteredValueReceiver {
 	public List<BudgetEvaluation> evaluateBudgetProjection(Category category, LocalDate startingDate) {
 
 		if (!category.getPaymentModality().isProjectable()) {
-			System.out.println("payment modiality '" + category.getPaymentModality().getClass().getSimpleName()
+			logger.info("payment modiality '" + category.getPaymentModality().getClass().getSimpleName()
 					+ "' is not projectable -- returning!!");
 			return new ArrayList<BudgetEvaluation>();
 		}
 
-		System.out.println(" --- projecting [" + category.getCategory() + "] ----: "
+		logger.info(" --- projecting [" + category.getCategory() + "] ----: "
 				+ category.getPaymentModality().getClass().getSimpleName());
 
 		List<BudgetEvaluation> evaluationResult = new ArrayList<BudgetEvaluation>();
@@ -127,14 +131,14 @@ public class AccountingManager implements FilteredValueReceiver {
 			months += PaymentPeriod.MONTH.getDurationInMonths();
 			if (timelineProjectonResult.hasTimeStamp(actualAppearance)) {
 				// budget planning should be there...
-				System.out.println("projecting: " + actualAppearance + " *");
+				logger.info("projecting: " + actualAppearance + " *");
 				if (!budgetPlanningAvailable) {
 					evaluationResult.add(BudgetEvaluation.fromValues(category.getCategory(), actualAppearance,
 							BudgetEvaluationResult.MISSING_BUDGET));
 				}
 			} else {
 				// budget planning should NOT be there...
-				System.out.println("projecting: " + actualAppearance);
+				logger.info("projecting: " + actualAppearance);
 				if (budgetPlanningAvailable) {
 					evaluationResult.add(BudgetEvaluation.fromValues(category.getCategory(), actualAppearance,
 							BudgetEvaluationResult.MISPLACED_BUDGET));
@@ -372,7 +376,7 @@ public class AccountingManager implements FilteredValueReceiver {
 
 	@Override
 	public void receiveFilterValue(FilterValue filterValue) {
-		System.out.println("receiveFilterValue: " + filterValue);
+		logger.info("receiveFilterValue: " + filterValue);
 		entityFilter.setFilter(filterValue.getAttributeName(), filterValue.getValue());
 	}
 
@@ -417,7 +421,12 @@ public class AccountingManager implements FilteredValueReceiver {
 	}
 
 	@Override
-	public List<?> loadDistinctItems(String attributeName) {
+	public List<AccountingRow> loadFilteredItems() {
+		return null;
+	}
+
+	@Override
+	protected List<AccountingRow> loadAllItems() {
 		// TODO Auto-generated method stub
 		return null;
 	}

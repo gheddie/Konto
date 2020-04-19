@@ -6,17 +6,20 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.impl.EqualFilter;
 import de.gravitex.accounting.gui.component.FilterComboBox;
 import de.gravitex.accounting.util.FakedValueHolder;
-import de.gravitex.accounting.util.FilterTestData;
+import de.gravitex.accounting.util.FilterTestDataProvider;
 
 public class FilterTest {
 	
-	private static final FilterTestData filterTestData = new FilterTestData();
+	private static final Logger logger = Logger.getLogger(FilterTest.class);
+	
+	private static final FilterTestDataProvider filterTestData = new FilterTestDataProvider();
 	static {
 		
 		List<FilterTestItem> testItems = new ArrayList<FilterTestItem>();
@@ -41,32 +44,40 @@ public class FilterTest {
 		
 		EntityFilter<FilterTestItem> entityFilter = new EntityFilter<FilterTestItem>();
 		
-		// ---
-		
 		FakedValueHolder fakedValueHolder = new FakedValueHolder();
 		
 		// set up components
 		FilterComboBox<String> filterString = new FilterComboBox<String>();
-		filterString.setMvcData(filterTestData, fakedValueHolder, FilterTestData.ATTR_STRING);
+		filterString.setMvcData(filterTestData, fakedValueHolder, FilterTestDataProvider.ATTR_STRING);
 		
 		FilterComboBox<Integer> filterInteger = new FilterComboBox<Integer>();
-		filterInteger.setMvcData(filterTestData, fakedValueHolder, FilterTestData.ATTR_INTEGER);
+		filterInteger.setMvcData(filterTestData, fakedValueHolder, FilterTestDataProvider.ATTR_INTEGER);
+		
+		// load data for components
+		filterString.initData();
+		// including 'no entry' string...
+		assertEquals(4, filterString.getModel().getSize());
+		
+		// load data for components
+		filterInteger.initData();
+		// including 'no entry' string...
+		assertEquals(4, filterInteger.getModel().getSize());
 		
 		// ---
 		
 		// register filters
-		entityFilter.registerFilter(new EqualFilter(FilterTestData.ATTR_STRING));
-		entityFilter.registerFilter(new EqualFilter(FilterTestData.ATTR_INTEGER));
+		entityFilter.registerFilter(new EqualFilter(FilterTestDataProvider.ATTR_STRING));
+		entityFilter.registerFilter(new EqualFilter(FilterTestDataProvider.ATTR_INTEGER));
 		
 		List<FilterTestItem> testData = filterTestData.getFilterTestItems();
 		
-		entityFilter.setFilter(FilterTestData.ATTR_STRING, "A");
+		entityFilter.setFilter(FilterTestDataProvider.ATTR_STRING, "A");
 		assertEquals(3, entityFilter.filterItems(testData).size());
 		
-		entityFilter.setFilter(FilterTestData.ATTR_INTEGER, 11);
+		entityFilter.setFilter(FilterTestDataProvider.ATTR_INTEGER, 11);
 		assertEquals(1, entityFilter.filterItems(testData).size());
 		
-		entityFilter.setFilter(FilterTestData.ATTR_STRING, EntityFilter.NO_FILTER);
+		entityFilter.setFilter(FilterTestDataProvider.ATTR_STRING, EntityFilter.NO_FILTER);
 		assertEquals(3, entityFilter.filterItems(testData).size());
 	}
 }

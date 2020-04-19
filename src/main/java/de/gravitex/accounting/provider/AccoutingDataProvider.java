@@ -14,11 +14,13 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import de.gravitex.accounting.AccountingData;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.AccountingUtil;
@@ -50,6 +52,8 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 
 	private static List<String> header;
 
+	private static final Logger logger = Logger.getLogger(AccountingData.class);
+
 	@Override
 	public HashMap<MonthKey, List<AccountingRow>> readAccountingData() {
 		try {
@@ -74,7 +78,7 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 					readHeaderRow(row);
 				}
 			}
-			System.out.println("completeAmount: " + completeAmount);
+			logger.info("completeAmount: " + completeAmount);
 			wb.close();
 			return fileRows;
 		} catch (Exception e) {
@@ -193,7 +197,7 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 			String key = null;
 			for (Object keyValue : prop.keySet()) {
 				key = String.valueOf(keyValue);
-				System.out.println(keyValue + " ---> " + prop.getProperty(key));
+				logger.info(keyValue + " ---> " + prop.getProperty(key));
 				createCategory(key, prop.getProperty(key), result);
 			}
 		} catch (IOException e) {
@@ -207,7 +211,7 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	public HashMap<MonthKey, BudgetPlanning> readBudgetPlannings() {
 		HashMap<MonthKey, BudgetPlanning> result = new HashMap<MonthKey, BudgetPlanning>();
 		for (File resourcePlanningFile : getResourceFolderFiles(IAccoutingDataProvider.RESOURCE_PLANNING_FOLDER)) {
-			System.out.println("reading resource planning: " + resourcePlanningFile.getName());
+			logger.info("reading resource planning: " + resourcePlanningFile.getName());
 			Properties budgetPlanningForMonth = new Properties();
 			try {
 				budgetPlanningForMonth.load(new FileInputStream(resourcePlanningFile.getAbsolutePath()));

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.provider.AccoutingDataProvider;
@@ -18,6 +20,8 @@ import lombok.Data;
 
 @Data
 public class AccountingSingleton {
+	
+	private static final Logger logger = Logger.getLogger(AccountingSingleton.class);
 
 	private static AccountingSingleton instance;
 
@@ -55,13 +59,13 @@ public class AccountingSingleton {
 			resultsByCategory.addAll(month.getRowObjectsByCategory(category));
 		}
 		for (AccountingRow accountingRow : resultsByCategory) {
-			System.out.println(accountingRow);
+			logger.info(accountingRow);
 		}
 	}
 
 	public void saldoCheck() {
 
-		System.out.println(" --------------------- SALDO CHECK --------------------- ");
+		logger.info(" --------------------- SALDO CHECK --------------------- ");
 
 		List<AccountingRow> results = new ArrayList<AccountingRow>();
 		for (AccountingMonth month : accountingManager.getAccountingData().getAccountingMonths()) {
@@ -72,7 +76,7 @@ public class AccountingSingleton {
 		for (AccountingRow accountingRow : results) {
 			if (referenceSaldo == null && accountingRow.getSaldo() != null) {
 				referenceSaldo = accountingRow.getSaldo();
-				System.out.println("setting reference saldo to: " + referenceSaldo);
+				logger.info("setting reference saldo to: " + referenceSaldo);
 			} else {
 				if (referenceSaldo != null) {
 					referenceSaldo = referenceSaldo.add(accountingRow.getAmount());
@@ -83,17 +87,17 @@ public class AccountingSingleton {
 											+ accountingRow.getSaldo() + "]!!",
 									AccountingError.INVALID_SALDO_REF, accountingRow);
 						}
-						System.out.println(
+						logger.info(
 								" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: " + referenceSaldo
 										+ " [CHECK against row saldo '" + accountingRow.getSaldo() + "'] --> OK!!");
 					} else {
-						System.out.println(" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: "
+						logger.info(" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: "
 								+ referenceSaldo);
 					}
 				}
 			}
 		}
-		System.out.println("saldo check ok...");
+		logger.info("saldo check ok...");
 	}
 
 	public HashMap<String, BigDecimal> getCategorySums(MonthKey monthKey) {
