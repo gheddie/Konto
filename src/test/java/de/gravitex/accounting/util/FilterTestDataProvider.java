@@ -28,11 +28,6 @@ public class FilterTestDataProvider extends FilteredValueReceiver<FilterTestItem
 	}
 
 	@Override
-	public List<FilterTestItem> loadFilteredItems() {
-		return null;
-	}
-
-	@Override
 	protected List<FilterTestItem> loadAllItems() {
 		return filterTestItems;
 	}

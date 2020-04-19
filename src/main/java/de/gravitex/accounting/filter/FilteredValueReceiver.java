@@ -8,8 +8,6 @@ import de.gravitex.accounting.filter.interfacing.IFilteredValueReceiver;
 
 public abstract class FilteredValueReceiver<T> implements IFilteredValueReceiver {
 	
-	public abstract List<T> loadFilteredItems();
-
 	@Override
 	public Set<Object> loadDistinctItems(String attributeName) {
 		Set<Object> result = new HashSet<Object>();

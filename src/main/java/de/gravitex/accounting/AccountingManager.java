@@ -386,31 +386,6 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		return entityFilter.filterItems(getAllEntries());
 	}
 	
-	public Set<Category> getAllCategories(AccountingData accountingData, AccountingManager manager) {
-		Set<Category> allCategories = new HashSet<Category>();
-		AccountingMonth accountingMonth = null;
-		for (MonthKey key : accountingData.keySet()) {
-			accountingMonth = accountingData.get(key);
-			Set<String> distinctCategories = accountingMonth.getDistinctCategories();
-			for (String category : distinctCategories) {
-				allCategories.add(Category.fromValues(category, manager.getPaymentModality(category)));	
-			}
-		}
-		return allCategories;
-	}
-	
-	public Set<String> getAllPartners(AccountingData accountingData) {
-		Set<String> allPartners = new HashSet<String>();
-		for (AccountingMonth accountingMonth : accountingData.getAccountingMonths()) {
-			for (AccountingRow accountingRow : accountingMonth.getRowObjects()) {
-				if (accountingRow.getPartner() != null && accountingRow.getPartner().length() > 0) {
-					allPartners.add(accountingRow.getPartner());
-				}
-			}
-		}
-		return allPartners;
-	}
-
 	public List<AccountingRow> getAllEntries() {
 		List<AccountingRow> allEntries = new ArrayList<AccountingRow>();
 		for (MonthKey key : accountingData.keySet()) {
@@ -420,11 +395,6 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		}
 		Collections.sort(allEntries);
 		return allEntries;
-	}
-
-	@Override
-	public List<AccountingRow> loadFilteredItems() {
-		return null;
 	}
 
 	@Override

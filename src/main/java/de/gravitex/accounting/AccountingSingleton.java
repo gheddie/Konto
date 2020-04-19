@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -15,7 +14,6 @@ import de.gravitex.accounting.provider.AccoutingDataProvider;
 import de.gravitex.accounting.provider.IAccoutingDataProvider;
 import de.gravitex.accounting.setting.AccountManagerSettings;
 import de.gravitex.accounting.util.MonthKey;
-import de.gravitex.accounting.wrapper.Category;
 import lombok.Data;
 
 @Data
@@ -114,14 +112,6 @@ public class AccountingSingleton {
 			categorySums.put(category, categorySum);
 		}
 		return categorySums;
-	}
-
-	public Set<String> getAllPartners(AccountingData accountingData) {
-		return accountingManager.getAllPartners(accountingData);
-	}
-
-	public Set<Category> getAllCategories(AccountingData accountingData) {
-		return accountingManager.getAllCategories(accountingData, accountingManager);
 	}
 
 	public List<AccountingRow> getAllEntriesForCategory(String category, AccountingData accountingData) {
