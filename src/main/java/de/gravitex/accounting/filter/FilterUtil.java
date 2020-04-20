@@ -2,7 +2,7 @@ package de.gravitex.accounting.filter;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class FilterUitl {
+public class FilterUtil {
 
 	public static Object getAttributeValue(String attributeName, Object item) {
 		try {

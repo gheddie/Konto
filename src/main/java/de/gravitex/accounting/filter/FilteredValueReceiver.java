@@ -13,7 +13,7 @@ public abstract class FilteredValueReceiver<T> implements IFilteredValueReceiver
 		Set<Object> result = new HashSet<Object>();
 		Object attributeValue = null;
 		for (T item : loadAllItems()) {
-			attributeValue = FilterUitl.getAttributeValue(attributeName, item);
+			attributeValue = FilterUtil.getAttributeValue(attributeName, item);
 			if (attributeValue != null && !String.valueOf(attributeValue).isEmpty()) {
 				result.add(attributeValue);				
 			}
