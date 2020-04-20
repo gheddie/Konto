@@ -30,6 +30,17 @@ public class LocalDateRange {
 		if (from == null && to == null) {
 			return true;
 		}
+		
+		// open at start
+		if (from == null && to != null) {
+			return (localDate.isBefore(to) || localDate.equals(to));	
+		}
+		
+		// open at end
+		if (from != null && to == null) {
+			return (localDate.isAfter(from) || localDate.equals(from));
+		}
+		
 		return (localDate.equals(from) || localDate.isAfter(from)) && (localDate.equals(to) || localDate.isBefore(to));
 	}
 }

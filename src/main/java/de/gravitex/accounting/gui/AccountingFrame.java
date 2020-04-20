@@ -395,6 +395,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 		checkBox2 = new JCheckBox();
 		panel3 = new JPanel();
 		pnlChart = new JPanel();
+		lblBudgetState = new JLabel();
 		percentageBar = new JProgressBar();
 		pnlFilter = new JPanel();
 		label1 = new JLabel();
@@ -457,13 +458,12 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax
-				. swing. border .EmptyBorder ( 0, 0 ,0 , 0) ,  "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn" , javax. swing
-				.border . TitledBorder. CENTER ,javax . swing. border .TitledBorder . BOTTOM, new java. awt .
-				Font ( "Dia\u006cog", java .awt . Font. BOLD ,12 ) ,java . awt. Color .red
-				) ,pnlData. getBorder () ) ); pnlData. addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override
-				public void propertyChange (java . beans. PropertyChangeEvent e) { if( "\u0062ord\u0065r" .equals ( e. getPropertyName (
-				) ) )throw new RuntimeException( ) ;} } );
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing.
+				border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDes\u0069gner \u0045valua\u0074ion", javax. swing. border. TitledBorder. CENTER
+				, javax. swing. border. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069alog" ,java .awt .Font
+				.BOLD ,12 ), java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (
+				new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062order"
+				.equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -625,15 +625,21 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 					panel3.setBorder(new TitledBorder("Grafische Darstellung"));
 					panel3.setLayout(new GridBagLayout());
 					((GridBagLayout)panel3.getLayout()).columnWidths = new int[] {0, 0};
-					((GridBagLayout)panel3.getLayout()).rowHeights = new int[] {0, 0};
+					((GridBagLayout)panel3.getLayout()).rowHeights = new int[] {0, 0, 0};
 					((GridBagLayout)panel3.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
-					((GridBagLayout)panel3.getLayout()).rowWeights = new double[] {1.0, 1.0E-4};
+					((GridBagLayout)panel3.getLayout()).rowWeights = new double[] {1.0, 0.0, 1.0E-4};
 
 					//======== pnlChart ========
 					{
 						pnlChart.setLayout(new BorderLayout());
 					}
 					panel3.add(pnlChart, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(0, 0, 0, 0), 0, 0));
+
+					//---- lblBudgetState ----
+					lblBudgetState.setText("123");
+					panel3.add(lblBudgetState, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 				}
@@ -813,6 +819,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	private JCheckBox checkBox2;
 	private JPanel panel3;
 	private JPanel pnlChart;
+	private JLabel lblBudgetState;
 	private JProgressBar percentageBar;
 	private JPanel pnlFilter;
 	private JLabel label1;
@@ -846,5 +853,9 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 			sum = sum.add(accountingRow.getAmount());
 		}
 		tfFilterSum.setText(sum.toString());
+	}
+
+	public void updateBudgetState(String text) {
+		lblBudgetState.setText(text);
 	}
 }

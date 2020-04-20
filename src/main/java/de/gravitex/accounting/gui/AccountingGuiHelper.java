@@ -69,13 +69,19 @@ public class AccountingGuiHelper {
 		}
 		
 		if (totalyPlanned > availableIncome.intValue()) {
+			/*
 			JOptionPane.showMessageDialog(accountingFrame,
 					"Budget überplant (" + availableIncome.intValue() + " verfügbar, " + totalyPlanned + " verplant)",
 					"Achtung", JOptionPane.INFORMATION_MESSAGE);
+					*/
+			accountingFrame.updateBudgetState("Budget überplant (" + availableIncome.intValue() + " verfügbar, " + totalyPlanned + " verplant)");
 		} else {
+			/*
 			JOptionPane.showMessageDialog(accountingFrame,
 					"Noch "+(availableIncome.intValue()-totalyPlanned)+" Euro verfügbar!!",
 					"Info", JOptionPane.INFORMATION_MESSAGE);
+					*/
+			accountingFrame.updateBudgetState("Noch "+(availableIncome.intValue()-totalyPlanned)+" Euro verfügbar!!");
 		}
 		
 		int percentage = (int) AccountingUtil.getPercentage(totalyPlanned, availableIncome.doubleValue());

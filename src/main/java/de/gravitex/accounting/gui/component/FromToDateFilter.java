@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import javax.swing.JPanel;
 
-import org.jdatepicker.DateModel;
 import org.jdatepicker.impl.DateComponentFormatter;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -74,13 +73,18 @@ public class FromToDateFilter extends JPanel implements FilterValueProvider<Loca
 
 	@Override
 	public LocalDateRange getSelectedFilterValue() {
-		LocalDate aFrom = toLocalDate(datePickerFrom.getModel());
-		LocalDate aTo = toLocalDate(datePickerTo.getModel());
-		return LocalDateRange.fromValues(aFrom, aTo);
+		return LocalDateRange.fromValues(parseDate(datePickerFrom), parseDate(datePickerTo));		
 	}
 
-	private LocalDate toLocalDate(DateModel<?> model) {
-		return LocalDate.of(model.getYear(), model.getMonth() + 1, model.getDay());
+	private LocalDate parseDate(JDatePickerImpl datePicker) {
+		// TODO
+		String text = datePicker.getJFormattedTextField().getText();
+		if (text == null || text.length() == 0) {
+			return null;
+		}
+		String[] textSplitted = text.split("\\.");
+		LocalDate result = LocalDate.of(Integer.parseInt(textSplitted[2]), Integer.parseInt(textSplitted[1]), Integer.parseInt(textSplitted[0]));
+		return result;
 	}
 
 	@Override
