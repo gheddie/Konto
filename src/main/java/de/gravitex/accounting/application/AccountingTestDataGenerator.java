@@ -1,5 +1,7 @@
 package de.gravitex.accounting.application;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +11,8 @@ import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.util.MonthKey;
 
 public class AccountingTestDataGenerator {
+
+	private static final String CAT_A = "CAT_A";
 
 	public static AccountingData generateAccountingTestData() {
 		
@@ -25,8 +29,21 @@ public class AccountingTestDataGenerator {
 		
 		List<AccountingRow> result = new ArrayList<AccountingRow>();
 		
-		result.add(new AccountingRow());
+		result.add(getAccountingRow());
 		
 		return result;
+	}
+
+	private static AccountingRow getAccountingRow() {
+		
+		AccountingRow accountingRow = new AccountingRow();
+		
+		// set values
+		accountingRow.setRunningIndex(1);
+		accountingRow.setDate(LocalDate.of(1994, 1, 1));
+		accountingRow.setCategory(CAT_A);
+		accountingRow.setAmount(new BigDecimal(14));
+		
+		return accountingRow;
 	}
 }

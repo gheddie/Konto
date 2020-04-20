@@ -29,6 +29,7 @@ import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
 import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.io.ResourceFileReader;
 import de.gravitex.accounting.modality.FixedPeriodIncomingPaymentModality;
 import de.gravitex.accounting.modality.FixedPeriodOutgoingPaymentModality;
 import de.gravitex.accounting.modality.PaymentModality;
@@ -50,11 +51,14 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	private static List<String> header;
 
 	private static final Logger logger = Logger.getLogger(AccountingData.class);
+	
+	private static final String BOOKING_FILE_NAME = "Buchungen.xlsx";
 
 	@Override
-	public HashMap<MonthKey, List<AccountingRow>> readAccountingData(String fileName) {
+	public HashMap<MonthKey, List<AccountingRow>> readAccountingData(String accountingKey) {
 		try {
-			File file = new File(fileName);
+			// File file = new File(fileName);
+			File file = ResourceFileReader.getResourceFile(accountingKey, BOOKING_FILE_NAME);
 			FileInputStream fis = new FileInputStream(file);
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
 			XSSFSheet sheet = wb.getSheetAt(0);
@@ -173,10 +177,10 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	}
 
 	@Override
-	public Income readIncome() {
+	public Income readIncome(String accountingKey) {
 		Properties prop = new Properties();
 		try {
-			prop.load(AccoutingDataProvider.class.getClassLoader().getResourceAsStream(IAccoutingDataProvider.INCOME_PROPERTIES));
+			prop.load(AccoutingDataProvider.class.getClassLoader().getResourceAsStream(accountingKey + "/" + IAccoutingDataProvider.INCOME_PROPERTIES));
 			return Income.fromValues(prop);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -186,11 +190,11 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	}
 
 	@Override
-	public HashMap<String, PaymentModality> readPaymentModalitys() {
+	public HashMap<String, PaymentModality> readPaymentModalitys(String accountingKey) {
 		Properties prop = new Properties();
 		HashMap<String, PaymentModality> result = new HashMap<String, PaymentModality>();
 		try {
-			prop.load(AccoutingDataProvider.class.getClassLoader().getResourceAsStream(IAccoutingDataProvider.MODALITIES_PROPERTIES));
+			prop.load(AccoutingDataProvider.class.getClassLoader().getResourceAsStream(accountingKey + "/" + IAccoutingDataProvider.MODALITIES_PROPERTIES));
 			String key = null;
 			for (Object keyValue : prop.keySet()) {
 				key = String.valueOf(keyValue);
@@ -205,9 +209,9 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	}
 
 	@Override
-	public HashMap<MonthKey, BudgetPlanning> readBudgetPlannings() {
+	public HashMap<MonthKey, BudgetPlanning> readBudgetPlannings(String accountingKey) {
 		HashMap<MonthKey, BudgetPlanning> result = new HashMap<MonthKey, BudgetPlanning>();
-		for (File resourcePlanningFile : getResourceFolderFiles(IAccoutingDataProvider.RESOURCE_PLANNING_FOLDER)) {
+		for (File resourcePlanningFile : ResourceFileReader.getResourceFiles(accountingKey, IAccoutingDataProvider.RESOURCE_PLANNING_FOLDER)) {
 			logger.info("reading resource planning: " + resourcePlanningFile.getName());
 			Properties budgetPlanningForMonth = new Properties();
 			try {
@@ -242,13 +246,5 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 			}
 			break;
 		}
-	}
-	
-	private static File[] getResourceFolderFiles(String folder) {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		URL url = loader.getResource(folder);
-		String path = url.getPath();
-		File[] result = new File(path).listFiles();
-		return result;
 	}
 }

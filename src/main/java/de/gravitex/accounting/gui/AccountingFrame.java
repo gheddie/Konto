@@ -17,24 +17,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -48,6 +31,7 @@ import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.interfacing.FilterDataChangedListener;
 import de.gravitex.accounting.gui.component.FilterCheckBox;
 import de.gravitex.accounting.gui.component.FilterComboBox;
@@ -79,8 +63,6 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	protected AccountingResultMonthModel monthModel;
 	
 	public AccountingFrame() {
-		
-		new FromToDateFilter();
 		
 		initComponents();
 		singleton = AccountingSingleton.getInstance();
@@ -156,6 +138,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 				System.exit(0);
 			}
 		});
+		fillAccounts();
 		initFilters();
 		fillAccountingMonths();
 		cbFilterAllPartners.initData();
@@ -166,6 +149,26 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
+	private void fillAccounts() {
+		
+		DefaultComboBoxModel<String> accountsModel = new DefaultComboBoxModel<String>();
+		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
+		/*
+		for (String account : accountingManager.getAccounts()) {
+			accountsModel.addElement(account);
+		}
+		*/
+		cbSelectedAccount.setModel(accountsModel);
+		/*
+		cbSelectedAccount.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AccountingSingleton.getInstance().initialize((String) cbSelectedAccount.getSelectedItem());
+			}
+		});
+		*/
+	}
+
 	private void initFilters() {
 		
 		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
@@ -367,6 +370,8 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 		btnReloadData = new JButton();
 		btnClose = new JButton();
 		btnCheckValidities = new JButton();
+		label3 = new JLabel();
+		cbSelectedAccount = new JComboBox();
 		tbpMain = new JTabbedPane();
 		pnlData = new JPanel();
 		scrollPane1 = new JScrollPane();
@@ -418,16 +423,15 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 		panelAlerts = new JPanel();
 		scrollPane2 = new JScrollPane();
 		messagesTable = new JTable();
-		label3 = new JLabel();
 
 		//======== this ========
 		setTitle("Accounting Manager");
 		var contentPane = getContentPane();
 		contentPane.setLayout(new GridBagLayout());
-		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {1076, 0};
-		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 169, 183, 0, 129, 0};
-		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
-		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0E-4};
+		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 1076, 0};
+		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 169, 183, 0, 129, 0};
+		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 1.0, 1.0E-4};
+		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0E-4};
 
 		//======== tbMain ========
 		{
@@ -449,7 +453,16 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 			btnCheckValidities.setText("Zeitr\u00e4ume pr\u00fcfen");
 			tbMain.add(btnCheckValidities);
 		}
-		contentPane.add(tbMain, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+		contentPane.add(tbMain, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 5, 0), 0, 0));
+
+		//---- label3 ----
+		label3.setText("Konto:");
+		contentPane.add(label3, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 5, 5), 0, 0));
+		contentPane.add(cbSelectedAccount, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -458,12 +471,14 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing.
-				border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDes\u0069gner \u0045valua\u0074ion", javax. swing. border. TitledBorder. CENTER
-				, javax. swing. border. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069alog" ,java .awt .Font
-				.BOLD ,12 ), java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (
-				new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062order"
-				.equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (
+				new javax. swing. border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDes\u0069gner \u0045valua\u0074ion"
+				, javax. swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM
+				, new java .awt .Font ("D\u0069alog" ,java .awt .Font .BOLD ,12 )
+				, java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (
+				new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e
+				) {if ("\u0062order" .equals (e .getPropertyName () )) throw new RuntimeException( )
+				; }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -746,7 +761,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 			}
 			tbpMain.addTab("Ausgabe", pnlOutput);
 		}
-		contentPane.add(tbpMain, new GridBagConstraints(0, 1, 1, 4, 0.0, 0.0,
+		contentPane.add(tbpMain, new GridBagConstraints(0, 2, 2, 4, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -767,14 +782,11 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				new Insets(0, 0, 0, 0), 0, 0));
 		}
-		contentPane.add(panelAlerts, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
+		contentPane.add(panelAlerts, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 0, 0), 0, 0));
 		pack();
 		setLocationRelativeTo(getOwner());
-
-		//---- label3 ----
-		label3.setText("Per Kategorie (\u00fcbergreifend):");
 		// JFormDesigner - End of component initialization //GEN-END:initComponents
 	}
 
@@ -791,6 +803,8 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	private JButton btnReloadData;
 	private JButton btnClose;
 	private JButton btnCheckValidities;
+	private JLabel label3;
+	private JComboBox cbSelectedAccount;
 	private JTabbedPane tbpMain;
 	private JPanel pnlData;
 	private JScrollPane scrollPane1;
@@ -842,7 +856,6 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	private JPanel panelAlerts;
 	private JScrollPane scrollPane2;
 	private JTable messagesTable;
-	private JLabel label3;
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 
 	@Override

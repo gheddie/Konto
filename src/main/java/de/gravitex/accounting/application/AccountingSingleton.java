@@ -26,11 +26,11 @@ public class AccountingSingleton {
 	private static final Logger logger = Logger.getLogger(AccountingSingleton.class);
 
 	// productive
-	public static final String ACCOUNTING_KEY_PRODUCTIVE = "ACCOUNTING_KEY_PRODUCTIVE";
+	public static final String ACCOUNTING_KEY_VB = "VB";
 	private static final String FILE_PRODUCTIVE = "C:\\work\\eclipseWorkspaces\\2019\\konto2\\accounting-excel\\src\\main\\resources\\Konto.xlsx";
 	
 	// test
-	public static final String ACCOUNTING_KEY_TEST = "ACCOUNTING_KEY_TEST";
+	public static final String ACCOUNTING_KEY_VISA = "VISA";
 
 	private static AccountingSingleton instance;
 
@@ -43,18 +43,30 @@ public class AccountingSingleton {
 	}
 
 	public void initialize() {
+		
 		AccountingData data = new AccountingData();
-		HashMap<MonthKey, List<AccountingRow>> fileData = accoutingDataProvider.readAccountingData(FILE_PRODUCTIVE);
+		HashMap<MonthKey, List<AccountingRow>> fileData = accoutingDataProvider.readAccountingData(ACCOUNTING_KEY_VB);
+		if (fileData == null) {
+			throw new AccountingException("Daten konnten nicht gelesen werden!!", AccountingError.NO_DATA_READ, null);
+		}
 		for (MonthKey key : fileData.keySet()) {
 			data.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
 		}
-		accountingManager = new AccountingManager().withAccountingData(ACCOUNTING_KEY_PRODUCTIVE, data)
+		
+		accountingManager = new AccountingManager().withAccountingData(ACCOUNTING_KEY_VB, data)
+				.withBudgetPlannings(accoutingDataProvider.readBudgetPlannings(ACCOUNTING_KEY_VB))
+				.withPaymentModalitys(accoutingDataProvider.readPaymentModalitys(ACCOUNTING_KEY_VB))
+				.withSettings(AccountManagerSettings.fromValues(true, 24, true, true))
+				.withIncome(accoutingDataProvider.readIncome(ACCOUNTING_KEY_VB));
+		
+		/*
+		accountingManager = new AccountingManager()
 				.withAccountingData(ACCOUNTING_KEY_TEST, AccountingTestDataGenerator.generateAccountingTestData())
 				.withBudgetPlannings(accoutingDataProvider.readBudgetPlannings())
 				.withPaymentModalitys(accoutingDataProvider.readPaymentModalitys())
 				.withSettings(AccountManagerSettings.fromValues(true, 24, true, true))
 				.withIncome(accoutingDataProvider.readIncome());
-		accountingManager.selectAccount(ACCOUNTING_KEY_PRODUCTIVE);
+				*/
 	}
 
 	public static AccountingSingleton getInstance() {
