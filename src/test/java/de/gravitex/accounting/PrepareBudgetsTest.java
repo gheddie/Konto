@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import org.junit.Test;
 
+import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.modality.FixedPeriodOutgoingPaymentModality;
 import de.gravitex.accounting.modality.PaymentModality;
@@ -36,9 +37,11 @@ public class PrepareBudgetsTest {
 
 		// ---
 
-		HashMap<MonthKey, Properties> preparedBudgets = new AccountingManager().withPaymentModalitys(paymentModalitys)
-				.withAccountingData(createAccountingData())
-				.withSettings(AccountManagerSettings.fromValues(true, 12, true, true))
+		AccountingManager accountingManager = new AccountingManager().withPaymentModalitys(paymentModalitys)
+				.withAccountingData(AccountingSingleton.ACCOUNTING_KEY_PRODUCTIVE, createAccountingData())
+				.withSettings(AccountManagerSettings.fromValues(true, 12, true, true));
+		accountingManager.selectAccount(AccountingSingleton.ACCOUNTING_KEY_PRODUCTIVE);
+		HashMap<MonthKey, Properties> preparedBudgets = accountingManager
 				.prepareBudgets(LocalDate.of(2020, 1, 1), false);
 
 		/**

@@ -44,8 +44,8 @@ import org.apache.log4j.Logger;
 
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
-import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.BudgetEvaluation;
+import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.filter.interfacing.FilterDataChangedListener;
@@ -227,7 +227,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	private void fillAccountingMonths() {
 		
 		final DefaultListModel<MonthKey> monthKeyModel = new DefaultListModel<MonthKey>();
-		Set<MonthKey> keySet = AccountingSingleton.getInstance().getAccountingManager().getAccountingData().keySet();
+		Set<MonthKey> keySet = AccountingSingleton.getInstance().getAccountingManager().getSelectedAccountingData().keySet();
 		List<MonthKey> keyList = new ArrayList<MonthKey>(keySet);
 		Collections.sort(keyList);
 		for (MonthKey monthKey : keyList) {

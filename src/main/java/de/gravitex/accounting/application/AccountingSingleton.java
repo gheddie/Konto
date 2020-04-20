@@ -1,4 +1,4 @@
-package de.gravitex.accounting;
+package de.gravitex.accounting.application;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -8,6 +8,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.gravitex.accounting.AccountingData;
+import de.gravitex.accounting.AccountingManager;
+import de.gravitex.accounting.AccountingMonth;
+import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.exception.AccountingException;
 import de.gravitex.accounting.provider.AccoutingDataProvider;
@@ -21,27 +25,36 @@ public class AccountingSingleton {
 	
 	private static final Logger logger = Logger.getLogger(AccountingSingleton.class);
 
+	// productive
+	public static final String ACCOUNTING_KEY_PRODUCTIVE = "ACCOUNTING_KEY_PRODUCTIVE";
+	private static final String FILE_PRODUCTIVE = "C:\\work\\eclipseWorkspaces\\2019\\konto2\\accounting-excel\\src\\main\\resources\\Konto.xlsx";
+	
+	// test
+	public static final String ACCOUNTING_KEY_TEST = "ACCOUNTING_KEY_TEST";
+
 	private static AccountingSingleton instance;
 
 	private AccountingManager accountingManager;
 	
 	private IAccoutingDataProvider accoutingDataProvider = new AccoutingDataProvider();
-
+	
 	private AccountingSingleton() {
 		initialize();
 	}
 
 	public void initialize() {
 		AccountingData data = new AccountingData();
-		HashMap<MonthKey, List<AccountingRow>> fileData = accoutingDataProvider.readAccountingData();
+		HashMap<MonthKey, List<AccountingRow>> fileData = accoutingDataProvider.readAccountingData(FILE_PRODUCTIVE);
 		for (MonthKey key : fileData.keySet()) {
 			data.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
 		}
-		accountingManager = new AccountingManager().withAccountingData(data)
+		accountingManager = new AccountingManager().withAccountingData(ACCOUNTING_KEY_PRODUCTIVE, data)
+				.withAccountingData(ACCOUNTING_KEY_TEST, AccountingTestDataGenerator.generateAccountingTestData())
 				.withBudgetPlannings(accoutingDataProvider.readBudgetPlannings())
 				.withPaymentModalitys(accoutingDataProvider.readPaymentModalitys())
 				.withSettings(AccountManagerSettings.fromValues(true, 24, true, true))
 				.withIncome(accoutingDataProvider.readIncome());
+		accountingManager.selectAccount(ACCOUNTING_KEY_PRODUCTIVE);
 	}
 
 	public static AccountingSingleton getInstance() {
@@ -53,7 +66,7 @@ public class AccountingSingleton {
 	
 	public void printCategory(String category) {
 		List<AccountingRow> resultsByCategory = new ArrayList<AccountingRow>();
-		for (AccountingMonth month : accountingManager.getAccountingData().getAccountingMonths()) {
+		for (AccountingMonth month : accountingManager.getSelectedAccountingData().getAccountingMonths()) {
 			resultsByCategory.addAll(month.getRowObjectsByCategory(category));
 		}
 		for (AccountingRow accountingRow : resultsByCategory) {
@@ -66,7 +79,7 @@ public class AccountingSingleton {
 		logger.info(" --------------------- SALDO CHECK --------------------- ");
 
 		List<AccountingRow> results = new ArrayList<AccountingRow>();
-		for (AccountingMonth month : accountingManager.getAccountingData().getAccountingMonths()) {
+		for (AccountingMonth month : accountingManager.getSelectedAccountingData().getAccountingMonths()) {
 			results.addAll(month.getRowObjects());
 		}
 		Collections.sort(results);
@@ -99,7 +112,7 @@ public class AccountingSingleton {
 	}
 
 	public HashMap<String, BigDecimal> getCategorySums(MonthKey monthKey) {
-		AccountingMonth monthData = accountingManager.getAccountingData().get(monthKey);
+		AccountingMonth monthData = accountingManager.getSelectedAccountingData().get(monthKey);
 		if (monthData == null) {
 			return null;
 		}

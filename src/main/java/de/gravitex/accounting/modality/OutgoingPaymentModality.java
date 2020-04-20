@@ -1,6 +1,6 @@
 package de.gravitex.accounting.modality;
 
-import de.gravitex.accounting.AccountingSingleton;
+import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
 import lombok.Data;

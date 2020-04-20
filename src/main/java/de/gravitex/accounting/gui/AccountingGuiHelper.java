@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import org.apache.log4j.Logger;
@@ -20,8 +19,8 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import de.gravitex.accounting.AccountingManager;
-import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.AccountingUtil;
+import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.util.MonthKey;
 

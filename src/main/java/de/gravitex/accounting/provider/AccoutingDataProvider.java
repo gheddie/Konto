@@ -22,7 +22,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import de.gravitex.accounting.AccountingData;
 import de.gravitex.accounting.AccountingRow;
-import de.gravitex.accounting.AccountingSingleton;
 import de.gravitex.accounting.AccountingUtil;
 import de.gravitex.accounting.BudgetPlanning;
 import de.gravitex.accounting.Income;
@@ -37,8 +36,6 @@ import de.gravitex.accounting.modality.UndefinedPeriodOutgoingPaymentModality;
 import de.gravitex.accounting.util.MonthKey;
 
 public class AccoutingDataProvider implements IAccoutingDataProvider {
-	
-	private static final String FILE = "C:\\work\\eclipseWorkspaces\\2019\\konto2\\accounting-excel\\src\\main\\resources\\Konto.xlsx";
 	
 	private static final int COL_RUNNING_INDEX = 0;
 	private static final int COL_DATUM = 1;
@@ -55,9 +52,9 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	private static final Logger logger = Logger.getLogger(AccountingData.class);
 
 	@Override
-	public HashMap<MonthKey, List<AccountingRow>> readAccountingData() {
+	public HashMap<MonthKey, List<AccountingRow>> readAccountingData(String fileName) {
 		try {
-			File file = new File(FILE);
+			File file = new File(fileName);
 			FileInputStream fis = new FileInputStream(file);
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
 			XSSFSheet sheet = wb.getSheetAt(0);

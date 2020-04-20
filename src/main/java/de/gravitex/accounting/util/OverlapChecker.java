@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.gravitex.accounting.AccountingSingleton;
 import lombok.Data;
 
 public class OverlapChecker {

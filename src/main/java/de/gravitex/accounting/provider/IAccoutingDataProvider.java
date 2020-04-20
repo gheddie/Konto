@@ -17,11 +17,11 @@ public interface IAccoutingDataProvider {
 
 	public static final String INCOME_PROPERTIES = "income.properties";
 
-	HashMap<MonthKey, List<AccountingRow>> readAccountingData();
-	
 	Income readIncome();
 	
 	HashMap<String, PaymentModality> readPaymentModalitys();
 	
 	HashMap<MonthKey, BudgetPlanning> readBudgetPlannings();
+
+	HashMap<MonthKey, List<AccountingRow>> readAccountingData(String fileName);
 }

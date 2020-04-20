@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import de.gravitex.accounting.AccountingRow;
-import de.gravitex.accounting.AccountingSingleton;
+import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.filter.interfacing.FilterDataChangedListener;
 import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
