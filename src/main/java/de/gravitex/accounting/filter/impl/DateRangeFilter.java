@@ -15,4 +15,9 @@ public class DateRangeFilter extends AbstractItemFilter<LocalDateRange> {
 	public boolean accept(Object item) {
 		return getFilterValue().contains((LocalDate) getAttributeValue(item));
 	}
+
+	@Override
+	public boolean isNullValue(LocalDateRange value) {
+		return false;
+	}
 }

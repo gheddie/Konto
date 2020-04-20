@@ -11,7 +11,7 @@ public class EntityFilter<T> {
 	private HashMap<String, AbstractItemFilter> registeredFilters = new HashMap<String, AbstractItemFilter>();
 	
 	public static final String NO_FILTER = "[kein Eintrag]";
-
+	
 	public List<T> filterItems(List<T> itemsToFilter) {
 		List<T> result = new ArrayList<T>();
 		for (T item : itemsToFilter) {
@@ -23,10 +23,10 @@ public class EntityFilter<T> {
 	}
 	
 	public void setFilter(String attributeName, Object value) {
-		if (value != null && value.equals(NO_FILTER)) {
+		AbstractItemFilter filter = registeredFilters.get(attributeName);
+		if (filter.isNullValue(value)) {
 			resetFilter(attributeName);
 		} else {
-			AbstractItemFilter filter = registeredFilters.get(attributeName);
 			filter.setActive(true);
 			filter.setFilterValue(value);	
 		}

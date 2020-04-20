@@ -22,4 +22,6 @@ public abstract class AbstractItemFilter<T> {
 	protected Object getAttributeValue(Object item) {
 		return FilterUitl.getAttributeValue(getAttributeName(), item);
 	}
+
+	public abstract boolean isNullValue(T value);
 }
