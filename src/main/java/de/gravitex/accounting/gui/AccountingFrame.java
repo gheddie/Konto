@@ -17,7 +17,26 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -31,7 +50,6 @@ import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.exception.AccountingException;
-import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.interfacing.FilterDataChangedListener;
 import de.gravitex.accounting.gui.component.FilterCheckBox;
 import de.gravitex.accounting.gui.component.FilterComboBox;
@@ -65,88 +83,96 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	public AccountingFrame() {
 		
 		initComponents();
-		singleton = AccountingSingleton.getInstance();
-		accountingMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		categoriesByMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		budgetPlanningList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		btnCheckSaldo.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					singleton.saldoCheck();
-					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Saldo OK!!")
-							.getAlertMessages());
-				} catch (AccountingException accountingException) {
-					pushMessages(new AlertMessagesBuilder()
-							.withMessage(AlertMessageType.ERROR, "Saldo error: " + accountingException.getMessage())
-							.getAlertMessages());
-				}
-			}
-		});
-		btnCheckValidities.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				tbpMain.setSelectedIndex(TAB_INDEX_OUTPUT);
-				StringBuffer buffer = new StringBuffer();
-				AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
-				for (Category category : accountingManager
-						.getPeriodicalPaymentCategories()) {
-					buffer.append("------------ "+category.getCategory()+" ------------\n");
+		
+		try {
+			singleton = AccountingSingleton.getInstance();
+			
+			accountingMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			categoriesByMonthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			budgetPlanningList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			btnCheckSaldo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
 					try {
-						accountingManager.checkValidities(category.getCategory());	
-						buffer.append("OK\n");
-					} catch (AccountingException e2) {
-						buffer.append(e2.asStringBuffer());
+						singleton.saldoCheck();
+						pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Saldo OK!!")
+								.getAlertMessages());
+					} catch (AccountingException accountingException) {
+						pushMessages(new AlertMessagesBuilder()
+								.withMessage(AlertMessageType.ERROR, "Saldo error: " + accountingException.getMessage())
+								.getAlertMessages());
 					}
 				}
-				taOutput.setText(buffer.toString());
-			}
-		});
-		btnPrepareBudgets.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				HashMap<MonthKey, Properties> extendedBudgets = AccountingSingleton.getInstance().getAccountingManager()
-						.prepareBudgets(LocalDate.now(), false);
-				tbpMain.setSelectedIndex(TAB_INDEX_OUTPUT);
-				StringBuffer buffer = new StringBuffer();
-				List<MonthKey> keyList = new ArrayList<MonthKey>(extendedBudgets.keySet());
-				Collections.sort(keyList);
-				for (MonthKey monthKey : keyList) {
-					buffer.append(monthKey + "\n");
-					buffer.append("------------------------------------------------------\n");
-					Properties properties = extendedBudgets.get(monthKey);
-					for (Entry<Object, Object> entry : properties.entrySet()) {
-						buffer.append(entry.getKey() + "=" + entry.getValue() + "\n");
+			});
+			btnCheckValidities.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					tbpMain.setSelectedIndex(TAB_INDEX_OUTPUT);
+					StringBuffer buffer = new StringBuffer();
+					AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
+					for (Category category : accountingManager
+							.getPeriodicalPaymentCategories()) {
+						buffer.append("------------ "+category.getCategory()+" ------------\n");
+						try {
+							accountingManager.checkValidities(category.getCategory());	
+							buffer.append("OK\n");
+						} catch (AccountingException e2) {
+							buffer.append(e2.asStringBuffer());
+						}
 					}
-					buffer.append("\n");
+					taOutput.setText(buffer.toString());
 				}
-				taOutput.setText(buffer.toString());
-				pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Budgets vorbereitet!!")
-						.getAlertMessages());
-			}
-		});
-		btnReloadData.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				AccountingSingleton.getInstance().initialize();
-			}
-		});
-		btnClose.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-		fillAccounts();
-		initFilters();
-		fillAccountingMonths();
-		cbFilterAllPartners.initData();
-		cbFilterAllCategories.initData();
-		fillBudgetPlannings();
-		initSettings();
-		filterTable.loadData();
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			});
+			btnPrepareBudgets.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					HashMap<MonthKey, Properties> extendedBudgets = AccountingSingleton.getInstance().getAccountingManager()
+							.prepareBudgets(LocalDate.now(), false);
+					tbpMain.setSelectedIndex(TAB_INDEX_OUTPUT);
+					StringBuffer buffer = new StringBuffer();
+					List<MonthKey> keyList = new ArrayList<MonthKey>(extendedBudgets.keySet());
+					Collections.sort(keyList);
+					for (MonthKey monthKey : keyList) {
+						buffer.append(monthKey + "\n");
+						buffer.append("------------------------------------------------------\n");
+						Properties properties = extendedBudgets.get(monthKey);
+						for (Entry<Object, Object> entry : properties.entrySet()) {
+							buffer.append(entry.getKey() + "=" + entry.getValue() + "\n");
+						}
+						buffer.append("\n");
+					}
+					taOutput.setText(buffer.toString());
+					pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Budgets vorbereitet!!")
+							.getAlertMessages());
+				}
+			});
+			btnReloadData.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// AccountingSingleton.getInstance().initialize();
+				}
+			});
+			btnClose.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.exit(0);
+				}
+			});
+			fillAccounts();
+			initFilters();
+			fillAccountingMonths();
+			cbFilterAllPartners.initData();
+			cbFilterAllCategories.initData();
+			fillBudgetPlannings();
+			initSettings();
+			filterTable.loadData();
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
+		} catch (AccountingException e) {
+			pushMessages(
+					new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, "Fehler beim Starten des Managers!!")
+							.withMessage(AlertMessageType.ERROR, e.getMessage()).getAlertMessages());
+		}
 	}
 	
 	private void fillAccounts() {

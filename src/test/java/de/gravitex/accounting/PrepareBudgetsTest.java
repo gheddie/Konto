@@ -38,9 +38,8 @@ public class PrepareBudgetsTest {
 		// ---
 
 		AccountingManager accountingManager = new AccountingManager().withPaymentModalitys(paymentModalitys)
-				.withAccountingData(AccountingSingleton.ACCOUNTING_KEY_VB, createAccountingData())
+				.withAccountingData("", createAccountingData())
 				.withSettings(AccountManagerSettings.fromValues(true, 12, true, true));
-		// accountingManager.selectAccount(AccountingSingleton.ACCOUNTING_KEY_VB);
 		HashMap<MonthKey, Properties> preparedBudgets = accountingManager
 				.prepareBudgets(LocalDate.of(2020, 1, 1), false);
 

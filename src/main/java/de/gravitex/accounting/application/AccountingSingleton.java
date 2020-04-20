@@ -14,9 +14,6 @@ import de.gravitex.accounting.AccountingMonth;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.exception.AccountingException;
-import de.gravitex.accounting.provider.AccoutingDataProvider;
-import de.gravitex.accounting.provider.IAccoutingDataProvider;
-import de.gravitex.accounting.setting.AccountManagerSettings;
 import de.gravitex.accounting.util.MonthKey;
 import lombok.Data;
 
@@ -27,7 +24,6 @@ public class AccountingSingleton {
 
 	// productive
 	public static final String ACCOUNTING_KEY_VB = "VB";
-	private static final String FILE_PRODUCTIVE = "C:\\work\\eclipseWorkspaces\\2019\\konto2\\accounting-excel\\src\\main\\resources\\Konto.xlsx";
 	
 	// test
 	public static final String ACCOUNTING_KEY_VISA = "VISA";
@@ -36,37 +32,8 @@ public class AccountingSingleton {
 
 	private AccountingManager accountingManager;
 	
-	private IAccoutingDataProvider accoutingDataProvider = new AccoutingDataProvider();
-	
 	private AccountingSingleton() {
-		initialize();
-	}
-
-	public void initialize() {
-		
-		AccountingData data = new AccountingData();
-		HashMap<MonthKey, List<AccountingRow>> fileData = accoutingDataProvider.readAccountingData(ACCOUNTING_KEY_VB);
-		if (fileData == null) {
-			throw new AccountingException("Daten konnten nicht gelesen werden!!", AccountingError.NO_DATA_READ, null);
-		}
-		for (MonthKey key : fileData.keySet()) {
-			data.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
-		}
-		
-		accountingManager = new AccountingManager().withAccountingData(ACCOUNTING_KEY_VB, data)
-				.withBudgetPlannings(accoutingDataProvider.readBudgetPlannings(ACCOUNTING_KEY_VB))
-				.withPaymentModalitys(accoutingDataProvider.readPaymentModalitys(ACCOUNTING_KEY_VB))
-				.withSettings(AccountManagerSettings.fromValues(true, 24, true, true))
-				.withIncome(accoutingDataProvider.readIncome(ACCOUNTING_KEY_VB));
-		
-		/*
-		accountingManager = new AccountingManager()
-				.withAccountingData(ACCOUNTING_KEY_TEST, AccountingTestDataGenerator.generateAccountingTestData())
-				.withBudgetPlannings(accoutingDataProvider.readBudgetPlannings())
-				.withPaymentModalitys(accoutingDataProvider.readPaymentModalitys())
-				.withSettings(AccountManagerSettings.fromValues(true, 24, true, true))
-				.withIncome(accoutingDataProvider.readIncome());
-				*/
+		accountingManager = new AccountingLoader().startUp(ACCOUNTING_KEY_VISA);
 	}
 
 	public static AccountingSingleton getInstance() {

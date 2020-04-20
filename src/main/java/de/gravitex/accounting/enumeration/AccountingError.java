@@ -25,5 +25,7 @@ public enum AccountingError {
 	NO_VALID_PERIOD,
 	
 	// Daten konnten nicht eingelesen werden
-	NO_DATA_READ
+	NO_DATA_READ,
+	
+	INIT
 }
