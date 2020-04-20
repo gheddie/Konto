@@ -168,7 +168,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 			initSettings();
 			filterTable.loadData();
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
-		} catch (AccountingException e) {
+		} catch (Exception e) {
 			pushMessages(
 					new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, "Fehler beim Starten des Managers!!")
 							.withMessage(AlertMessageType.ERROR, e.getMessage()).getAlertMessages());
