@@ -2,6 +2,7 @@ package de.gravitex.accounting.modality;
 
 import java.math.BigDecimal;
 
+import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
 import de.gravitex.accounting.util.MonthKey;
@@ -27,10 +28,6 @@ public abstract class PaymentModality {
 
 	public abstract StringBuffer getCalculationFooter();
 
-	public void addAmount(BigDecimal anAmount) {
-		totalAmount = totalAmount.add(anAmount);
-	}
-
 	public abstract void prepare();
 
 	public void reset() {
@@ -45,4 +42,6 @@ public abstract class PaymentModality {
 	public boolean isPeriodically() {
 		return false;
 	}
+
+	public abstract boolean checkAmount(AccountingRow accountingRow);
 }

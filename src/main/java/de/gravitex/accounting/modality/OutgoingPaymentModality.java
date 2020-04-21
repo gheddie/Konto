@@ -1,5 +1,8 @@
 package de.gravitex.accounting.modality;
 
+import java.math.BigDecimal;
+
+import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
@@ -38,5 +41,14 @@ public abstract class OutgoingPaymentModality extends PaymentModality {
 	public void prepare() {
 		// request limit
 		setLimit(AccountingSingleton.getInstance().getAccountingManager().requestLimit(getMonthKey(), getCategory()));
+	}
+	
+	@Override
+	public boolean checkAmount(AccountingRow accountingRow) {
+		boolean result = accountingRow.getAmount().compareTo(new BigDecimal(0)) < 0;
+		if (!result) {
+			int werner = 5;
+		}
+		return result;
 	}
 }

@@ -78,7 +78,8 @@ public class AccountingMonth {
 			Set<RowValidationResult> errors = rowValidator.getErrors(accountingRow, paymentModality);
 			if (errors != null && errors.size() > 0) {
 				RowValidationResult[] errorArray = errors.toArray(new RowValidationResult[] {});
-				throw new ValidatingAccountingException("error on validating accounting month ["+monthKey+"]!!", accountingRow, errorArray);
+				ValidatingAccountingException validatingAccountingException = new ValidatingAccountingException("error on validating accounting month ["+monthKey+"]!!", accountingRow, errorArray);
+				throw validatingAccountingException;
 			}
 		}
 	}

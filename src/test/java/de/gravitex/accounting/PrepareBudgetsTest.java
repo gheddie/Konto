@@ -78,7 +78,6 @@ public class PrepareBudgetsTest {
 		paymentModalitys.put(CATEGORY_C_HALF_YEAR, new FixedPeriodOutgoingPaymentModality(PaymentPeriod.HALF_YEAR));
 		
 		accountingData.setPaymentModalitys(paymentModalitys);
-		
 		accountingData.setAccountingType(AccountingType.MAIN_ACCOUNT);
 		
 		HashMap<MonthKey, AccountingMonth> data = new HashMap<MonthKey, AccountingMonth>();
