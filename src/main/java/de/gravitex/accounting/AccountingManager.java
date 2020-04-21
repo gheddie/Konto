@@ -255,7 +255,6 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		paymentModality.reset();
 		paymentModality.setMonthKey(monthKey);
 		paymentModality.setCategory(category);
-		paymentModality.prepare();
 		return paymentModality;
 	}
 	

@@ -47,6 +47,7 @@ import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
+import de.gravitex.accounting.enumeration.PaymentType;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.filter.interfacing.FilterDataChangedListener;
 import de.gravitex.accounting.gui.component.FilterCheckBox;
@@ -301,7 +302,8 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	}
 	
 	private void updatePaymentModality(PaymentModality paymentModality) {
-		switch (paymentModality.getPaymentType()) {
+		PaymentType paymentType = paymentModality.getPaymentType();
+		switch (paymentType) {
 		case INCOMING:
 			rbIncoming.setSelected(true);
 			rbOutgoing.setSelected(false);

@@ -18,17 +18,14 @@ public abstract class PaymentModality {
 	private PaymentPeriod paymentPeriod;
 	
 	private BigDecimal totalAmount = new BigDecimal(0);
+
+	private PaymentType paymentType;
 	
-	public PaymentModality(PaymentPeriod aPaymentPeriod) {
+	public PaymentModality(PaymentPeriod aPaymentPeriod, PaymentType aPaymentType) {
 		super();
 		this.paymentPeriod = aPaymentPeriod;
+		this.paymentType = aPaymentType;
 	}
-
-	public abstract PaymentType getPaymentType();
-
-	public abstract StringBuffer getCalculationFooter();
-
-	public abstract void prepare();
 
 	public void reset() {
 		totalAmount = new BigDecimal(0);
@@ -43,5 +40,7 @@ public abstract class PaymentModality {
 		return false;
 	}
 
-	public abstract boolean checkAmount(AccountingRow accountingRow);
+	public boolean checkAmount(AccountingRow accountingRow) {
+		return false;
+	}
 }

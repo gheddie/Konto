@@ -29,10 +29,9 @@ import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.io.ResourceFileReader;
-import de.gravitex.accounting.modality.FixedPeriodIncomingPaymentModality;
-import de.gravitex.accounting.modality.FixedPeriodOutgoingPaymentModality;
+import de.gravitex.accounting.modality.FixedPeriodPaymentModality;
 import de.gravitex.accounting.modality.PaymentModality;
-import de.gravitex.accounting.modality.UndefinedPeriodOutgoingPaymentModality;
+import de.gravitex.accounting.modality.UndefinedPeriodPaymentModality;
 import de.gravitex.accounting.util.MonthKey;
 
 public class AccoutingDataProvider implements IAccoutingDataProvider {
@@ -225,18 +224,12 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	private void createCategory(String categoryKey, String paymentInfo,
 			HashMap<String, PaymentModality> aPaymentModalitys) {
 		String[] spl = paymentInfo.split("#");
+		PaymentType paymentType = PaymentType.valueOf(spl[0]);
 		PaymentPeriod paymentPeriod = PaymentPeriod.valueOf(spl[1]);
-		switch (PaymentType.valueOf(spl[0])) {
-		case INCOMING:
-			aPaymentModalitys.put(categoryKey, new FixedPeriodIncomingPaymentModality(paymentPeriod));
-			break;
-		case OUTGOING:
-			if (paymentPeriod.equals(paymentPeriod.UNDEFINED)) {
-				aPaymentModalitys.put(categoryKey, new UndefinedPeriodOutgoingPaymentModality());
-			} else {
-				aPaymentModalitys.put(categoryKey, new FixedPeriodOutgoingPaymentModality(paymentPeriod));
-			}
-			break;
+		if (paymentPeriod.equals(PaymentPeriod.UNDEFINED)) {
+			aPaymentModalitys.put(categoryKey, new UndefinedPeriodPaymentModality(paymentType));
+		} else {
+			aPaymentModalitys.put(categoryKey, new FixedPeriodPaymentModality(paymentPeriod, paymentType));
 		}
 	}
 }

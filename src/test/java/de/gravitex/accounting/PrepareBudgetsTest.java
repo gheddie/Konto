@@ -14,7 +14,8 @@ import org.junit.Test;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AccountingType;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
-import de.gravitex.accounting.modality.FixedPeriodOutgoingPaymentModality;
+import de.gravitex.accounting.enumeration.PaymentType;
+import de.gravitex.accounting.modality.FixedPeriodPaymentModality;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.setting.AccountManagerSettings;
 import de.gravitex.accounting.util.MonthKey;
@@ -32,9 +33,9 @@ public class PrepareBudgetsTest {
 	public void testPrepareBudgets() {
 
 		HashMap<String, PaymentModality> paymentModalitys = new HashMap<String, PaymentModality>();
-		paymentModalitys.put(CATEGORY_A_MONTH, new FixedPeriodOutgoingPaymentModality(PaymentPeriod.MONTH));
-		paymentModalitys.put(CATEGORY_B_MONTH, new FixedPeriodOutgoingPaymentModality(PaymentPeriod.MONTH));
-		paymentModalitys.put(CATEGORY_C_HALF_YEAR, new FixedPeriodOutgoingPaymentModality(PaymentPeriod.HALF_YEAR));
+		paymentModalitys.put(CATEGORY_A_MONTH, new FixedPeriodPaymentModality(PaymentPeriod.MONTH, PaymentType.OUTGOING));
+		paymentModalitys.put(CATEGORY_B_MONTH, new FixedPeriodPaymentModality(PaymentPeriod.MONTH, PaymentType.OUTGOING));
+		paymentModalitys.put(CATEGORY_C_HALF_YEAR, new FixedPeriodPaymentModality(PaymentPeriod.HALF_YEAR, PaymentType.OUTGOING));
 
 		// ---
 
@@ -73,9 +74,9 @@ public class PrepareBudgetsTest {
 		AccountingData accountingData = new AccountingData();
 		
 		HashMap<String, PaymentModality> paymentModalitys = new HashMap<String, PaymentModality>();
-		paymentModalitys.put(CATEGORY_A_MONTH, new FixedPeriodOutgoingPaymentModality(PaymentPeriod.MONTH));
-		paymentModalitys.put(CATEGORY_B_MONTH, new FixedPeriodOutgoingPaymentModality(PaymentPeriod.MONTH));
-		paymentModalitys.put(CATEGORY_C_HALF_YEAR, new FixedPeriodOutgoingPaymentModality(PaymentPeriod.HALF_YEAR));
+		paymentModalitys.put(CATEGORY_A_MONTH, new FixedPeriodPaymentModality(PaymentPeriod.MONTH, PaymentType.OUTGOING));
+		paymentModalitys.put(CATEGORY_B_MONTH, new FixedPeriodPaymentModality(PaymentPeriod.MONTH, PaymentType.OUTGOING));
+		paymentModalitys.put(CATEGORY_C_HALF_YEAR, new FixedPeriodPaymentModality(PaymentPeriod.HALF_YEAR, PaymentType.OUTGOING));
 		
 		accountingData.setPaymentModalitys(paymentModalitys);
 		accountingData.setAccountingType(AccountingType.MAIN_ACCOUNT);
