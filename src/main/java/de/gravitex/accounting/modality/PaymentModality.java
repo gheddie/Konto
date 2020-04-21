@@ -11,6 +11,8 @@ import lombok.Data;
 @Data
 public abstract class PaymentModality {
 	
+	private static final BigDecimal ZERO = new BigDecimal(0);
+
 	private MonthKey monthKey;
 	
 	private String category;
@@ -41,6 +43,20 @@ public abstract class PaymentModality {
 	}
 
 	public boolean checkAmount(AccountingRow accountingRow) {
-		return false;
+		
+		boolean result = false;
+		BigDecimal amount = accountingRow.getAmount();
+		switch (paymentType) {
+		case IN_OUT:
+			result = true;
+			break;
+		case INCOMING:
+			result = amount.compareTo(ZERO) > 0;
+			break;
+		case OUTGOING:
+			result = amount.compareTo(ZERO) < 0;
+			break;
+		}
+		return result ;
 	}
 }

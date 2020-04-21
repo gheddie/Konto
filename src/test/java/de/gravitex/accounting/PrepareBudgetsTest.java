@@ -11,7 +11,6 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AccountingType;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
@@ -86,15 +85,15 @@ public class PrepareBudgetsTest {
 		// --- January
 
 		ArrayList<AccountingRow> rowObjectsJanuary = new ArrayList<AccountingRow>();
-		rowObjectsJanuary.add(getAccountingRow(1, LocalDate.of(2020, 1, 1), CATEGORY_A_MONTH, new BigDecimal(10)));
-		rowObjectsJanuary.add(getAccountingRow(2, LocalDate.of(2020, 1, 1), CATEGORY_B_MONTH, new BigDecimal(20)));
+		rowObjectsJanuary.add(getAccountingRow(1, LocalDate.of(2020, 1, 1), CATEGORY_A_MONTH, new BigDecimal(-10)));
+		rowObjectsJanuary.add(getAccountingRow(2, LocalDate.of(2020, 1, 1), CATEGORY_B_MONTH, new BigDecimal(-20)));
 
 		// --- February
 
 		ArrayList<AccountingRow> rowObjectsFebruary = new ArrayList<AccountingRow>();
-		rowObjectsFebruary.add(getAccountingRow(3, LocalDate.of(2020, 2, 1), CATEGORY_A_MONTH, new BigDecimal(10)));
-		rowObjectsFebruary.add(getAccountingRow(4, LocalDate.of(2020, 2, 1), CATEGORY_B_MONTH, new BigDecimal(75)));
-		rowObjectsFebruary.add(getAccountingRow(4, LocalDate.of(2020, 2, 1), CATEGORY_C_HALF_YEAR, new BigDecimal(50)));
+		rowObjectsFebruary.add(getAccountingRow(3, LocalDate.of(2020, 2, 1), CATEGORY_A_MONTH, new BigDecimal(-10)));
+		rowObjectsFebruary.add(getAccountingRow(4, LocalDate.of(2020, 2, 1), CATEGORY_B_MONTH, new BigDecimal(-75)));
+		rowObjectsFebruary.add(getAccountingRow(4, LocalDate.of(2020, 2, 1), CATEGORY_C_HALF_YEAR, new BigDecimal(-50)));
 
 		// --- Accounting data
 

@@ -1,6 +1,5 @@
 package de.gravitex.accounting.modality;
 
-import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
 

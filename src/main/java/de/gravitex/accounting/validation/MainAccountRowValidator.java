@@ -16,12 +16,10 @@ public class MainAccountRowValidator implements AccountingRowValidator {
 		
 		Set<RowValidationResult> result = new HashSet<RowValidationResult>();
 		
-		/*
 		// wrong amount (e.g. outgoing modality with positive amount)
 		if (!paymentModality.checkAmount(accountingRow)) {
 			result.add(RowValidationResult.fromValues(AccountingError.INVALID_AMOUNT, AlertMessageType.ERROR));
 		}
-		*/
 		
 		// no running index
 		if (accountingRow.getRunningIndex() == null) {
