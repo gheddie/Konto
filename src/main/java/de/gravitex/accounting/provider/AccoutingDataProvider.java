@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,9 +43,11 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	private static final int COL_SALDO = 3;
 	private static final int COL_PARTNER = 4;
 	private static final int COL_TEXT = 5;
-	private static final int COL_VALID_FROM = 6;
-	private static final int COL_VALID_UNTIL = 7;
-	private static final int COL_ALARM = 8;
+	private static final int COL_MAIN_ACCOUT = 6;
+	private static final int COL_MAIN_ACCOUT_REF = 7;
+	private static final int COL_VALID_FROM = 8;
+	private static final int COL_VALID_UNTIL = 9;
+	private static final int COL_ALARM = 10;
 
 	private static List<String> header;
 
@@ -68,7 +69,7 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 			while (itr.hasNext()) {
 				Row row = itr.next();
 				if (row.getRowNum() > 0) {
-					AccountingRow accountingRow = readLine(row);
+					AccountingRow accountingRow = readRow(row);
 					if (fileRows.get(MonthKey.fromDate(accountingRow.getDate())) == null) {
 						fileRows.put(MonthKey.fromDate(accountingRow.getDate()),
 								new ArrayList<AccountingRow>());
@@ -88,7 +89,7 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 		}
 	}
 	
-	private static AccountingRow readLine(Row row) {
+	private static AccountingRow readRow(Row row) {
 
 		AccountingRow rowObject = new AccountingRow();
 		Iterator<Cell> cellIterator = row.cellIterator();
@@ -121,16 +122,24 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 				// 5
 				rowObject.setText(AccountingUtil.getCellValue(String.class, cell));
 				break;
-			case COL_VALID_FROM:
+			case COL_MAIN_ACCOUT:
 				// 6
+				rowObject.setMainAccount(AccountingUtil.getCellValue(String.class, cell));
+				break;
+			case COL_MAIN_ACCOUT_REF:
+				// 7
+				rowObject.setMainAccountReference(AccountingUtil.getCellValue(String.class, cell));
+				break;
+			case COL_VALID_FROM:
+				// 8
 				rowObject.setValidFrom(AccountingUtil.getCellValue(LocalDate.class, cell));
 				break;
 			case COL_VALID_UNTIL:
-				// 7
+				// 9
 				rowObject.setValidUntil(AccountingUtil.getCellValue(LocalDate.class, cell));
 				break;
 			case COL_ALARM:
-				// 8
+				// 10
 				rowObject.setAlarm(AccountingUtil.getCellValue(String.class, cell));
 				break;
 			}

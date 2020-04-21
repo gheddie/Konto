@@ -15,6 +15,8 @@ public class AccountingRow implements Comparable<AccountingRow> {
 	private BigDecimal saldo;
 	private String partner;
 	private String text;
+	private String mainAccount;
+	private String mainAccountReference;
 	private String category;
 	private LocalDate validFrom;
 	private LocalDate validUntil;

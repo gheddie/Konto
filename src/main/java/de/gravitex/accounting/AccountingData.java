@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.gravitex.accounting.enumeration.AccountingType;
 import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.wrapper.Category;
 import lombok.Data;
@@ -16,6 +17,11 @@ import lombok.Data;
 public class AccountingData {
 
 	private HashMap<MonthKey, AccountingMonth> data = new HashMap<MonthKey, AccountingMonth>();
+	
+	private AccountingType accountingType;
+	
+	// reference to main account if accounting type = 'SUB_ACCOUNT'
+	private String mainAccount;
 
 	public Set<MonthKey> keySet() {
 		return data.keySet();
