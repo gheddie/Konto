@@ -76,27 +76,32 @@ new FormModel {
 						"gridx": 2
 						"gridheight": 4
 					} )
-					add( new FormComponent( "javax.swing.JRadioButton" ) {
-						name: "rbIncoming"
-						"text": "eingehend"
-						"enabled": false
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label3"
+						"text": "Typ:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 3
 					} )
-					add( new FormComponent( "javax.swing.JRadioButton" ) {
-						name: "rbOutgoing"
-						"text": "ausgehend"
-						"enabled": false
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "tfPaymentType"
+						"editable": false
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 3
 						"gridy": 1
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label8"
+						"text": "Periode:"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 3
+						"gridy": 2
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "tfPaymentPeriod"
 						"editable": false
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 3
-						"gridy": 2
+						"gridy": 3
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 						"$columnSpecs": "0, 249, 227, 312:1.0"

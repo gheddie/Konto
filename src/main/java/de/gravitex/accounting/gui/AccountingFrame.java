@@ -302,17 +302,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	}
 	
 	private void updatePaymentModality(PaymentModality paymentModality) {
-		PaymentType paymentType = paymentModality.getPaymentType();
-		switch (paymentType) {
-		case INCOMING:
-			rbIncoming.setSelected(true);
-			rbOutgoing.setSelected(false);
-			break;
-		case OUTGOING:
-			rbIncoming.setSelected(false);
-			rbOutgoing.setSelected(true);
-			break;
-		}
+		tfPaymentType.setText(paymentModality.getPaymentType().getTranslation());
 		tfPaymentPeriod.setText(paymentModality.getPaymentPeriod().getTranslation());
 	}
 
@@ -384,8 +374,9 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 		scrollPane3 = new JScrollPane();
 		panel5 = new JPanel();
 		categoriesByMonthList = new JList();
-		rbIncoming = new JRadioButton();
-		rbOutgoing = new JRadioButton();
+		label3 = new JLabel();
+		tfPaymentType = new JTextField();
+		label8 = new JLabel();
 		tfPaymentPeriod = new JTextField();
 		categoryEntriesParent = new JPanel();
 		scrollPane4 = new JScrollPane();
@@ -466,12 +457,12 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border.
-				EmptyBorder( 0, 0, 0, 0) , "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e", javax. swing. border. TitledBorder. CENTER, javax. swing
-				. border. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069al\u006fg" ,java .awt .Font .BOLD ,12 ),
-				java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( )
-				{ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062or\u0064er" .equals (e .getPropertyName () ))
-				throw new RuntimeException( ); }} );
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder
+				( 0, 0, 0, 0) , "JFor\u006dDesi\u0067ner \u0045valu\u0061tion", javax. swing. border. TitledBorder. CENTER, javax. swing. border
+				. TitledBorder. BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ), java. awt
+				. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void
+				propertyChange (java .beans .PropertyChangeEvent e) {if ("bord\u0065r" .equals (e .getPropertyName () )) throw new RuntimeException( )
+				; }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -508,23 +499,27 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 
-				//---- rbIncoming ----
-				rbIncoming.setText("eingehend");
-				rbIncoming.setEnabled(false);
-				pnlData.add(rbIncoming, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0,
+				//---- label3 ----
+				label3.setText("Typ:");
+				pnlData.add(label3, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 0), 0, 0));
 
-				//---- rbOutgoing ----
-				rbOutgoing.setText("ausgehend");
-				rbOutgoing.setEnabled(false);
-				pnlData.add(rbOutgoing, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0,
+				//---- tfPaymentType ----
+				tfPaymentType.setEditable(false);
+				pnlData.add(tfPaymentType, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 0), 0, 0));
+
+				//---- label8 ----
+				label8.setText("Periode:");
+				pnlData.add(label8, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 0), 0, 0));
 
 				//---- tfPaymentPeriod ----
 				tfPaymentPeriod.setEditable(false);
-				pnlData.add(tfPaymentPeriod, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0,
+				pnlData.add(tfPaymentPeriod, new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 0), 0, 0));
 
@@ -804,8 +799,9 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	private JScrollPane scrollPane3;
 	private JPanel panel5;
 	private JList categoriesByMonthList;
-	private JRadioButton rbIncoming;
-	private JRadioButton rbOutgoing;
+	private JLabel label3;
+	private JTextField tfPaymentType;
+	private JLabel label8;
 	private JTextField tfPaymentPeriod;
 	private JPanel categoryEntriesParent;
 	private JScrollPane scrollPane4;
