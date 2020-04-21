@@ -5,7 +5,7 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.GridBagLayout ) {
 			"$columnSpecs": "0, 1076:1.0"
-			"$rowSpecs": "0, 0, 0, 164:1.0, 178:1.0, 0, 129"
+			"$rowSpecs": "0, 0, 164:1.0, 178:1.0, 0, 129"
 			"$hGap": 5
 			"$vGap": 5
 			"$alignLeft": true
@@ -34,18 +34,6 @@ new FormModel {
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridwidth": 2
-			} )
-			add( new FormComponent( "javax.swing.JLabel" ) {
-				name: "label3"
-				"text": "Konto:"
-			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridy": 1
-			} )
-			add( new FormComponent( "javax.swing.JComboBox" ) {
-				name: "cbSelectedAccount"
-			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 1
-				"gridy": 1
 			} )
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
 				name: "tbpMain"
@@ -356,7 +344,7 @@ new FormModel {
 					"title": "Ausgabe"
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridy": 2
+				"gridy": 1
 				"gridheight": 4
 				"hAlign": 5
 				"gridwidth": 2
@@ -380,7 +368,7 @@ new FormModel {
 					"gridwidth": 4
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridy": 6
+				"gridy": 5
 				"gridwidth": 2
 			} )
 		}, new FormLayoutConstraints( null ) {

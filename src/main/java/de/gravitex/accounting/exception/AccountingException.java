@@ -1,48 +1,19 @@
 package de.gravitex.accounting.exception;
 
-import java.util.List;
-
 import de.gravitex.accounting.AccountingRow;
-import de.gravitex.accounting.enumeration.AccountingError;
-import de.gravitex.accounting.gui.AlertMessage;
-import lombok.Data;
 
-@Data
-public class AccountingException extends RuntimeException {
+public abstract class AccountingException extends RuntimeException {
 
-	private static final long serialVersionUID = 5428035104385968283L;
-
-	private AccountingError accountingError;
-
+	private static final long serialVersionUID = -8422380740238783078L;
+	
 	private AccountingRow accountingRow;
 
-	private List<AlertMessage> alertMessages;
-
-	public AccountingException(String message, AccountingError anAccountingError, AccountingRow anAccountingRow, List<AlertMessage> anAlertMessages) {
+	public AccountingException(String message, AccountingRow accountingRow) {
 		super(message);
-		this.accountingError = anAccountingError;
-		this.accountingRow = anAccountingRow;
-		this.alertMessages = anAlertMessages;
-	}
-
-	public AccountingException(String message, AccountingError anAccountingError, AccountingRow anAccountingRow) {
-		this(message, anAccountingError, anAccountingRow, null);
-	}
-
-	public String toString() {
-		return getClass().getSimpleName() + " (" + getMessage() + ") [ERROR:" + accountingError + "] in {"
-				+ accountingRow + "}!!";
+		this.accountingRow = accountingRow;
 	}
 	
-	public boolean hasAlertMessages() {
-		return (alertMessages != null && alertMessages.size() > 0);
-	}
-
-	public StringBuffer asStringBuffer() {
-		StringBuffer buffer = new StringBuffer();
-		for (AlertMessage alertMessage : alertMessages) {
-			buffer.append(alertMessage + "\n");
-		}
-		return buffer;
+	public AccountingRow getAccountingRow() {
+		return accountingRow;
 	}
 }

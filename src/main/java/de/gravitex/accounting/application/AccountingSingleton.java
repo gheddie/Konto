@@ -12,8 +12,10 @@ import de.gravitex.accounting.AccountingData;
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingMonth;
 import de.gravitex.accounting.AccountingRow;
+import de.gravitex.accounting.application.definition.AccountDefinition;
 import de.gravitex.accounting.enumeration.AccountingError;
-import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.enumeration.AccountingType;
+import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.util.MonthKey;
 import lombok.Data;
 
@@ -33,7 +35,10 @@ public class AccountingSingleton {
 	private AccountingManager accountingManager;
 	
 	private AccountingSingleton() {
-		accountingManager = new AccountingLoader().startUp(ACCOUNTING_KEY_VISA);
+		accountingManager = new AccountingLoader()
+				.withMainAccount(AccountDefinition.fromValues(ACCOUNTING_KEY_VB, AccountingType.MAIN_ACCOUNT))
+				.withSubAccount(AccountDefinition.fromValues(ACCOUNTING_KEY_VISA, AccountingType.SUB_ACCOUNT))
+				.startUp();
 	}
 
 	public static AccountingSingleton getInstance() {
@@ -45,7 +50,7 @@ public class AccountingSingleton {
 	
 	public void printCategory(String category) {
 		List<AccountingRow> resultsByCategory = new ArrayList<AccountingRow>();
-		for (AccountingMonth month : accountingManager.getSelectedAccountingData().getAccountingMonths()) {
+		for (AccountingMonth month : accountingManager.getMainAccount().getAccountingMonths()) {
 			resultsByCategory.addAll(month.getRowObjectsByCategory(category));
 		}
 		for (AccountingRow accountingRow : resultsByCategory) {
@@ -58,7 +63,7 @@ public class AccountingSingleton {
 		logger.info(" --------------------- SALDO CHECK --------------------- ");
 
 		List<AccountingRow> results = new ArrayList<AccountingRow>();
-		for (AccountingMonth month : accountingManager.getSelectedAccountingData().getAccountingMonths()) {
+		for (AccountingMonth month : accountingManager.getMainAccount().getAccountingMonths()) {
 			results.addAll(month.getRowObjects());
 		}
 		Collections.sort(results);
@@ -72,10 +77,10 @@ public class AccountingSingleton {
 					referenceSaldo = referenceSaldo.add(accountingRow.getAmount());
 					if (accountingRow.getSaldo() != null) {
 						if (!(accountingRow.getSaldo().equals(referenceSaldo))) {
-							throw new AccountingException(
+							throw new GenericAccountingException(
 									"invalid reference saldo [reference value: " + referenceSaldo + " <-> row value: "
 											+ accountingRow.getSaldo() + "]!!",
-									AccountingError.INVALID_SALDO_REF, accountingRow);
+									accountingRow, AccountingError.INVALID_SALDO_REF);
 						}
 						logger.info(
 								" ---> altered ref [diff:" + accountingRow.getAmount() + "] saldo to: " + referenceSaldo
@@ -91,7 +96,7 @@ public class AccountingSingleton {
 	}
 
 	public HashMap<String, BigDecimal> getCategorySums(MonthKey monthKey) {
-		AccountingMonth monthData = accountingManager.getSelectedAccountingData().get(monthKey);
+		AccountingMonth monthData = accountingManager.getMainAccount().get(monthKey);
 		if (monthData == null) {
 			return null;
 		}

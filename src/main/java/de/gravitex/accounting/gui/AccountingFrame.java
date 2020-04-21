@@ -19,11 +19,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -49,7 +47,7 @@ import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
-import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.filter.interfacing.FilterDataChangedListener;
 import de.gravitex.accounting.gui.component.FilterCheckBox;
 import de.gravitex.accounting.gui.component.FilterComboBox;
@@ -97,7 +95,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 						singleton.saldoCheck();
 						pushMessages(new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Saldo OK!!")
 								.getAlertMessages());
-					} catch (AccountingException accountingException) {
+					} catch (GenericAccountingException accountingException) {
 						pushMessages(new AlertMessagesBuilder()
 								.withMessage(AlertMessageType.ERROR, "Saldo error: " + accountingException.getMessage())
 								.getAlertMessages());
@@ -117,7 +115,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 						try {
 							accountingManager.checkValidities(category.getCategory());	
 							buffer.append("OK\n");
-						} catch (AccountingException e2) {
+						} catch (GenericAccountingException e2) {
 							buffer.append(e2.asStringBuffer());
 						}
 					}
@@ -159,7 +157,6 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 					System.exit(0);
 				}
 			});
-			fillAccounts();
 			initFilters();
 			fillAccountingMonths();
 			cbFilterAllPartners.initData();
@@ -169,32 +166,13 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 			filterTable.loadData();
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 		} catch (Exception e) {
+			e.printStackTrace();
 			pushMessages(
 					new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, "Fehler beim Starten des Managers!!")
 							.withMessage(AlertMessageType.ERROR, e.getMessage()).getAlertMessages());
 		}
 	}
 	
-	private void fillAccounts() {
-		
-		DefaultComboBoxModel<String> accountsModel = new DefaultComboBoxModel<String>();
-		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
-		/*
-		for (String account : accountingManager.getAccounts()) {
-			accountsModel.addElement(account);
-		}
-		*/
-		cbSelectedAccount.setModel(accountsModel);
-		/*
-		cbSelectedAccount.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				AccountingSingleton.getInstance().initialize((String) cbSelectedAccount.getSelectedItem());
-			}
-		});
-		*/
-	}
-
 	private void initFilters() {
 		
 		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
@@ -256,7 +234,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	private void fillAccountingMonths() {
 		
 		final DefaultListModel<MonthKey> monthKeyModel = new DefaultListModel<MonthKey>();
-		Set<MonthKey> keySet = AccountingSingleton.getInstance().getAccountingManager().getSelectedAccountingData().keySet();
+		Set<MonthKey> keySet = AccountingSingleton.getInstance().getAccountingManager().getMainAccount().keySet();
 		List<MonthKey> keyList = new ArrayList<MonthKey>(keySet);
 		Collections.sort(keyList);
 		for (MonthKey monthKey : keyList) {
@@ -316,7 +294,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 					}
 				}
 			});			
-		} catch (AccountingException e) {
+		} catch (GenericAccountingException e) {
 			pushMessages(
 					new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, e.getMessage()).getAlertMessages());
 		}
@@ -396,8 +374,6 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 		btnReloadData = new JButton();
 		btnClose = new JButton();
 		btnCheckValidities = new JButton();
-		label3 = new JLabel();
-		cbSelectedAccount = new JComboBox();
 		tbpMain = new JTabbedPane();
 		pnlData = new JPanel();
 		scrollPane1 = new JScrollPane();
@@ -455,9 +431,9 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 		var contentPane = getContentPane();
 		contentPane.setLayout(new GridBagLayout());
 		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 1076, 0};
-		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 169, 183, 0, 129, 0};
+		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 169, 183, 0, 129, 0};
 		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 1.0, 1.0E-4};
-		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0E-4};
+		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0E-4};
 
 		//======== tbMain ========
 		{
@@ -483,28 +459,17 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
-		//---- label3 ----
-		label3.setText("Konto:");
-		contentPane.add(label3, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 5), 0, 0));
-		contentPane.add(cbSelectedAccount, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-			new Insets(0, 0, 5, 0), 0, 0));
-
 		//======== tbpMain ========
 		{
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (
-				new javax. swing. border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDes\u0069gner \u0045valua\u0074ion"
-				, javax. swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM
-				, new java .awt .Font ("D\u0069alog" ,java .awt .Font .BOLD ,12 )
-				, java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (
-				new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e
-				) {if ("\u0062order" .equals (e .getPropertyName () )) throw new RuntimeException( )
-				; }} );
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border.
+				EmptyBorder( 0, 0, 0, 0) , "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e", javax. swing. border. TitledBorder. CENTER, javax. swing
+				. border. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069al\u006fg" ,java .awt .Font .BOLD ,12 ),
+				java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( )
+				{ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062or\u0064er" .equals (e .getPropertyName () ))
+				throw new RuntimeException( ); }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -787,7 +752,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 			}
 			tbpMain.addTab("Ausgabe", pnlOutput);
 		}
-		contentPane.add(tbpMain, new GridBagConstraints(0, 2, 2, 4, 0.0, 0.0,
+		contentPane.add(tbpMain, new GridBagConstraints(0, 1, 2, 4, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -808,7 +773,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				new Insets(0, 0, 0, 0), 0, 0));
 		}
-		contentPane.add(panelAlerts, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0,
+		contentPane.add(panelAlerts, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 0, 0), 0, 0));
 		pack();
@@ -829,8 +794,6 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	private JButton btnReloadData;
 	private JButton btnClose;
 	private JButton btnCheckValidities;
-	private JLabel label3;
-	private JComboBox cbSelectedAccount;
 	private JTabbedPane tbpMain;
 	private JPanel pnlData;
 	private JScrollPane scrollPane1;

@@ -27,5 +27,9 @@ public enum AccountingError {
 	// Daten konnten nicht eingelesen werden
 	NO_DATA_READ,
 	
-	INIT
+	INIT,
+	
+	INVALID_MAINACCOUNT,
+	
+	INVALID_MAINACCOUNT_REF
 }

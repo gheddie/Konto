@@ -9,8 +9,9 @@ import de.gravitex.accounting.AccountingMonth;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.BudgetPlanning;
 import de.gravitex.accounting.Income;
+import de.gravitex.accounting.application.definition.AccountDefinition;
 import de.gravitex.accounting.enumeration.AccountingError;
-import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.provider.AccoutingDataProvider;
 import de.gravitex.accounting.provider.IAccoutingDataProvider;
@@ -20,36 +21,45 @@ import de.gravitex.accounting.util.MonthKey;
 public class AccountingLoader {
 	
 	private IAccoutingDataProvider accoutingDataProvider = new AccoutingDataProvider();
+	
+	private HashMap<String, AccountDefinition> accountDefinitions = new HashMap<String, AccountDefinition>();
 
-	public AccountingManager startUp(String accountingKey) {
+	public AccountingManager startUp() {
 		
-		AccountingData data = new AccountingData();
-		
-		HashMap<MonthKey, List<AccountingRow>> fileData = readAccountingData(accountingKey);
-
-		for (MonthKey key : fileData.keySet()) {
-			data.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
+		Income income = readIncome();
+		AccountingManager accountingManager = new AccountingManager();
+		AccountingData accountingData = null;
+		for (String key : accountDefinitions.keySet()) {
+			accountingData = getAccountingData(key);
+			accountingData.setAccountKey(key);
+			accountingData.setAccountingType(accountDefinitions.get(key).getAccountingType());
+			accountingManager.withAccountingData(accountingData);
 		}
-		
-		HashMap<MonthKey, BudgetPlanning> budgetPlannings = readBudgetPlannings(accountingKey);
-		HashMap<String, PaymentModality> paymentModalitys = readPaymentModalitys(accountingKey);
-		Income income = readIncome(accountingKey);
-		
-		AccountingManager accountingManager = new AccountingManager().withAccountingData(accountingKey, data)
-				.withBudgetPlannings(budgetPlannings)
-				.withPaymentModalitys(paymentModalitys)
-				.withSettings(AccountManagerSettings.fromValues(true, 24, true, true))
-				.withIncome(income);
-		
+		accountingManager.withSettings(AccountManagerSettings.fromValues(true, 24, true, true)).withIncome(income);
 		return accountingManager;
 	}
 
-	private Income readIncome(String accountingKey) {
+	private AccountingData getAccountingData(String accountingKey) {
+		
+		AccountingData accountingData = new AccountingData();
+		
+		HashMap<MonthKey, List<AccountingRow>> fileData = readAccountingData(accountingKey);
+		for (MonthKey key : fileData.keySet()) {
+			accountingData.put(key, AccountingMonth.fromValues(key, fileData.get(key)));
+		}
+		
+		accountingData.setBudgetPlannings(readBudgetPlannings(accountingKey));
+		accountingData.setPaymentModalitys(readPaymentModalitys(accountingKey));
+		
+		return accountingData;
+	}
+
+	private Income readIncome() {
 		try {
-			Income income = accoutingDataProvider.readIncome(accountingKey);
+			Income income = accoutingDataProvider.readIncome();
 			return income;	
 		} catch (Exception e) {
-			throw new AccountingException("Einkommen konnten nicht gelesen werden!!", AccountingError.NO_DATA_READ, null);
+			throw new GenericAccountingException("Einkommen konnten nicht gelesen werden!!", null, AccountingError.NO_DATA_READ);
 		}
 	}
 
@@ -58,7 +68,7 @@ public class AccountingLoader {
 			HashMap<String, PaymentModality> paymentModalitys = accoutingDataProvider.readPaymentModalitys(accountingKey);
 			return paymentModalitys;	
 		} catch (Exception e) {
-			throw new AccountingException("Zahlungstypen konnten nicht gelesen werden!!", AccountingError.NO_DATA_READ, null);
+			throw new GenericAccountingException("Zahlungstypen konnten nicht gelesen werden!!", null, AccountingError.NO_DATA_READ);
 		}
 	}
 
@@ -67,7 +77,7 @@ public class AccountingLoader {
 			HashMap<MonthKey, BudgetPlanning> budgetPlannings = accoutingDataProvider.readBudgetPlannings(accountingKey);
 			return budgetPlannings;	
 		} catch (Exception e) {
-			throw new AccountingException("Budgets konnten nicht gelesen werden!!", AccountingError.NO_DATA_READ, null);
+			throw new GenericAccountingException("Budgets konnten nicht gelesen werden!!", null, AccountingError.NO_DATA_READ);
 		}
 	}
 
@@ -76,7 +86,17 @@ public class AccountingLoader {
 			HashMap<MonthKey, List<AccountingRow>> fileData = accoutingDataProvider.readAccountingData(accountingKey);
 			return fileData;	
 		} catch (Exception e) {
-			throw new AccountingException("Buchungen konnten nicht gelesen werden!!", AccountingError.NO_DATA_READ, null);
+			throw new GenericAccountingException("Buchungen konnten nicht gelesen werden!!", null, AccountingError.NO_DATA_READ);
 		}
+	}
+
+	public AccountingLoader withMainAccount(AccountDefinition accountDefinition) {
+		accountDefinitions.put(accountDefinition.getAccountKey(), accountDefinition);
+		return this;
+	}
+	
+	public AccountingLoader withSubAccount(AccountDefinition accountDefinition) {
+		accountDefinitions.put(accountDefinition.getAccountKey(), accountDefinition);
+		return this;
 	}
 }

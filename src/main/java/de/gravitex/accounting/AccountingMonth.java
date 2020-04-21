@@ -7,22 +7,31 @@ import java.util.List;
 import java.util.Set;
 
 import de.gravitex.accounting.enumeration.AccountingError;
-import de.gravitex.accounting.exception.AccountingException;
-import de.gravitex.accounting.util.CategoryResultPrinter;
+import de.gravitex.accounting.enumeration.AccountingType;
+import de.gravitex.accounting.exception.GenericAccountingException;
+import de.gravitex.accounting.exception.ValidatingAccountingException;
 import de.gravitex.accounting.util.MonthKey;
+import de.gravitex.accounting.validation.MainAccountRowValidator;
+import de.gravitex.accounting.validation.RowValidationResult;
+import de.gravitex.accounting.validation.AccountingRowValidator;
+import de.gravitex.accounting.validation.SubAccountRowValidator;
 import lombok.Data;
 
 @Data
 public class AccountingMonth {
 	
+	private static final HashMap<AccountingType, AccountingRowValidator> rowValidators = new HashMap<AccountingType, AccountingRowValidator>();
+	static {
+		rowValidators.put(AccountingType.MAIN_ACCOUNT, new MainAccountRowValidator());
+		rowValidators.put(AccountingType.SUB_ACCOUNT, new SubAccountRowValidator());
+	}
+	
 	private MonthKey monthKey;
 	
 	private List<AccountingRow> rowObjects;
 
-	private CategoryResultPrinter printer;
-
 	private AccountingMonth() {
-
+		super();
 	}
 
 	public static AccountingMonth fromValues(MonthKey monthKey, List<AccountingRow> rowObjects) {
@@ -30,17 +39,6 @@ public class AccountingMonth {
 		aMonth.setMonthKey(monthKey);
 		aMonth.setRowObjects(rowObjects);
 		return aMonth;
-	}
-
-	private HashMap<String, List<AccountingRow>> getSortedByWhat() {
-		HashMap<String, List<AccountingRow>> result = new HashMap<String, List<AccountingRow>>();
-		for (AccountingRow rowObject : rowObjects) {
-			if (result.get(rowObject.getCategory()) == null) {
-				result.put(rowObject.getCategory(), new ArrayList());
-			}
-			result.get(rowObject.getCategory()).add(rowObject);
-		}
-		return result;
 	}
 
 	public List<AccountingRow> getRowObjectsByCategory(String category) {
@@ -71,12 +69,12 @@ public class AccountingMonth {
 		return result;
 	}
 
-	public void validate() {
-		AccountingError error = null;
+	public void validate(AccountingType accountingType) {
 		for (AccountingRow accountingRow : rowObjects) {
-			error = accountingRow.getError();
-			if (error != null) {
-				throw new AccountingException("error on validating accounting month!!", error, accountingRow);
+			Set<RowValidationResult> errors = rowValidators.get(accountingType).getErrors(accountingRow);
+			if (errors != null && errors.size() > 0) {
+				RowValidationResult[] errorArray = errors.toArray(new RowValidationResult[] {});
+				throw new ValidatingAccountingException("error on validating accounting month ["+monthKey+"]!!", accountingRow, errorArray);
 			}
 		}
 	}

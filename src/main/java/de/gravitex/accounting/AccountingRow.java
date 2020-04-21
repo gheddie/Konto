@@ -34,28 +34,6 @@ public class AccountingRow implements Comparable<AccountingRow> {
 		return runningIndex.compareTo(accountingRow.getRunningIndex());
 	}
 
-	public AccountingError getError() {
-		// no running index
-		if (runningIndex == null) {
-			return AccountingError.NO_RUNNING_INDEX;
-		}
-		// no date
-		if (date == null) {
-			return AccountingError.NO_DATE;
-		}
-		if (category == null) {
-			return AccountingError.NO_CATEGORY;
-		}
-		if (amount == null) {
-			return AccountingError.NO_AMOUNT;
-		}
-		// undefined without without a text
-		if (category.equals(AccountingManager.UNDEFINED_CATEGORY) && (text == null || text.length() == 0)) {
-			return AccountingError.UNDEF_NO_TEXT;
-		}
-		return null;
-	}
-
 	public String[] asTableRow(boolean withValidity) {
 		if (withValidity) {
 			return new String[] {String.valueOf(runningIndex), date.toString(), amount.toString(), validFrom != null ? validFrom.toString() : "", validUntil != null ? validUntil.toString() : "", text};	

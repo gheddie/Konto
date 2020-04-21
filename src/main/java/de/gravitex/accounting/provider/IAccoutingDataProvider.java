@@ -1,5 +1,7 @@
 package de.gravitex.accounting.provider;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,11 +19,11 @@ public interface IAccoutingDataProvider {
 
 	public static final String INCOME_PROPERTIES = "income.properties";
 
-	Income readIncome(String accountingKey);
+	Income readIncome() throws IOException;
 	
-	HashMap<String, PaymentModality> readPaymentModalitys(String accountingKey);
+	HashMap<String, PaymentModality> readPaymentModalitys(String accountingKey) throws IOException;
 	
-	HashMap<MonthKey, BudgetPlanning> readBudgetPlannings(String accountingKey);
+	HashMap<MonthKey, BudgetPlanning> readBudgetPlannings(String accountingKey) throws FileNotFoundException, IOException;
 
 	HashMap<MonthKey, List<AccountingRow>> readAccountingData(String accountingKey);
 }

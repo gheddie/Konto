@@ -27,7 +27,7 @@ import de.gravitex.accounting.Income;
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
-import de.gravitex.accounting.exception.AccountingException;
+import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.io.ResourceFileReader;
 import de.gravitex.accounting.modality.FixedPeriodIncomingPaymentModality;
 import de.gravitex.accounting.modality.FixedPeriodOutgoingPaymentModality;
@@ -58,7 +58,6 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	@Override
 	public HashMap<MonthKey, List<AccountingRow>> readAccountingData(String accountingKey) {
 		try {
-			// File file = new File(fileName);
 			File file = ResourceFileReader.getResourceFile(accountingKey, BOOKING_FILE_NAME);
 			FileInputStream fis = new FileInputStream(file);
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
@@ -144,10 +143,12 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 				break;
 			}
 		}
+		/*
 		AccountingError error = rowObject.getError();
 		if (error != null) {
-			throw new AccountingException("row [" + rowObject + "] is not valid!!", error, rowObject);
+			throw new AccountingException("row [" + rowObject + "] is not valid!!", rowObject, error);
 		}
+		*/
 		return rowObject;
 	}
 	
@@ -165,11 +166,11 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 			}
 		}
 		if (categorys.size() == 0) {
-			throw new AccountingException("no category found for row!!", AccountingError.NO_CATEGORY, null);
+			throw new GenericAccountingException("no category found for row!!", null, AccountingError.NO_CATEGORY);
 		}
 		if (categorys.size() > 1) {
-			throw new AccountingException("more than one category found for row!!", AccountingError.MULTIPLE_CATEGORIES,
-					null);
+			throw new GenericAccountingException("more than one category found for row!!", null,
+					AccountingError.MULTIPLE_CATEGORIES);
 		}
 		return categorys.get(0);
 	}
@@ -186,55 +187,37 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 	}
 
 	@Override
-	public Income readIncome(String accountingKey) {
-		Properties prop = new Properties();
-		try {
-			prop.load(AccoutingDataProvider.class.getClassLoader().getResourceAsStream(accountingKey + "/" + IAccoutingDataProvider.INCOME_PROPERTIES));
-			return Income.fromValues(prop);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+	public Income readIncome() throws IOException {
+		
+		Properties prop = ResourceFileReader.getProperties(null, IAccoutingDataProvider.INCOME_PROPERTIES);
+		return Income.fromValues(prop);
 	}
 
 	@Override
-	public HashMap<String, PaymentModality> readPaymentModalitys(String accountingKey) {
-		Properties prop = new Properties();
+	public HashMap<String, PaymentModality> readPaymentModalitys(String accountingKey) throws IOException {
+		
 		HashMap<String, PaymentModality> result = new HashMap<String, PaymentModality>();
-		try {
-			prop.load(AccoutingDataProvider.class.getClassLoader().getResourceAsStream(accountingKey + "/" + IAccoutingDataProvider.MODALITIES_PROPERTIES));
-			String key = null;
-			for (Object keyValue : prop.keySet()) {
-				key = String.valueOf(keyValue);
-				logger.info(keyValue + " ---> " + prop.getProperty(key));
-				createCategory(key, prop.getProperty(key), result);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Properties prop = ResourceFileReader.getProperties(accountingKey, IAccoutingDataProvider.MODALITIES_PROPERTIES);
+		String key = null;
+		for (Object keyValue : prop.keySet()) {
+			key = String.valueOf(keyValue);
+			logger.info(keyValue + " ---> " + prop.getProperty(key));
+			createCategory(key, prop.getProperty(key), result);
 		}
 		return result;
 	}
 
 	@Override
-	public HashMap<MonthKey, BudgetPlanning> readBudgetPlannings(String accountingKey) {
+	public HashMap<MonthKey, BudgetPlanning> readBudgetPlannings(String accountingKey) throws FileNotFoundException, IOException {
+		
 		HashMap<MonthKey, BudgetPlanning> result = new HashMap<MonthKey, BudgetPlanning>();
 		for (File resourcePlanningFile : ResourceFileReader.getResourceFiles(accountingKey, IAccoutingDataProvider.RESOURCE_PLANNING_FOLDER)) {
 			logger.info("reading resource planning: " + resourcePlanningFile.getName());
 			Properties budgetPlanningForMonth = new Properties();
-			try {
-				budgetPlanningForMonth.load(new FileInputStream(resourcePlanningFile.getAbsolutePath()));
-				String[] spl = FilenameUtils.removeExtension(resourcePlanningFile.getName()).split("_");
-				MonthKey monthKey = MonthKey.fromValues(Integer.parseInt(spl[1]), Integer.parseInt(spl[2]));
-				result.put(monthKey, BudgetPlanning.fromValues(budgetPlanningForMonth));
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			budgetPlanningForMonth.load(new FileInputStream(resourcePlanningFile.getAbsolutePath()));
+			String[] spl = FilenameUtils.removeExtension(resourcePlanningFile.getName()).split("_");
+			MonthKey monthKey = MonthKey.fromValues(Integer.parseInt(spl[1]), Integer.parseInt(spl[2]));
+			result.put(monthKey, BudgetPlanning.fromValues(budgetPlanningForMonth));
 		}
 		return result;
 	}
