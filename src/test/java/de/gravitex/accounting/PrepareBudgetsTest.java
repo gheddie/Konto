@@ -12,6 +12,7 @@ import java.util.Properties;
 import org.junit.Test;
 
 import de.gravitex.accounting.application.AccountingSingleton;
+import de.gravitex.accounting.enumeration.AccountingType;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.modality.FixedPeriodOutgoingPaymentModality;
 import de.gravitex.accounting.modality.PaymentModality;
@@ -38,7 +39,6 @@ public class PrepareBudgetsTest {
 		// ---
 
 		AccountingManager accountingManager = new AccountingManager()
-				// .withPaymentModalitys(paymentModalitys)
 				.withAccountingData(createAccountingData())
 				.withSettings(AccountManagerSettings.fromValues(true, 12, true, true));
 		HashMap<MonthKey, Properties> preparedBudgets = accountingManager
@@ -71,6 +71,16 @@ public class PrepareBudgetsTest {
 	private AccountingData createAccountingData() {
 
 		AccountingData accountingData = new AccountingData();
+		
+		HashMap<String, PaymentModality> paymentModalitys = new HashMap<String, PaymentModality>();
+		paymentModalitys.put(CATEGORY_A_MONTH, new FixedPeriodOutgoingPaymentModality(PaymentPeriod.MONTH));
+		paymentModalitys.put(CATEGORY_B_MONTH, new FixedPeriodOutgoingPaymentModality(PaymentPeriod.MONTH));
+		paymentModalitys.put(CATEGORY_C_HALF_YEAR, new FixedPeriodOutgoingPaymentModality(PaymentPeriod.HALF_YEAR));
+		
+		accountingData.setPaymentModalitys(paymentModalitys);
+		
+		accountingData.setAccountingType(AccountingType.MAIN_ACCOUNT);
+		
 		HashMap<MonthKey, AccountingMonth> data = new HashMap<MonthKey, AccountingMonth>();
 
 		// --- January
@@ -92,6 +102,7 @@ public class PrepareBudgetsTest {
 		data.put(MONTHKEY_FEBRUARY, AccountingMonth.fromValues(MONTHKEY_FEBRUARY, rowObjectsFebruary));
 
 		accountingData.setData(data);
+		
 		return accountingData;
 	}
 

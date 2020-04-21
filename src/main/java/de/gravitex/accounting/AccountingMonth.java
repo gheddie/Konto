@@ -10,6 +10,7 @@ import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.AccountingType;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.exception.ValidatingAccountingException;
+import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.validation.MainAccountRowValidator;
 import de.gravitex.accounting.validation.RowValidationResult;
@@ -69,9 +70,12 @@ public class AccountingMonth {
 		return result;
 	}
 
-	public void validate(AccountingType accountingType) {
+	public void validate(AccountingType accountingType, HashMap<String, PaymentModality> paymentModalitys) {
+		
 		for (AccountingRow accountingRow : rowObjects) {
-			Set<RowValidationResult> errors = rowValidators.get(accountingType).getErrors(accountingRow);
+			AccountingRowValidator rowValidator = rowValidators.get(accountingType);
+			PaymentModality paymentModality = paymentModalitys.get(accountingRow.getCategory());
+			Set<RowValidationResult> errors = rowValidator.getErrors(accountingRow, paymentModality);
 			if (errors != null && errors.size() > 0) {
 				RowValidationResult[] errorArray = errors.toArray(new RowValidationResult[] {});
 				throw new ValidatingAccountingException("error on validating accounting month ["+monthKey+"]!!", accountingRow, errorArray);

@@ -6,13 +6,14 @@ import java.util.Set;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.AlertMessageType;
+import de.gravitex.accounting.modality.PaymentModality;
 
 public class SubAccountRowValidator extends MainAccountRowValidator {
-
+	
 	@Override
-	public Set<RowValidationResult> getErrors(AccountingRow accountingRow) {
+	public Set<RowValidationResult> getErrors(AccountingRow accountingRow, PaymentModality paymentModality) {
 		
-		Set<RowValidationResult> errors = super.getErrors(accountingRow);
+		Set<RowValidationResult> errors = super.getErrors(accountingRow, paymentModality);
 		Set<RowValidationResult> result = new HashSet<RowValidationResult>();
 		result.addAll(errors);
 		

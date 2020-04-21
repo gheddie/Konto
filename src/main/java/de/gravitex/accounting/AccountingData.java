@@ -65,7 +65,7 @@ public class AccountingData {
 
 	public void validate() {
 		for (AccountingMonth accountingMonth : data.values()) {
-			accountingMonth.validate(accountingType);
+			accountingMonth.validate(accountingType, paymentModalitys);
 		}
 	}
 }

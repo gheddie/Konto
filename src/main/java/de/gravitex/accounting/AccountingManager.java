@@ -65,6 +65,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	public AccountingManager withAccountingData(AccountingData accountingData) {
 		
 		accountingData.validate();
+		
 		if (accountingData.getAccountingType().equals(AccountingType.MAIN_ACCOUNT)) {
 			mainAccountKey = accountingData.getAccountKey();
 		}

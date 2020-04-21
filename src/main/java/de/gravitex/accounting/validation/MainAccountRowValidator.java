@@ -7,11 +7,12 @@ import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.AlertMessageType;
+import de.gravitex.accounting.modality.PaymentModality;
 
 public class MainAccountRowValidator implements AccountingRowValidator {
 
 	@Override
-	public Set<RowValidationResult> getErrors(AccountingRow accountingRow) {
+	public Set<RowValidationResult> getErrors(AccountingRow accountingRow, PaymentModality paymentModality) {
 		
 		Set<RowValidationResult> result = new HashSet<RowValidationResult>();
 		
