@@ -1,6 +1,5 @@
 package de.gravitex.accounting.modality;
 
-import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.PaymentType;
 
@@ -12,7 +11,7 @@ public class FixedPeriodPaymentModality extends PaymentModality {
 	
 	@Override
 	public boolean isProjectable() {
-		return true;
+		return (getPaymentType().equals(PaymentType.OUTGOING));
 	}
 	
 	@Override

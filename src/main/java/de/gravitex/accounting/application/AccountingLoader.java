@@ -50,6 +50,7 @@ public class AccountingLoader {
 		
 		accountingData.setBudgetPlannings(readBudgetPlannings(accountingKey));
 		accountingData.setPaymentModalitys(readPaymentModalitys(accountingKey));
+		accountingData.setSubAccountReferences(readSubAccountReferences(accountingKey));
 		
 		return accountingData;
 	}
@@ -60,6 +61,15 @@ public class AccountingLoader {
 			return income;	
 		} catch (Exception e) {
 			throw new GenericAccountingException("Einkommen konnten nicht gelesen werden!!", null, AccountingError.NO_DATA_READ);
+		}
+	}
+	
+	private HashMap<String, String> readSubAccountReferences(String accountingKey) {
+		try {
+			HashMap<String, String> subAccountReferences = accoutingDataProvider.readSubAccountReferences(accountingKey);
+			return subAccountReferences;	
+		} catch (Exception e) {
+			throw new GenericAccountingException("Unterkonto-Referenzen konnten nicht gelesen werden!!", null, AccountingError.NO_DATA_READ);
 		}
 	}
 

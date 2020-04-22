@@ -47,6 +47,7 @@ import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
+import de.gravitex.accounting.enumeration.SubAccountReferenceCheck;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.filter.interfacing.FilteredComponentListener;
 import de.gravitex.accounting.gui.component.FilterComboBox;
@@ -57,6 +58,7 @@ import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
 import de.gravitex.accounting.util.MonthKey;
+import de.gravitex.accounting.validation.SubAccountValidation;
 import de.gravitex.accounting.wrapper.Category;
 import lombok.Data;
 
@@ -181,7 +183,7 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		cbFilterAllPartners.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_MAIN_PARTNER);
 		fromToDateFilter.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_MAIN_DATE);
 		
-		filterTable.acceptDataChagedListener(this);
+		filterTable.acceptFilteredComponentListener(this);
 	}
 
 	private void initSettings() {
@@ -840,8 +842,29 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 
 	@Override
 	public void itemSelected(Object selectedItem) {
-		List<AccountingRow> subEntries = AccountingSingleton.getInstance().getAccountingManager()
-				.getSubEntries(((AccountingRow) selectedItem).getRunningIndex());
+		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
+		AccountingRow accountingRow = (AccountingRow) selectedItem;
+		List<AccountingRow> subEntries = accountingManager
+				.getSubEntries(accountingRow);
 		logger.info(subEntries.size() + " sub entries loaded.");
+		SubAccountValidation checkSubEntries = accountingManager.checkSubEntries(accountingRow);
+		if (!checkSubEntries.getSubAccountReferenceCheck().equals(SubAccountReferenceCheck.NONE)) {
+			pushMessages(new AlertMessagesBuilder()
+					.withMessage(AlertMessageType.WARNING, checkSubEntries.toString())
+					.getAlertMessages());			
+		}
+	}
+
+	@Override
+	public Color getRowColor(Object object) {
+		switch (AccountingSingleton.getInstance().getAccountingManager().checkSubEntries((AccountingRow) object)
+				.getSubAccountReferenceCheck()) {
+		case VALID:
+			return Color.GREEN;
+		case INVALID:
+			return Color.RED;
+		default:
+			return Color.WHITE;
+		}
 	}
 }

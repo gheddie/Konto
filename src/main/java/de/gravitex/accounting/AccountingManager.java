@@ -16,6 +16,7 @@ import de.gravitex.accounting.enumeration.AccountingError;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.enumeration.BudgetEvaluationResult;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
+import de.gravitex.accounting.enumeration.SubAccountReferenceCheck;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.FilterValue;
@@ -32,6 +33,7 @@ import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.util.OverlapChecker;
 import de.gravitex.accounting.util.TimelineProjectonResult;
 import de.gravitex.accounting.util.TimelineProjector;
+import de.gravitex.accounting.validation.SubAccountValidation;
 import de.gravitex.accounting.wrapper.Category;
 
 public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
@@ -57,6 +59,16 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	private String mainAccountKey;
 
 	private Object subAccountKey;
+	
+	/*
+	// TODO from config
+	private static final List<String> subAccountRefCategories = new ArrayList<String>();
+	static {
+		subAccountRefCategories.add("Kreditkarte");
+		subAccountRefCategories.add("Paypal");
+
+	}
+	*/
 	
 	private static final EntityFilter<AccountingRow> mainEntityFilter = new EntityFilter<AccountingRow>();
 	static {
@@ -421,9 +433,28 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		return getMainAccount().getBudgetPlannings();
 	}
 
-	public List<AccountingRow> getSubEntries(Integer mainIndex) {
+	public List<AccountingRow> getSubEntries(AccountingRow accountingRow) {
 		return subEntityFilter.setFilter(ATTR_SUB_MAIN_ACCOUNT, getMainAccount().getAccountKey())
-				.setFilter(ATTR_SUB_MAIN_ACCOUNT_REFERENCE, mainIndex)
+				.setFilter(ATTR_SUB_MAIN_ACCOUNT_REFERENCE, accountingRow.getRunningIndex())
 				.filterItems(getSubAccount().getAllEntriesSorted());
+	}
+
+	public SubAccountValidation checkSubEntries(AccountingRow accountingRow) {
+		
+		if (!getMainAccount().getSubAccountReferences().containsKey(accountingRow.getCategory())) {
+			return SubAccountValidation.fromValues(SubAccountReferenceCheck.NONE, null, null);
+		}
+		SubAccountReferenceCheck check = null; 
+		List<AccountingRow> subEntries = getSubEntries(accountingRow);
+		BigDecimal subEntriesSum = new BigDecimal(0);
+		for (AccountingRow subEntry : subEntries) {
+			subEntriesSum = subEntriesSum.add(subEntry.getAmount());
+		}
+		if (subEntriesSum.negate().equals(accountingRow.getAmount())) {
+			check = SubAccountReferenceCheck.VALID;
+		} else {
+			check = SubAccountReferenceCheck.INVALID;
+		}
+		return SubAccountValidation.fromValues(check, accountingRow.getAmount(), subEntriesSum);
 	}
 }

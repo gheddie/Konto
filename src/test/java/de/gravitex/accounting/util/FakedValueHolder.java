@@ -13,7 +13,7 @@ public class FakedValueHolder implements FilteredValuesHolder {
 	}
 	
 	@Override
-	public void acceptDataChagedListener(FilteredComponentListener changeListener) {
+	public void acceptFilteredComponentListener(FilteredComponentListener changeListener) {
 		this.changeListener = changeListener;
 	}
 }

@@ -1,6 +1,7 @@
 package de.gravitex.accounting.gui.component.table;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.List;
 
 import javax.swing.DefaultListSelectionModel;
@@ -15,17 +16,18 @@ import javax.swing.table.TableColumnModel;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.filter.interfacing.FilteredComponentListener;
 import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
+import de.gravitex.accounting.gui.component.table.listener.FilterTableListener;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 
-public class FilterTable<T> extends JPanel implements FilteredValuesHolder {
+public class FilterTable<T> extends JPanel implements FilteredValuesHolder, FilterTableListener {
 
 	private static final long serialVersionUID = -3840627411445980560L;
 	
-	private FilterTableImpl table;
+	private FilterTableImpl<T> table;
 
 	private JLabel entrySumLabel;
 
-	private FilteredComponentListener changeListener;
+	private FilteredComponentListener filteredComponentListener;
 
 	private TableModelGenerator<T> tableModelGenerator;
 
@@ -55,9 +57,10 @@ public class FilterTable<T> extends JPanel implements FilteredValuesHolder {
 	            if (anchorSelectionIndex < 0) {
 	            	return;	            	
 	            }
-				changeListener.itemSelected(data.get(anchorSelectionIndex));
+				filteredComponentListener.itemSelected(data.get(anchorSelectionIndex));
 			}
 		});
+		table.acceptFilterTableListener(this);
 	}
 
 	@Override
@@ -82,8 +85,8 @@ public class FilterTable<T> extends JPanel implements FilteredValuesHolder {
 		} else {
 			entrySumLabel.setText(rowCount + " Einträge geladen");			
 		}
-		if (changeListener != null) {
-			changeListener.filterDataChanged();	
+		if (filteredComponentListener != null) {
+			filteredComponentListener.filterDataChanged();	
 		}
 	}
 
@@ -92,7 +95,12 @@ public class FilterTable<T> extends JPanel implements FilteredValuesHolder {
 	}
 
 	@Override
-	public void acceptDataChagedListener(FilteredComponentListener changeListener) {
-		this.changeListener = changeListener;
+	public void acceptFilteredComponentListener(FilteredComponentListener aFilteredComponentListener) {
+		this.filteredComponentListener = aFilteredComponentListener;
+	}
+
+	@Override
+	public Color getRowColor(int row) {
+		return filteredComponentListener.getRowColor(data.get(row));
 	}
 }

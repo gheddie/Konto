@@ -23,6 +23,8 @@ public class AccountingData {
 	
 	private HashMap<MonthKey, BudgetPlanning> budgetPlannings = new HashMap<MonthKey, BudgetPlanning>();
 	
+	private HashMap<String, String> subAccountReferences = new HashMap<String, String>();
+	
 	private AccountingType accountingType;
 	
 	private String accountKey;

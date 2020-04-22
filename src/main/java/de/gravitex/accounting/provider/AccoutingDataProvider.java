@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
@@ -187,9 +188,19 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 
 	@Override
 	public Income readIncome() throws IOException {
+		Properties properties = ResourceFileReader.getProperties(null, IAccoutingDataProvider.INCOME_PROPERTIES);
+		return Income.fromValues(properties);
+	}
+	
+	@Override
+	public HashMap<String, String> readSubAccountReferences(String accountingKey) throws IOException {
 		
-		Properties prop = ResourceFileReader.getProperties(null, IAccoutingDataProvider.INCOME_PROPERTIES);
-		return Income.fromValues(prop);
+		Properties properties = ResourceFileReader.getProperties(accountingKey, IAccoutingDataProvider.SUB_ACCOUNT_REF_PROPERTIES);
+		HashMap<String, String> map = new HashMap<String, String>();
+		for (String key : properties.stringPropertyNames()) {
+		    map.put(key, properties.getProperty(key));
+		}
+		return map;
 	}
 
 	@Override

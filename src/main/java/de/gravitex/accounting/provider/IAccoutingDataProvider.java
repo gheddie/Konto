@@ -19,9 +19,13 @@ public interface IAccoutingDataProvider {
 
 	public static final String INCOME_PROPERTIES = "income.properties";
 
+	public static final String SUB_ACCOUNT_REF_PROPERTIES = "subaccountrefs.properties";
+
 	Income readIncome() throws IOException;
 	
 	HashMap<String, PaymentModality> readPaymentModalitys(String accountingKey) throws IOException;
+	
+	HashMap<String, String> readSubAccountReferences(String accountingKey) throws IOException;
 	
 	HashMap<MonthKey, BudgetPlanning> readBudgetPlannings(String accountingKey) throws FileNotFoundException, IOException;
 
