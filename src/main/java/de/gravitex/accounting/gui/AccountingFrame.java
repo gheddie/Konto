@@ -407,6 +407,9 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 		cbFilterAlarm = new FilterCheckBox();
 		label6 = new JLabel();
 		tfFilterSum = new JTextField();
+		tblSubEntries = new FilterTable();
+		label9 = new JLabel();
+		tfSubEntriesSum = new JTextField();
 		pnlSettings = new JPanel();
 		chkRealValuesInBudgets = new JCheckBox();
 		pnlOutput = new JPanel();
@@ -454,13 +457,12 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax . swing
-				. border .EmptyBorder ( 0, 0 ,0 , 0) ,  "JF\u006frmDes\u0069gner \u0045valua\u0074ion" , javax. swing .border . TitledBorder
-				. CENTER ,javax . swing. border .TitledBorder . BOTTOM, new java. awt .Font ( "D\u0069alog", java .
-				awt . Font. BOLD ,12 ) ,java . awt. Color .red ) ,pnlData. getBorder () ) )
-				; pnlData. addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override public void propertyChange (java . beans. PropertyChangeEvent e
-				) { if( "\u0062order" .equals ( e. getPropertyName () ) )throw new RuntimeException( ) ;} } )
-				;
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder
+				( 0, 0, 0, 0) , "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e", javax. swing. border. TitledBorder. CENTER, javax. swing. border
+				. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069al\u006fg" ,java .awt .Font .BOLD ,12 ), java. awt
+				. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void
+				propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062or\u0064er" .equals (e .getPropertyName () )) throw new RuntimeException( )
+				; }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -656,10 +658,10 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 			//======== pnlFilter ========
 			{
 				pnlFilter.setLayout(new GridBagLayout());
-				((GridBagLayout)pnlFilter.getLayout()).columnWidths = new int[] {0, 0, 0, 0, 0};
-				((GridBagLayout)pnlFilter.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0};
-				((GridBagLayout)pnlFilter.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0, 1.0E-4};
-				((GridBagLayout)pnlFilter.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0E-4};
+				((GridBagLayout)pnlFilter.getLayout()).columnWidths = new int[] {0, 0, 0, 0, 0, 0};
+				((GridBagLayout)pnlFilter.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0, 149, 24, 0};
+				((GridBagLayout)pnlFilter.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0, 0.0, 1.0E-4};
+				((GridBagLayout)pnlFilter.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0E-4};
 
 				//---- label1 ----
 				label1.setText("Kategorie");
@@ -671,7 +673,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 					new Insets(0, 0, 5, 5), 0, 0));
 				pnlFilter.add(filterTable, new GridBagConstraints(2, 0, 2, 5, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 5, 0), 0, 0));
+					new Insets(0, 0, 5, 5), 0, 0));
 
 				//---- label4 ----
 				label4.setText("Partner");
@@ -704,13 +706,28 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 				label6.setText("Summe:");
 				pnlFilter.add(label6, new GridBagConstraints(2, 5, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 0, 5), 0, 0));
+					new Insets(0, 0, 5, 5), 0, 0));
 
 				//---- tfFilterSum ----
 				tfFilterSum.setEditable(false);
 				pnlFilter.add(tfFilterSum, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 0, 0), 0, 0));
+					new Insets(0, 0, 5, 5), 0, 0));
+				pnlFilter.add(tblSubEntries, new GridBagConstraints(2, 6, 3, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 5, 0), 0, 0));
+
+				//---- label9 ----
+				label9.setText("Summe:");
+				pnlFilter.add(label9, new GridBagConstraints(2, 7, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 0, 5), 0, 0));
+
+				//---- tfSubEntriesSum ----
+				tfSubEntriesSum.setEditable(false);
+				pnlFilter.add(tfSubEntriesSum, new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0,
+					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+					new Insets(0, 0, 0, 5), 0, 0));
 			}
 			tbpMain.addTab("Filter", pnlFilter);
 
@@ -827,6 +844,9 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	private FilterCheckBox cbFilterAlarm;
 	private JLabel label6;
 	private JTextField tfFilterSum;
+	private FilterTable tblSubEntries;
+	private JLabel label9;
+	private JTextField tfSubEntriesSum;
 	private JPanel pnlSettings;
 	private JCheckBox chkRealValuesInBudgets;
 	private JPanel pnlOutput;

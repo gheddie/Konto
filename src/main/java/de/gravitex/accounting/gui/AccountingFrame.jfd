@@ -239,8 +239,8 @@ new FormModel {
 					"title": "Budget"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "0, 0, 0, 0:1.0"
-					"$rowSpecs": "0, 0, 0, 0, 0:1.0, 0"
+					"$columnSpecs": "0, 0, 0, 0:1.0, 0"
+					"$rowSpecs": "0, 0, 0, 0, 0, 0, 144:1.0, 24"
 					"$hGap": 5
 					"$vGap": 5
 					"$alignLeft": true
@@ -312,6 +312,27 @@ new FormModel {
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 3
 						"gridy": 5
+					} )
+					add( new FormComponent( "de.gravitex.accounting.gui.component.table.FilterTable" ) {
+						name: "tblSubEntries"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 2
+						"gridy": 6
+						"gridwidth": 3
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label9"
+						"text": "Summe:"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 2
+						"gridy": 7
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "tfSubEntriesSum"
+						"editable": false
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 3
+						"gridy": 7
 					} )
 				}, new FormLayoutConstraints( null ) {
 					"title": "Filter"
