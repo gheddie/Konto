@@ -240,7 +240,7 @@ new FormModel {
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 					"$columnSpecs": "0, 0, 0:1.0"
-					"$rowSpecs": "0, 0, 0, 0, 198:1.0"
+					"$rowSpecs": "0, 0, 0, 0:1.0, 0"
 					"$hGap": 5
 					"$vGap": 5
 					"$alignLeft": true
@@ -248,8 +248,8 @@ new FormModel {
 				} ) {
 					name: "pnlFilter"
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "lblCategory"
-						"text": "Kategorie"
+						name: "label1"
+						"text": "Kategorie:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 					add( new FormComponent( "de.gravitex.accounting.gui.component.FilterComboBox" ) {
 						name: "cbFilterAllCategories"
@@ -260,23 +260,25 @@ new FormModel {
 						name: "filterTable"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
-						"gridheight": 5
+						"gridheight": 4
+						"hAlign": 5
+						"vAlign": 5
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "lblPartner"
-						"text": "Partner"
+						name: "label4"
+						"text": "Partner:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 1
 					} )
 					add( new FormComponent( "de.gravitex.accounting.gui.component.FilterComboBox" ) {
 						name: "cbFilterAllPartners"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 1
 						"gridx": 1
+						"gridy": 1
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "lblFromTo"
-						"text": "Zeitraum"
+						name: "label5"
+						"text": "Zeitraum:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 2
 					} )
@@ -287,16 +289,18 @@ new FormModel {
 						"gridy": 2
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "lblAlarm"
-						"text": "Alarm"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 3
-					} )
-					add( new FormComponent( "de.gravitex.accounting.gui.component.FilterCheckBox" ) {
-						name: "cbFilterAlarm"
+						name: "label6"
+						"text": "Summe:"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
-						"gridy": 3
+						"gridy": 4
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "tfFilterSum"
+						"editable": false
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 2
+						"gridy": 4
 					} )
 				}, new FormLayoutConstraints( null ) {
 					"title": "Filter"
