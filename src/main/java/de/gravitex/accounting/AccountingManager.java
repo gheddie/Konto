@@ -57,9 +57,8 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	
 	private static final EntityFilter<AccountingRow> entityFilter = new EntityFilter<AccountingRow>();
 	static {
-		entityFilter.registerFilter(new EqualFilter().withAttributeName(ATTR_CATEGORY));
-		entityFilter.registerFilter(new EqualFilter().withAttributeName(ATTR_PARTNER));
-		entityFilter.registerFilter(new DateRangeFilter().withAttributeName(ATTR_DATE));
+		entityFilter.registerFilter(ATTR_CATEGORY, EqualFilter.class).registerFilter(ATTR_PARTNER, EqualFilter.class)
+				.registerFilter(ATTR_DATE, DateRangeFilter.class);
 	}
 	
 	public AccountingManager withAccountingData(AccountingData accountingData) {

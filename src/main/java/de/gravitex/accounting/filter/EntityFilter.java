@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.gravitex.accounting.filter.exception.FilterException;
 import de.gravitex.accounting.filter.impl.base.AbstractItemFilter;
 
 public class EntityFilter<T> {
 	
-	private HashMap<String, AbstractItemFilter> registeredFilters = new HashMap<String, AbstractItemFilter>();
+	private HashMap<String, Class<? extends AbstractItemFilter<?>>> filterDefinitions = new HashMap<String, Class<? extends AbstractItemFilter<?>>>();
+	
+	private HashMap<String, AbstractItemFilter<T>> filters = new HashMap<String, AbstractItemFilter<T>>();
 	
 	public static final String NO_FILTER = "[kein Eintrag]";
 	
@@ -23,7 +26,7 @@ public class EntityFilter<T> {
 	}
 	
 	public void setFilter(String attributeName, Object value) {
-		AbstractItemFilter filter = registeredFilters.get(attributeName);
+		AbstractItemFilter filter = assertFilterProduced(attributeName);
 		if (filter.isNullValue(value)) {
 			resetFilter(attributeName);
 		} else {
@@ -33,7 +36,7 @@ public class EntityFilter<T> {
 	}
 
 	private boolean matchesFilters(T item) {
-		for (AbstractItemFilter filter : registeredFilters.values()) {
+		for (AbstractItemFilter filter : filters.values()) {
 			if (filter.isActive() && !filter.accept(item)) {
 				return false;
 			}
@@ -41,11 +44,30 @@ public class EntityFilter<T> {
 		return true;
 	}
 	
-	public void registerFilter(AbstractItemFilter filter) {
-		registeredFilters.put(filter.getAttributeName(), filter);
+	public EntityFilter<T> registerFilter(String attributeName, Class<? extends AbstractItemFilter<?>> filterClass) {
+		filterDefinitions.put(attributeName, filterClass);
+		return this;
 	}
 
 	private void resetFilter(String attributeName) {
-		registeredFilters.get(attributeName).setActive(false);
+		assertFilterProduced(attributeName).setActive(false);
+	}
+	
+	@SuppressWarnings({ "deprecation", "unchecked" })
+	private AbstractItemFilter<T> assertFilterProduced(String attributeName) {
+		if (filters.get(attributeName) != null) {
+			return filters.get(attributeName);
+		}
+		try {
+			if (filterDefinitions.get(attributeName) == null) {
+				throw new FilterException("no filter defined for attribute [" + attributeName + "]!!", null);	
+			}
+			AbstractItemFilter<T> constructedFilter = (AbstractItemFilter<T>) filterDefinitions.get(attributeName).newInstance();
+			constructedFilter.setAttributeName(attributeName);
+			filters.put(attributeName, constructedFilter);
+			return constructedFilter;
+		} catch (Exception e) {
+			throw new FilterException("unable to construct filter defined for attribute [" + attributeName + "]!!", e);
+		}
 	}
 }
