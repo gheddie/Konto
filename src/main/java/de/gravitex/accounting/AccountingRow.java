@@ -27,7 +27,7 @@ public class AccountingRow implements Comparable<AccountingRow> {
 	
 	private String mainAccount;
 	
-	private String mainAccountReference;
+	private Integer mainAccountReference;
 	
 	@DisplayValue(header = "Kategorie")
 	private String category;

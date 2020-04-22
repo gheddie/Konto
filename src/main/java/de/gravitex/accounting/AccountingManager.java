@@ -38,10 +38,13 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	
 	private static final Logger logger = Logger.getLogger(AccountingManager.class);
 	
-	public static final String ATTR_PARTNER = "partner";
-	public static final String ATTR_CATEGORY = "category";
-	public static final String ATTR_ALARM = "alarm";
-	public static final String ATTR_DATE = "date";
+	public static final String ATTR_MAIN_PARTNER = "partner";
+	public static final String ATTR_MAIN_CATEGORY = "category";
+	public static final String ATTR_MAIN_ALARM = "alarm";
+	public static final String ATTR_MAIN_DATE = "date";
+	
+	public static final String ATTR_SUB_MAIN_ACCOUNT = "mainAccount";
+	public static final String ATTR_SUB_MAIN_ACCOUNT_REFERENCE = "mainAccountReference";
 
 	public static final String UNDEFINED_CATEGORY = "Undefiniert";
 
@@ -55,10 +58,16 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 	private Object subAccountKey;
 	
-	private static final EntityFilter<AccountingRow> entityFilter = new EntityFilter<AccountingRow>();
+	private static final EntityFilter<AccountingRow> mainEntityFilter = new EntityFilter<AccountingRow>();
 	static {
-		entityFilter.registerFilter(ATTR_CATEGORY, EqualFilter.class).registerFilter(ATTR_PARTNER, EqualFilter.class)
-				.registerFilter(ATTR_DATE, DateRangeFilter.class);
+		mainEntityFilter.registerFilter(ATTR_MAIN_CATEGORY, EqualFilter.class).registerFilter(ATTR_MAIN_PARTNER, EqualFilter.class)
+				.registerFilter(ATTR_MAIN_DATE, DateRangeFilter.class);
+	}
+	
+	private static final EntityFilter<AccountingRow> subEntityFilter = new EntityFilter<AccountingRow>();
+	static {
+		subEntityFilter.registerFilter(ATTR_SUB_MAIN_ACCOUNT, EqualFilter.class)
+				.registerFilter(ATTR_SUB_MAIN_ACCOUNT_REFERENCE, EqualFilter.class);
 	}
 	
 	public AccountingManager withAccountingData(AccountingData accountingData) {
@@ -372,11 +381,11 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	@Override
 	public void receiveFilterValue(FilterValue filterValue) {
 		logger.info("receiveFilterValue: " + filterValue);
-		entityFilter.setFilter(filterValue.getAttributeName(), filterValue.getValue());
+		mainEntityFilter.setFilter(filterValue.getAttributeName(), filterValue.getValue());
 	}
 
 	public List<AccountingRow> getFilteredEntries() {
-		return entityFilter.filterItems(getAllEntries());
+		return mainEntityFilter.filterItems(getAllEntries());
 	}
 	
 	public List<AccountingRow> getAllEntries() {
@@ -410,5 +419,11 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 	public HashMap<MonthKey, BudgetPlanning> getBudgetPlannings() {
 		return getMainAccount().getBudgetPlannings();
+	}
+
+	public List<AccountingRow> getSubEntries(Integer mainIndex) {
+		return subEntityFilter.setFilter(ATTR_SUB_MAIN_ACCOUNT, getMainAccount().getAccountKey())
+				.setFilter(ATTR_SUB_MAIN_ACCOUNT_REFERENCE, mainIndex)
+				.filterItems(getSubAccount().getAllEntriesSorted());
 	}
 }

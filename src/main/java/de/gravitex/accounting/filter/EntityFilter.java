@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.filter.exception.FilterException;
 import de.gravitex.accounting.filter.impl.base.AbstractItemFilter;
 
@@ -25,7 +26,7 @@ public class EntityFilter<T> {
 		return result;
 	}
 	
-	public void setFilter(String attributeName, Object value) {
+	public EntityFilter<T> setFilter(String attributeName, Object value) {
 		AbstractItemFilter filter = assertFilterProduced(attributeName);
 		if (filter.isNullValue(value)) {
 			resetFilter(attributeName);
@@ -33,6 +34,7 @@ public class EntityFilter<T> {
 			filter.setActive(true);
 			filter.setFilterValue(value);	
 		}
+		return this;
 	}
 
 	private boolean matchesFilters(T item) {

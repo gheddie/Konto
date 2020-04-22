@@ -41,6 +41,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
 
+import de.gravitex.accounting.AccountingData;
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.BudgetEvaluation;
@@ -176,9 +177,9 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
 		
 		// cbFilterAlarm.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_ALARM);
-		cbFilterAllCategories.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_CATEGORY);
-		cbFilterAllPartners.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_PARTNER);
-		fromToDateFilter.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_DATE);
+		cbFilterAllCategories.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_MAIN_CATEGORY);
+		cbFilterAllPartners.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_MAIN_PARTNER);
+		fromToDateFilter.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_MAIN_DATE);
 		
 		filterTable.acceptDataChagedListener(this);
 	}
@@ -839,8 +840,8 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 
 	@Override
 	public void itemSelected(Object selectedItem) {
-		
-		logger.info("item selected: " + ((AccountingRow) selectedItem).getRunningIndex());
-		AccountingSingleton.getInstance().getAccountingManager().getSubAccount().getAllEntriesSorted();
+		List<AccountingRow> subEntries = AccountingSingleton.getInstance().getAccountingManager()
+				.getSubEntries(((AccountingRow) selectedItem).getRunningIndex());
+		logger.info(subEntries.size() + " sub entries loaded.");
 	}
 }

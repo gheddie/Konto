@@ -11,6 +11,18 @@ public class FilterTableImpl extends JTable {
 		super();
 		getTableHeader().setReorderingAllowed(false);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		/*
+		setDefaultRenderer(Object.class, new DefaultTableCellRenderer()
+		{
+		    @Override
+		    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+		    {
+		        final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		        c.setBackground(row % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE);
+		        return c;
+		    }
+		});
+		*/
 	}
 	
 	@Override

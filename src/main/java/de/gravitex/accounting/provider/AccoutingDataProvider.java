@@ -126,7 +126,7 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 				break;
 			case COL_MAIN_ACCOUT_REF:
 				// 7
-				rowObject.setMainAccountReference(AccountingUtil.getCellValue(String.class, cell));
+				rowObject.setMainAccountReference(AccountingUtil.getCellValue(Integer.class, cell));
 				break;
 			case COL_VALID_FROM:
 				// 8
