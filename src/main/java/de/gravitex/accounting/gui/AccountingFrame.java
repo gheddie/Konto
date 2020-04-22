@@ -47,7 +47,7 @@ import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.exception.GenericAccountingException;
-import de.gravitex.accounting.filter.interfacing.FilterDataChangedListener;
+import de.gravitex.accounting.filter.interfacing.FilteredComponentListener;
 import de.gravitex.accounting.gui.component.FilterCheckBox;
 import de.gravitex.accounting.gui.component.FilterComboBox;
 import de.gravitex.accounting.gui.component.FromToDateFilter;
@@ -61,7 +61,7 @@ import de.gravitex.accounting.wrapper.Category;
 import lombok.Data;
 
 @Data
-public class AccountingFrame extends JFrame implements FilterDataChangedListener {
+public class AccountingFrame extends JFrame implements FilteredComponentListener {
 	
 	private static final Logger logger = Logger.getLogger(AccountingFrame.class);
 
@@ -869,5 +869,10 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 
 	public void updateBudgetState(String text) {
 		lblBudgetState.setText(text);
+	}
+
+	@Override
+	public void itemSelected(Object object) {
+		logger.info("item selected: " + object);
 	}
 }

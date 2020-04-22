@@ -1,6 +1,7 @@
 package de.gravitex.accounting.gui.component.table;
 
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 public class FilterTableImpl extends JTable {
 
@@ -9,6 +10,7 @@ public class FilterTableImpl extends JTable {
 	public FilterTableImpl() {
 		super();
 		getTableHeader().setReorderingAllowed(false);
+		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 	
 	@Override

@@ -1,11 +1,11 @@
 package de.gravitex.accounting.util;
 
-import de.gravitex.accounting.filter.interfacing.FilterDataChangedListener;
+import de.gravitex.accounting.filter.interfacing.FilteredComponentListener;
 import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
 
 public class FakedValueHolder implements FilteredValuesHolder {
 
-	private FilterDataChangedListener changeListener;
+	private FilteredComponentListener changeListener;
 
 	@Override
 	public void loadData() {
@@ -13,7 +13,7 @@ public class FakedValueHolder implements FilteredValuesHolder {
 	}
 	
 	@Override
-	public void acceptDataChagedListener(FilterDataChangedListener changeListener) {
+	public void acceptDataChagedListener(FilteredComponentListener changeListener) {
 		this.changeListener = changeListener;
 	}
 }

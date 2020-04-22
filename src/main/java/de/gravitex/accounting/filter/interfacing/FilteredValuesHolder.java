@@ -4,5 +4,5 @@ public interface FilteredValuesHolder {
 
 	void loadData();
 	
-	void acceptDataChagedListener(FilterDataChangedListener changeListener);
+	void acceptDataChagedListener(FilteredComponentListener changeListener);
 }

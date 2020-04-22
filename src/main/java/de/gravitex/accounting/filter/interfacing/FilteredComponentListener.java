@@ -1,6 +1,8 @@
 package de.gravitex.accounting.filter.interfacing;
 
-public interface FilterDataChangedListener {
+public interface FilteredComponentListener {
 
 	void filterDataChanged();
+
+	void itemSelected(Object object);
 }
