@@ -3,23 +3,41 @@ package de.gravitex.accounting;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import de.gravitex.accounting.enumeration.AccountingError;
 import lombok.Data;
 
 @Data
 public class AccountingRow implements Comparable<AccountingRow> {
 
+	@DisplayValue(header = "Lfd. Nr.")
 	private Integer runningIndex;
+	
+	@DisplayValue(header = "Datum")
 	private LocalDate date;
+	
+	@DisplayValue(header = "Betrag")
 	private BigDecimal amount;
+	
 	private BigDecimal saldo;
+	
+	@DisplayValue(header = "Partner")
 	private String partner;
+	
+	@DisplayValue(header = "Text")
 	private String text;
+	
 	private String mainAccount;
+	
 	private String mainAccountReference;
+	
+	@DisplayValue(header = "Kategorie")
 	private String category;
+	
+	@DisplayValue(header = "gültig von")
 	private LocalDate validFrom;
+	
+	@DisplayValue(header = "gültig bis")
 	private LocalDate validUntil;
+	
 	private String alarm;
 
 	public boolean hasCategory(String aCategory) {

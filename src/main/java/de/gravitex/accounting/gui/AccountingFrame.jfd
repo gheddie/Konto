@@ -258,7 +258,7 @@ new FormModel {
 					} )
 					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 						name: "scFilterTable"
-						add( new FormComponent( "de.gravitex.accounting.gui.component.FilterTable" ) {
+						add( new FormComponent( "de.gravitex.accounting.gui.component.table.FilterTable" ) {
 							name: "filterTable"
 						} )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
