@@ -48,7 +48,7 @@ public class FilterTest {
 		EntityFilter<FilterTestItem> entityFilter = new EntityFilter<FilterTestItem>();
 		
 		// register filters
-		entityFilter.registerFilter(new DateRangeFilter(FilterTestDataProvider.ATTR_LOCAL_DATE));
+		entityFilter.registerFilter(new DateRangeFilter().withAttributeName(FilterTestDataProvider.ATTR_LOCAL_DATE));
 		
 		// set up components
 		FromToDateFilter filterLocalDate = new FromToDateFilter();
@@ -103,8 +103,8 @@ public class FilterTest {
 		// ---
 		
 		// register filters
-		entityFilter.registerFilter(new EqualFilter(FilterTestDataProvider.ATTR_STRING));
-		entityFilter.registerFilter(new EqualFilter(FilterTestDataProvider.ATTR_INTEGER));
+		entityFilter.registerFilter(new EqualFilter().withAttributeName(FilterTestDataProvider.ATTR_STRING));
+		entityFilter.registerFilter(new EqualFilter().withAttributeName(FilterTestDataProvider.ATTR_INTEGER));
 		
 		List<FilterTestItem> testData = filterTestData.getFilterTestItems();
 		

@@ -13,7 +13,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import de.gravitex.accounting.enumeration.AccountingError;
-import de.gravitex.accounting.enumeration.AccountingType;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.enumeration.BudgetEvaluationResult;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
@@ -58,9 +57,9 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	
 	private static final EntityFilter<AccountingRow> entityFilter = new EntityFilter<AccountingRow>();
 	static {
-		entityFilter.registerFilter(new EqualFilter(ATTR_CATEGORY));
-		entityFilter.registerFilter(new EqualFilter(ATTR_PARTNER));
-		entityFilter.registerFilter(new DateRangeFilter(ATTR_DATE));
+		entityFilter.registerFilter(new EqualFilter().withAttributeName(ATTR_CATEGORY));
+		entityFilter.registerFilter(new EqualFilter().withAttributeName(ATTR_PARTNER));
+		entityFilter.registerFilter(new DateRangeFilter().withAttributeName(ATTR_DATE));
 	}
 	
 	public AccountingManager withAccountingData(AccountingData accountingData) {

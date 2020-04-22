@@ -12,11 +12,6 @@ public abstract class AbstractItemFilter<T> {
 	
 	private T filterValue;
 
-	public AbstractItemFilter(String attributeName) {
-		super();
-		this.attributeName = attributeName;
-	}
-	
 	public abstract boolean accept(Object item);
 	
 	protected Object getAttributeValue(Object item) {
@@ -24,4 +19,9 @@ public abstract class AbstractItemFilter<T> {
 	}
 
 	public abstract boolean isNullValue(T value);
+	
+	public AbstractItemFilter<T> withAttributeName(String anAttributeName) {
+		attributeName = anAttributeName;
+		return this;
+	}
 }
