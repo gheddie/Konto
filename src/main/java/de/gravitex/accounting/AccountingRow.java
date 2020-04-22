@@ -38,7 +38,8 @@ public class AccountingRow implements Comparable<AccountingRow> {
 	@DisplayValue(header = "gültig bis")
 	private LocalDate validUntil;
 	
-	private String alarm;
+	// @DisplayValue(header = "Alarm")
+	private Boolean alarm;
 
 	public boolean hasCategory(String aCategory) {
 		return (category.equals(aCategory));

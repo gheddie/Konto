@@ -4,11 +4,11 @@ import org.apache.poi.ss.usermodel.Cell;
 
 public class BooleanCellValueResolver implements CellValueResolver<Boolean> {
 	
-	private static final String CHECKED_CATEGORY = "X";
+	private static final String CHECKED = "X";
 
 	public Boolean resolveCellValue(Cell cell) {
 		String value = cell.getStringCellValue();
-		if (value != null && value.equals(CHECKED_CATEGORY)) {
+		if (value != null && value.equals(CHECKED)) {
 			return true;
 		}
 		return false;

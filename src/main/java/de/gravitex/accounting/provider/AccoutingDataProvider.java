@@ -138,7 +138,7 @@ public class AccoutingDataProvider implements IAccoutingDataProvider {
 				break;
 			case COL_ALARM:
 				// 10
-				rowObject.setAlarm(AccountingUtil.getCellValue(String.class, cell));
+				rowObject.setAlarm(AccountingUtil.getCellValue(Boolean.class, cell));
 				break;
 			}
 		}

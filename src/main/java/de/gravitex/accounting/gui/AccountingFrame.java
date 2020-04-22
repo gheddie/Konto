@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import javax.swing.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -49,7 +48,6 @@ import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.filter.interfacing.FilteredComponentListener;
-import de.gravitex.accounting.gui.component.FilterCheckBox;
 import de.gravitex.accounting.gui.component.FilterComboBox;
 import de.gravitex.accounting.gui.component.FromToDateFilter;
 import de.gravitex.accounting.gui.component.table.FilterTable;
