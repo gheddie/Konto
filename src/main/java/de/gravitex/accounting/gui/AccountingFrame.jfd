@@ -256,11 +256,8 @@ new FormModel {
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 					} )
-					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-						name: "scFilterTable"
-						add( new FormComponent( "de.gravitex.accounting.gui.component.table.FilterTable" ) {
-							name: "filterTable"
-						} )
+					add( new FormComponent( "de.gravitex.accounting.gui.component.table.FilterTable" ) {
+						name: "filterTable"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
 						"gridheight": 5

@@ -398,7 +398,6 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 		pnlFilter = new JPanel();
 		label1 = new JLabel();
 		cbFilterAllCategories = new FilterComboBox();
-		scFilterTable = new JScrollPane();
 		filterTable = new FilterTable();
 		label4 = new JLabel();
 		cbFilterAllPartners = new FilterComboBox();
@@ -455,12 +454,12 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder
-				( 0, 0, 0, 0) , "JF\u006frmDes\u0069gner \u0045valua\u0074ion", javax. swing. border. TitledBorder. CENTER, javax. swing. border
-				. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069alog" ,java .awt .Font .BOLD ,12 ), java. awt
-				. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void
-				propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062order" .equals (e .getPropertyName () )) throw new RuntimeException( )
-				; }} );
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border
+				. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax. swing. border. TitledBorder. CENTER, javax
+				. swing. border. TitledBorder. BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,
+				12 ), java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans
+				. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062ord\u0065r" .equals (e .
+				getPropertyName () )) throw new RuntimeException( ); }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -669,12 +668,7 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 				pnlFilter.add(cbFilterAllCategories, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
-
-				//======== scFilterTable ========
-				{
-					scFilterTable.setViewportView(filterTable);
-				}
-				pnlFilter.add(scFilterTable, new GridBagConstraints(2, 0, 2, 5, 0.0, 0.0,
+				pnlFilter.add(filterTable, new GridBagConstraints(2, 0, 2, 5, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 0), 0, 0));
 
@@ -823,7 +817,6 @@ public class AccountingFrame extends JFrame implements FilterDataChangedListener
 	private JPanel pnlFilter;
 	private JLabel label1;
 	private FilterComboBox cbFilterAllCategories;
-	private JScrollPane scFilterTable;
 	private FilterTable filterTable;
 	private JLabel label4;
 	private FilterComboBox cbFilterAllPartners;
