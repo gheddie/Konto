@@ -396,20 +396,15 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		lblBudgetState = new JLabel();
 		percentageBar = new JProgressBar();
 		pnlFilter = new JPanel();
-		label1 = new JLabel();
+		lblCategory = new JLabel();
 		cbFilterAllCategories = new FilterComboBox();
 		filterTable = new FilterTable();
-		label4 = new JLabel();
+		lblPartner = new JLabel();
 		cbFilterAllPartners = new FilterComboBox();
-		label7 = new JLabel();
+		lblFromTo = new JLabel();
 		fromToDateFilter = new FromToDateFilter();
-		label5 = new JLabel();
+		lblAlarm = new JLabel();
 		cbFilterAlarm = new FilterCheckBox();
-		label6 = new JLabel();
-		tfFilterSum = new JTextField();
-		tblSubEntries = new FilterTable();
-		label9 = new JLabel();
-		tfSubEntriesSum = new JTextField();
 		pnlSettings = new JPanel();
 		chkRealValuesInBudgets = new JCheckBox();
 		pnlOutput = new JPanel();
@@ -424,9 +419,9 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		var contentPane = getContentPane();
 		contentPane.setLayout(new GridBagLayout());
 		((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 1076, 0};
-		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 169, 183, 0, 129, 0};
+		((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 169, 183, 129, 0};
 		((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 1.0, 1.0E-4};
-		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0E-4};
+		((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0, 1.0, 0.0, 1.0E-4};
 
 		//======== tbMain ========
 		{
@@ -457,12 +452,12 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder
-				( 0, 0, 0, 0) , "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e", javax. swing. border. TitledBorder. CENTER, javax. swing. border
-				. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069al\u006fg" ,java .awt .Font .BOLD ,12 ), java. awt
-				. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void
-				propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062or\u0064er" .equals (e .getPropertyName () )) throw new RuntimeException( )
-				; }} );
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing.
+				border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax. swing. border. TitledBorder. CENTER
+				, javax. swing. border. TitledBorder. BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font
+				.BOLD ,12 ), java. awt. Color. red) ,pnlData. getBorder( )) ); pnlData. addPropertyChangeListener (
+				new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062ord\u0065r"
+				.equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -658,76 +653,49 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 			//======== pnlFilter ========
 			{
 				pnlFilter.setLayout(new GridBagLayout());
-				((GridBagLayout)pnlFilter.getLayout()).columnWidths = new int[] {0, 0, 0, 0, 0, 0};
-				((GridBagLayout)pnlFilter.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0, 149, 24, 0};
-				((GridBagLayout)pnlFilter.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0, 0.0, 1.0E-4};
-				((GridBagLayout)pnlFilter.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0E-4};
+				((GridBagLayout)pnlFilter.getLayout()).columnWidths = new int[] {0, 0, 0, 0};
+				((GridBagLayout)pnlFilter.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 198, 0};
+				((GridBagLayout)pnlFilter.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0, 1.0E-4};
+				((GridBagLayout)pnlFilter.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0, 1.0E-4};
 
-				//---- label1 ----
-				label1.setText("Kategorie");
-				pnlFilter.add(label1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+				//---- lblCategory ----
+				lblCategory.setText("Kategorie");
+				pnlFilter.add(lblCategory, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 				pnlFilter.add(cbFilterAllCategories, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
-				pnlFilter.add(filterTable, new GridBagConstraints(2, 0, 2, 5, 0.0, 0.0,
+				pnlFilter.add(filterTable, new GridBagConstraints(2, 0, 1, 5, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 5, 5), 0, 0));
+					new Insets(0, 0, 0, 0), 0, 0));
 
-				//---- label4 ----
-				label4.setText("Partner");
-				pnlFilter.add(label4, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+				//---- lblPartner ----
+				lblPartner.setText("Partner");
+				pnlFilter.add(lblPartner, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 				pnlFilter.add(cbFilterAllPartners, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 
-				//---- label7 ----
-				label7.setText("Zeitraum");
-				pnlFilter.add(label7, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+				//---- lblFromTo ----
+				lblFromTo.setText("Zeitraum");
+				pnlFilter.add(lblFromTo, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 				pnlFilter.add(fromToDateFilter, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 
-				//---- label5 ----
-				label5.setText("Alarm");
-				pnlFilter.add(label5, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+				//---- lblAlarm ----
+				lblAlarm.setText("Alarm");
+				pnlFilter.add(lblAlarm, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
 				pnlFilter.add(cbFilterAlarm, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
 					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 					new Insets(0, 0, 5, 5), 0, 0));
-
-				//---- label6 ----
-				label6.setText("Summe:");
-				pnlFilter.add(label6, new GridBagConstraints(2, 5, 1, 1, 0.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 5, 5), 0, 0));
-
-				//---- tfFilterSum ----
-				tfFilterSum.setEditable(false);
-				pnlFilter.add(tfFilterSum, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 5, 5), 0, 0));
-				pnlFilter.add(tblSubEntries, new GridBagConstraints(2, 6, 3, 1, 0.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 5, 0), 0, 0));
-
-				//---- label9 ----
-				label9.setText("Summe:");
-				pnlFilter.add(label9, new GridBagConstraints(2, 7, 1, 1, 0.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 0, 5), 0, 0));
-
-				//---- tfSubEntriesSum ----
-				tfSubEntriesSum.setEditable(false);
-				pnlFilter.add(tfSubEntriesSum, new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 0, 5), 0, 0));
 			}
 			tbpMain.addTab("Filter", pnlFilter);
 
@@ -759,7 +727,7 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 			}
 			tbpMain.addTab("Ausgabe", pnlOutput);
 		}
-		contentPane.add(tbpMain, new GridBagConstraints(0, 1, 2, 4, 0.0, 0.0,
+		contentPane.add(tbpMain, new GridBagConstraints(0, 1, 2, 3, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 5, 0), 0, 0));
 
@@ -780,7 +748,7 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				new Insets(0, 0, 0, 0), 0, 0));
 		}
-		contentPane.add(panelAlerts, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0,
+		contentPane.add(panelAlerts, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0,
 			GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 			new Insets(0, 0, 0, 0), 0, 0));
 		pack();
@@ -833,20 +801,15 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 	private JLabel lblBudgetState;
 	private JProgressBar percentageBar;
 	private JPanel pnlFilter;
-	private JLabel label1;
+	private JLabel lblCategory;
 	private FilterComboBox cbFilterAllCategories;
 	private FilterTable filterTable;
-	private JLabel label4;
+	private JLabel lblPartner;
 	private FilterComboBox cbFilterAllPartners;
-	private JLabel label7;
+	private JLabel lblFromTo;
 	private FromToDateFilter fromToDateFilter;
-	private JLabel label5;
+	private JLabel lblAlarm;
 	private FilterCheckBox cbFilterAlarm;
-	private JLabel label6;
-	private JTextField tfFilterSum;
-	private FilterTable tblSubEntries;
-	private JLabel label9;
-	private JTextField tfSubEntriesSum;
 	private JPanel pnlSettings;
 	private JCheckBox chkRealValuesInBudgets;
 	private JPanel pnlOutput;
@@ -864,7 +827,7 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		for (AccountingRow accountingRow : AccountingSingleton.getInstance().getAccountingManager().getFilteredEntries()) {
 			sum = sum.add(accountingRow.getAmount());
 		}
-		tfFilterSum.setText(sum.toString());
+		// tfFilterSum.setText(sum.toString());
 	}
 
 	public void updateBudgetState(String text) {
@@ -872,7 +835,9 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 	}
 
 	@Override
-	public void itemSelected(Object object) {
-		logger.info("item selected: " + object);
+	public void itemSelected(Object selectedItem) {
+		
+		logger.info("item selected: " + ((AccountingRow) selectedItem).getRunningIndex());
+		AccountingSingleton.getInstance().getAccountingManager().getSubAccount().getAllEntriesSorted();
 	}
 }

@@ -5,7 +5,7 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.GridBagLayout ) {
 			"$columnSpecs": "0, 1076:1.0"
-			"$rowSpecs": "0, 0, 164:1.0, 178:1.0, 0, 129"
+			"$rowSpecs": "0, 0, 164:1.0, 178:1.0, 129"
 			"$hGap": 5
 			"$vGap": 5
 			"$alignLeft": true
@@ -239,8 +239,8 @@ new FormModel {
 					"title": "Budget"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "0, 0, 0, 0:1.0, 0"
-					"$rowSpecs": "0, 0, 0, 0, 0, 0, 144:1.0, 24"
+					"$columnSpecs": "0, 0, 0:1.0"
+					"$rowSpecs": "0, 0, 0, 0, 198:1.0"
 					"$hGap": 5
 					"$vGap": 5
 					"$alignLeft": true
@@ -248,7 +248,7 @@ new FormModel {
 				} ) {
 					name: "pnlFilter"
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label1"
+						name: "lblCategory"
 						"text": "Kategorie"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 					add( new FormComponent( "de.gravitex.accounting.gui.component.FilterComboBox" ) {
@@ -261,10 +261,9 @@ new FormModel {
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
 						"gridheight": 5
-						"gridwidth": 2
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label4"
+						name: "lblPartner"
 						"text": "Partner"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 1
@@ -276,7 +275,7 @@ new FormModel {
 						"gridx": 1
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label7"
+						name: "lblFromTo"
 						"text": "Zeitraum"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 2
@@ -288,7 +287,7 @@ new FormModel {
 						"gridy": 2
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label5"
+						name: "lblAlarm"
 						"text": "Alarm"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 3
@@ -298,41 +297,6 @@ new FormModel {
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridy": 3
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label6"
-						"text": "Summe:"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 2
-						"gridy": 5
-					} )
-					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "tfFilterSum"
-						"editable": false
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 3
-						"gridy": 5
-					} )
-					add( new FormComponent( "de.gravitex.accounting.gui.component.table.FilterTable" ) {
-						name: "tblSubEntries"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 2
-						"gridy": 6
-						"gridwidth": 3
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label9"
-						"text": "Summe:"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 2
-						"gridy": 7
-					} )
-					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "tfSubEntriesSum"
-						"editable": false
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 3
-						"gridy": 7
 					} )
 				}, new FormLayoutConstraints( null ) {
 					"title": "Filter"
@@ -368,7 +332,7 @@ new FormModel {
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 1
-				"gridheight": 4
+				"gridheight": 3
 				"hAlign": 5
 				"gridwidth": 2
 			} )
@@ -391,7 +355,7 @@ new FormModel {
 					"gridwidth": 4
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridy": 5
+				"gridy": 4
 				"gridwidth": 2
 			} )
 		}, new FormLayoutConstraints( null ) {

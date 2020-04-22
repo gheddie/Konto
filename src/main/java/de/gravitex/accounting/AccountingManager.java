@@ -1,6 +1,5 @@
 package de.gravitex.accounting;
 
-import java.awt.RenderingHints;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -54,6 +53,8 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	private HashMap<String, AccountingData> accountingDataMap = new HashMap<String, AccountingData>();
 	
 	private String mainAccountKey;
+
+	private Object subAccountKey;
 	
 	private static final EntityFilter<AccountingRow> entityFilter = new EntityFilter<AccountingRow>();
 	static {
@@ -65,9 +66,13 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	public AccountingManager withAccountingData(AccountingData accountingData) {
 		
 		accountingData.validate();
-		
-		if (accountingData.getAccountingType().equals(AccountingType.MAIN_ACCOUNT)) {
+		switch (accountingData.getAccountingType()) {
+		case MAIN_ACCOUNT:
 			mainAccountKey = accountingData.getAccountKey();
+			break;
+		case SUB_ACCOUNT:
+			subAccountKey = accountingData.getAccountKey();
+			break;
 		}
 		accountingDataMap.put(accountingData.getAccountKey(), accountingData);
 		return this;
@@ -399,6 +404,10 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	
 	public AccountingData getMainAccount() {
 		return accountingDataMap.get(mainAccountKey);
+	}
+	
+	public AccountingData getSubAccount() {
+		return accountingDataMap.get(subAccountKey);
 	}
 
 	public HashMap<MonthKey, BudgetPlanning> getBudgetPlannings() {

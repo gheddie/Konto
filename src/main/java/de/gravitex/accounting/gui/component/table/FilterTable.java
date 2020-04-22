@@ -40,9 +40,8 @@ public class FilterTable<T> extends JPanel implements FilteredValuesHolder {
 		setLayout(new BorderLayout());
 		table = new FilterTableImpl();
 		tableScroller = new JScrollPane();
-		tableScroller.setLayout(new ScrollPaneLayout());
+		// tableScroller.setLayout(new ScrollPaneLayout());
 		add(tableScroller, BorderLayout.NORTH);
-		tableScroller.add(table);
 		tableScroller.setViewportView(table);
 		entrySumLabel = new JLabel();
 		add(entrySumLabel, BorderLayout.SOUTH);
