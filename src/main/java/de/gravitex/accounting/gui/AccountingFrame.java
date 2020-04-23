@@ -855,16 +855,20 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		SubAccountValidation checkSubEntries = accountingManager.checkSubEntries(accountingRow);
 		if (!checkSubEntries.getSubAccountReferenceCheck().equals(SubAccountReferenceCheck.NONE)) {
 			AlertMessageType alertMessageType = null;
+			String message = null;
 			switch (checkSubEntries.getSubAccountReferenceCheck()) {
 			case INVALID:
-				alertMessageType = AlertMessageType.WARNING;	
+				alertMessageType = AlertMessageType.WARNING;
+				message = "Unpassende Gegenbuchung (" + checkSubEntries.getTargetAmount() + " <-> "
+						+ checkSubEntries.getActualAmount() + ")";
 				break;
 			case VALID:
-				alertMessageType = AlertMessageType.OK;	
+				alertMessageType = AlertMessageType.OK;
+				message = "Passende Gegenbuchung (" + checkSubEntries.getTargetAmount() + ")";
 				break;
 			}
 			pushMessages(new AlertMessagesBuilder()
-					.withMessage(alertMessageType, checkSubEntries.toString())
+					.withMessage(alertMessageType, message)
 					.getAlertMessages());			
 		}
 	}

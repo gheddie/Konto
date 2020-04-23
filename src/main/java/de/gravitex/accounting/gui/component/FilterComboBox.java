@@ -2,6 +2,7 @@ package de.gravitex.accounting.gui.component;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Set;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -66,7 +67,8 @@ public class FilterComboBox<T> extends JComboBox<T> implements FilterValueProvid
 	public void initData() {
 		logger.debug("loading data...");
 		DefaultComboBoxModel<T> model = new DefaultComboBoxModel<T>();
-		for (Object o : filteredValueReceiver.loadDistinctItems(attributeName)) {
+		Set<?> distinctItems = filteredValueReceiver.loadDistinctItems(attributeName);
+		for (Object o : distinctItems) {
 			model.addElement((T) o);
 		}
 		setModel(model);
