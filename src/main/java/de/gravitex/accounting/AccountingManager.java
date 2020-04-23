@@ -17,6 +17,7 @@ import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.enumeration.BudgetEvaluationResult;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.SubAccountReferenceCheck;
+import de.gravitex.accounting.exception.AccountingManagerException;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.filter.FilterValue;
 import de.gravitex.accounting.filter.FilteredValueReceiver;
@@ -378,7 +379,13 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 	public SubAccountValidation checkSubEntries(AccountingRow mainAccountingRow) {
 		
-		if (!getMainAccount().getSubAccountReferences().containsKey(mainAccountingRow.getCategory())) {
+		if (mainAccountingRow == null) {
+			throw new AccountingManagerException("can not check sub entries for a NULL main accouting row!!");
+		}
+		if (mainAccount == null) {
+			throw new AccountingManagerException("can not check sub entries without a main account set!!");
+		}
+		if (!mainAccount.getSubAccountReferences().containsKey(mainAccountingRow.getCategory())) {
 			return SubAccountValidation.fromValues(SubAccountReferenceCheck.NONE, null, null);
 		}
 		SubAccountReferenceCheck check = null; 

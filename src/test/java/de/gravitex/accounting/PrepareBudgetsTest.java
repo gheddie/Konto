@@ -19,7 +19,7 @@ import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.setting.AccountManagerSettings;
 import de.gravitex.accounting.util.MonthKey;
 
-public class PrepareBudgetsTest {
+public class PrepareBudgetsTest extends AccountingManagerDataTest {
 
 	private static final MonthKey MONTHKEY_JANUARY = MonthKey.fromValues(1, 2020);
 	private static final MonthKey MONTHKEY_FEBRUARY = MonthKey.fromValues(2, 2020);
@@ -103,15 +103,5 @@ public class PrepareBudgetsTest {
 		accountingData.setData(data);
 		
 		return accountingData;
-	}
-
-	private AccountingRow getAccountingRow(Integer runningIndex, LocalDate date, String category, BigDecimal amount) {
-
-		AccountingRow accountingRow = new AccountingRow();
-		accountingRow.setRunningIndex(runningIndex);
-		accountingRow.setDate(date);
-		accountingRow.setCategory(category);
-		accountingRow.setAmount(amount);
-		return accountingRow;
 	}
 }
