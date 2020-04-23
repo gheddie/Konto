@@ -18,7 +18,6 @@ public class FilterTableImpl<T> extends JTable {
 		super();
 		getTableHeader().setReorderingAllowed(false);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		/*
 		setDefaultRenderer(Object.class, new DefaultTableCellRenderer()
 		{
 		    @Override
@@ -29,7 +28,6 @@ public class FilterTableImpl<T> extends JTable {
 		        return c;
 		    }
 		});
-		*/
 	}
 	
 	@Override
