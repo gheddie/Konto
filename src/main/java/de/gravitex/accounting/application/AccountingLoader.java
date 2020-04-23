@@ -9,8 +9,8 @@ import de.gravitex.accounting.AccountingMonth;
 import de.gravitex.accounting.AccountingRow;
 import de.gravitex.accounting.BudgetPlanning;
 import de.gravitex.accounting.Income;
-import de.gravitex.accounting.application.definition.AccountDefinition;
 import de.gravitex.accounting.enumeration.AccountingError;
+import de.gravitex.accounting.enumeration.AccountingType;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.provider.AccoutingDataProvider;
@@ -22,24 +22,16 @@ public class AccountingLoader {
 	
 	private IAccoutingDataProvider accoutingDataProvider = new AccoutingDataProvider();
 	
-	private HashMap<String, AccountDefinition> accountDefinitions = new HashMap<String, AccountDefinition>();
-
-	public AccountingManager startUp() {
+	public AccountingManager startUp(String mainAccountingKey) {
 		
 		Income income = readIncome();
 		AccountingManager accountingManager = new AccountingManager();
-		AccountingData accountingData = null;
-		for (String key : accountDefinitions.keySet()) {
-			accountingData = getAccountingData(key);
-			accountingData.setAccountKey(key);
-			accountingData.setAccountingType(accountDefinitions.get(key).getAccountingType());
-			accountingManager.withAccountingData(accountingData);
-		}
+		accountingManager.setMainAccount(loadAccountingData(mainAccountingKey, AccountingType.MAIN_ACCOUNT));
 		accountingManager.withSettings(AccountManagerSettings.fromValues(true, 24, true, true)).withIncome(income);
 		return accountingManager;
 	}
 
-	private AccountingData getAccountingData(String accountingKey) {
+	public AccountingData loadAccountingData(String accountingKey, AccountingType accountingType) {
 		
 		AccountingData accountingData = new AccountingData();
 		
@@ -51,6 +43,9 @@ public class AccountingLoader {
 		accountingData.setBudgetPlannings(readBudgetPlannings(accountingKey));
 		accountingData.setPaymentModalitys(readPaymentModalitys(accountingKey));
 		accountingData.setSubAccountReferences(readSubAccountReferences(accountingKey));
+		
+		accountingData.setAccountKey(accountingKey);
+		accountingData.setAccountingType(accountingType);
 		
 		return accountingData;
 	}
@@ -100,6 +95,7 @@ public class AccountingLoader {
 		}
 	}
 
+	/*
 	public AccountingLoader withMainAccount(AccountDefinition accountDefinition) {
 		accountDefinitions.put(accountDefinition.getAccountKey(), accountDefinition);
 		return this;
@@ -109,4 +105,5 @@ public class AccountingLoader {
 		accountDefinitions.put(accountDefinition.getAccountKey(), accountDefinition);
 		return this;
 	}
+	*/
 }

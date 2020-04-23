@@ -12,9 +12,7 @@ import de.gravitex.accounting.AccountingData;
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingMonth;
 import de.gravitex.accounting.AccountingRow;
-import de.gravitex.accounting.application.definition.AccountDefinition;
 import de.gravitex.accounting.enumeration.AccountingError;
-import de.gravitex.accounting.enumeration.AccountingType;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.util.MonthKey;
 import lombok.Data;
@@ -35,10 +33,7 @@ public class AccountingSingleton {
 	private AccountingManager accountingManager;
 	
 	private AccountingSingleton() {
-		accountingManager = new AccountingLoader()
-				.withMainAccount(AccountDefinition.fromValues(ACCOUNTING_KEY_VB, AccountingType.MAIN_ACCOUNT))
-				.withSubAccount(AccountDefinition.fromValues(ACCOUNTING_KEY_VISA, AccountingType.SUB_ACCOUNT))
-				.startUp();
+		accountingManager = new AccountingLoader().startUp(ACCOUNTING_KEY_VB);
 	}
 
 	public static AccountingSingleton getInstance() {
@@ -120,7 +115,7 @@ public class AccountingSingleton {
 	}
 
 	public List<AccountingRow> getAllEntries() {
-		return accountingManager.getAllEntries();
+		return accountingManager.getMainAccount().getFilteredEntriesSorted();
 	}
 
 	public List<AccountingRow> getFilteredEntries() {

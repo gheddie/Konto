@@ -179,9 +179,9 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
 		
 		// cbFilterAlarm.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_ALARM);
-		cbFilterAllCategories.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_MAIN_CATEGORY);
-		cbFilterAllPartners.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_MAIN_PARTNER);
-		fromToDateFilter.setMvcData(accountingManager, filterTable, AccountingManager.ATTR_MAIN_DATE);
+		cbFilterAllCategories.setMvcData(accountingManager, filterTable, AccountingData.ATTR_CATEGORY);
+		cbFilterAllPartners.setMvcData(accountingManager, filterTable, AccountingData.ATTR_PARTNER);
+		fromToDateFilter.setMvcData(accountingManager, filterTable, AccountingData.ATTR_DATE);
 		
 		filterTable.acceptFilteredComponentListener(this);
 	}
@@ -844,13 +844,27 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 	public void itemSelected(Object selectedItem) {
 		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
 		AccountingRow accountingRow = (AccountingRow) selectedItem;
-		List<AccountingRow> subEntries = accountingManager
-				.getSubEntries(accountingRow);
+		AccountingData subAccount = accountingManager.getSubAccount(accountingRow.getCategory());
+		if (subAccount == null) {
+			clearMessages();
+			return;
+		}
+		List<AccountingRow> subEntries = subAccount
+				.getFilteredEntriesSorted();
 		logger.info(subEntries.size() + " sub entries loaded.");
 		SubAccountValidation checkSubEntries = accountingManager.checkSubEntries(accountingRow);
 		if (!checkSubEntries.getSubAccountReferenceCheck().equals(SubAccountReferenceCheck.NONE)) {
+			AlertMessageType alertMessageType = null;
+			switch (checkSubEntries.getSubAccountReferenceCheck()) {
+			case INVALID:
+				alertMessageType = AlertMessageType.WARNING;	
+				break;
+			case VALID:
+				alertMessageType = AlertMessageType.OK;	
+				break;
+			}
 			pushMessages(new AlertMessagesBuilder()
-					.withMessage(AlertMessageType.WARNING, checkSubEntries.toString())
+					.withMessage(alertMessageType, checkSubEntries.toString())
 					.getAlertMessages());			
 		}
 	}

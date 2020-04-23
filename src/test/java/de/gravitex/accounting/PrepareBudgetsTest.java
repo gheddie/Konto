@@ -39,11 +39,11 @@ public class PrepareBudgetsTest {
 		// ---
 
 		AccountingManager accountingManager = new AccountingManager()
-				.withAccountingData(createAccountingData())
 				.withSettings(AccountManagerSettings.fromValues(true, 12, true, true));
-		HashMap<MonthKey, Properties> preparedBudgets = accountingManager
-				.prepareBudgets(LocalDate.of(2020, 1, 1), false);
-
+		accountingManager.setMainAccount(createAccountingData());
+		HashMap<MonthKey, Properties> preparedBudgets = accountingManager.prepareBudgets(LocalDate.of(2020, 1, 1),
+				false);
+		
 		/**
 		 * In Jan, an amount was spent for fixed modality 'CATEGORY_B', so there should
 		 * be a budget planned for Feb month, too...

@@ -18,11 +18,8 @@ import de.gravitex.accounting.enumeration.BudgetEvaluationResult;
 import de.gravitex.accounting.enumeration.PaymentPeriod;
 import de.gravitex.accounting.enumeration.SubAccountReferenceCheck;
 import de.gravitex.accounting.exception.GenericAccountingException;
-import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.FilterValue;
 import de.gravitex.accounting.filter.FilteredValueReceiver;
-import de.gravitex.accounting.filter.impl.DateRangeFilter;
-import de.gravitex.accounting.filter.impl.EqualFilter;
 import de.gravitex.accounting.gui.AlertMessagesBuilder;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
@@ -35,18 +32,12 @@ import de.gravitex.accounting.util.TimelineProjectonResult;
 import de.gravitex.accounting.util.TimelineProjector;
 import de.gravitex.accounting.validation.SubAccountValidation;
 import de.gravitex.accounting.wrapper.Category;
+import lombok.Data;
 
+@Data
 public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	
 	private static final Logger logger = Logger.getLogger(AccountingManager.class);
-	
-	public static final String ATTR_MAIN_PARTNER = "partner";
-	public static final String ATTR_MAIN_CATEGORY = "category";
-	public static final String ATTR_MAIN_ALARM = "alarm";
-	public static final String ATTR_MAIN_DATE = "date";
-	
-	public static final String ATTR_SUB_MAIN_ACCOUNT = "mainAccount";
-	public static final String ATTR_SUB_MAIN_ACCOUNT_REFERENCE = "mainAccountReference";
 
 	public static final String UNDEFINED_CATEGORY = "Undefiniert";
 
@@ -54,48 +45,9 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 	private Income income;
 
-	private HashMap<String, AccountingData> accountingDataMap = new HashMap<String, AccountingData>();
-	
 	private String mainAccountKey;
 
-	private Object subAccountKey;
-	
-	/*
-	// TODO from config
-	private static final List<String> subAccountRefCategories = new ArrayList<String>();
-	static {
-		subAccountRefCategories.add("Kreditkarte");
-		subAccountRefCategories.add("Paypal");
-
-	}
-	*/
-	
-	private static final EntityFilter<AccountingRow> mainEntityFilter = new EntityFilter<AccountingRow>();
-	static {
-		mainEntityFilter.registerFilter(ATTR_MAIN_CATEGORY, EqualFilter.class).registerFilter(ATTR_MAIN_PARTNER, EqualFilter.class)
-				.registerFilter(ATTR_MAIN_DATE, DateRangeFilter.class);
-	}
-	
-	private static final EntityFilter<AccountingRow> subEntityFilter = new EntityFilter<AccountingRow>();
-	static {
-		subEntityFilter.registerFilter(ATTR_SUB_MAIN_ACCOUNT, EqualFilter.class)
-				.registerFilter(ATTR_SUB_MAIN_ACCOUNT_REFERENCE, EqualFilter.class);
-	}
-	
-	public AccountingManager withAccountingData(AccountingData accountingData) {
-		
-		accountingData.validate();
-		switch (accountingData.getAccountingType()) {
-		case MAIN_ACCOUNT:
-			mainAccountKey = accountingData.getAccountKey();
-			break;
-		case SUB_ACCOUNT:
-			subAccountKey = accountingData.getAccountKey();
-			break;
-		}
-		accountingDataMap.put(accountingData.getAccountKey(), accountingData);
-		return this;
-	}
+	private AccountingData mainAccount;
 
 	public AccountingManager withSettings(AccountManagerSettings accountManagerSettings) {
 		this.accountManagerSettings = accountManagerSettings;
@@ -110,7 +62,6 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	private boolean budgetPlanningAvailableFor(MonthKey monthKey, String category) {
 		
 		HashMap<MonthKey, BudgetPlanning> budgetPlannings = getMainAccount().getBudgetPlannings();
-		
 		if (budgetPlannings == null) {
 			return false;
 		}
@@ -192,8 +143,8 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 		HashMap<MonthKey, Properties> extendedProperties = new HashMap<MonthKey, Properties>();
 		HashMap<MonthKey, Set<BudgetEvaluation>> failuresPerMonth = new HashMap<MonthKey, Set<BudgetEvaluation>>();
-		for (Category category : getMainAccount().getDistinctCategories()) {
-			category.setPaymentModality(getMainAccount().getPaymentModalitys().get(category.getCategory()));
+		for (Category category : mainAccount.getDistinctCategories()) {
+			category.setPaymentModality(mainAccount.getPaymentModalitys().get(category.getCategory()));
 			List<BudgetEvaluation> evaluation = evaluateBudgetProjection(category, startingDate);
 			for (BudgetEvaluation budgetEvaluation : evaluation) {
 				if (budgetEvaluation.getBudgetEvaluationResult().equals(BudgetEvaluationResult.MISSING_BUDGET)) {
@@ -255,7 +206,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 	public List<AccountingRow> getAllEntriesForCategory(String category) {
 		List<AccountingRow> result = new ArrayList<AccountingRow>();
-		for (AccountingRow accountingRow : getMainAccount().getAllEntriesSorted()) {
+		for (AccountingRow accountingRow : getMainAccount().getFilteredEntriesSorted()) {
 			if (accountingRow.getCategory().equals(category)) {
 				result.add(accountingRow);
 			}
@@ -266,7 +217,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 	public List<AccountingRow> getAllEntriesForPartner(String partner) {
 		List<AccountingRow> result = new ArrayList<AccountingRow>();
-		for (AccountingRow accountingRow : getMainAccount().getAllEntriesSorted()) {
+		for (AccountingRow accountingRow : getMainAccount().getFilteredEntriesSorted()) {
 			if (accountingRow.getPartner() != null && accountingRow.getPartner().equals(partner)) {
 				result.add(accountingRow);
 			}
@@ -393,68 +344,55 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	@Override
 	public void receiveFilterValue(FilterValue filterValue) {
 		logger.info("receiveFilterValue: " + filterValue);
-		mainEntityFilter.setFilter(filterValue.getAttributeName(), filterValue.getValue());
+		getMainAccount().acceptFilter(filterValue.getAttributeName(), filterValue.getValue());
 	}
 
 	public List<AccountingRow> getFilteredEntries() {
-		return mainEntityFilter.filterItems(getAllEntries());
-	}
-	
-	public List<AccountingRow> getAllEntries() {
-		List<AccountingRow> allEntries = new ArrayList<AccountingRow>();
-		AccountingData mainAccount = getMainAccount();
-		for (MonthKey key : mainAccount.keySet()) {
-			for (AccountingRow accountingRow : mainAccount.get(key).getRowObjects()) {
-				allEntries.add(accountingRow);
-			}
-		}
-		Collections.sort(allEntries);
-		return allEntries;
+		return getMainAccount().getFilteredEntriesSorted();
 	}
 
 	@Override
 	protected List<AccountingRow> loadAllItems() {
-		return getMainAccount().getAllEntriesSorted();
+		return getMainAccount().getFilteredEntriesSorted();
 	}
 
 	public AccountManagerSettings getAccountManagerSettings() {
 		return accountManagerSettings;
 	}
 	
-	public AccountingData getMainAccount() {
-		return accountingDataMap.get(mainAccountKey);
-	}
-	
-	public AccountingData getSubAccount() {
-		return accountingDataMap.get(subAccountKey);
-	}
-
 	public HashMap<MonthKey, BudgetPlanning> getBudgetPlannings() {
 		return getMainAccount().getBudgetPlannings();
 	}
 
-	public List<AccountingRow> getSubEntries(AccountingRow accountingRow) {
-		return subEntityFilter.setFilter(ATTR_SUB_MAIN_ACCOUNT, getMainAccount().getAccountKey())
-				.setFilter(ATTR_SUB_MAIN_ACCOUNT_REFERENCE, accountingRow.getRunningIndex())
-				.filterItems(getSubAccount().getAllEntriesSorted());
+	public List<AccountingRow> getSubEntries(String categoryKey, Integer mainRunningIndex) {
+		
+		AccountingData subAccount = getSubAccount(categoryKey);
+		subAccount.acceptFilter(AccountingData.ATTR_MAIN_ACCOUNT, getMainAccount().getAccountKey())
+				.acceptFilter(AccountingData.ATTR_MAIN_ACCOUNT_REFERENCE, mainRunningIndex);
+		return subAccount.getFilteredEntriesSorted();
 	}
 
-	public SubAccountValidation checkSubEntries(AccountingRow accountingRow) {
+	public AccountingData getSubAccount(String categoryKey) {
+		return getMainAccount().getSubAccount(categoryKey);
+	}
+
+	public SubAccountValidation checkSubEntries(AccountingRow mainAccountingRow) {
 		
-		if (!getMainAccount().getSubAccountReferences().containsKey(accountingRow.getCategory())) {
+		if (!getMainAccount().getSubAccountReferences().containsKey(mainAccountingRow.getCategory())) {
 			return SubAccountValidation.fromValues(SubAccountReferenceCheck.NONE, null, null);
 		}
 		SubAccountReferenceCheck check = null; 
-		List<AccountingRow> subEntries = getSubEntries(accountingRow);
+		List<AccountingRow> subEntries = getSubEntries(mainAccountingRow.getCategory(),
+				mainAccountingRow.getRunningIndex());
 		BigDecimal subEntriesSum = new BigDecimal(0);
 		for (AccountingRow subEntry : subEntries) {
 			subEntriesSum = subEntriesSum.add(subEntry.getAmount());
 		}
-		if (subEntriesSum.negate().equals(accountingRow.getAmount())) {
+		if (subEntriesSum.negate().equals(mainAccountingRow.getAmount())) {
 			check = SubAccountReferenceCheck.VALID;
 		} else {
 			check = SubAccountReferenceCheck.INVALID;
 		}
-		return SubAccountValidation.fromValues(check, accountingRow.getAmount(), subEntriesSum);
+		return SubAccountValidation.fromValues(check, mainAccountingRow.getAmount(), subEntriesSum);
 	}
 }
