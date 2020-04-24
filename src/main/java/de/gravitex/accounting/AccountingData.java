@@ -119,7 +119,7 @@ public class AccountingData {
 		return subAccountReferences.get(categoryKey);
 	}
 
-	private AccountingData assertSubAccountPresent(String accountKey) {
+	public AccountingData assertSubAccountPresent(String accountKey) {
 		if (subAccounts.get(accountKey) == null) {
 			subAccounts.put(accountKey, accountingLoader.loadAccountingData(accountKey, AccountingType.SUB_ACCOUNT));
 		}
