@@ -80,20 +80,25 @@ public class AccountingData {
 
 	public Set<Category> getDistinctCategories() {
 		Set<Category> result = new HashSet<Category>();
-		for (AccountingRow accountingRow : getFilteredEntriesSorted()) {
+		for (AccountingRow accountingRow : getAllEntriesSorted()) {
 			result.add(Category.fromValues(accountingRow.getCategory(), null));
 		}
 		return result;
 	}
 	
 	public List<AccountingRow> getFilteredEntriesSorted() {
+		List<AccountingRow> result = getAllEntriesSorted();
+		assertEntityFilterSet();
+		return entityFilter.filterItems(result);
+	}
+
+	public List<AccountingRow> getAllEntriesSorted() {
 		List<AccountingRow> result = new ArrayList<AccountingRow>();
 		for (MonthKey monthKey : data.keySet()) {
 			result.addAll(data.get(monthKey).getRowObjects());
 		}
 		Collections.sort(result);
-		assertEntityFilterSet();
-		return entityFilter.filterItems(result);
+		return result;
 	}
 
 	public void validate() {

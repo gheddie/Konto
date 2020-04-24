@@ -207,7 +207,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 	public List<AccountingRow> getAllEntriesForCategory(String category) {
 		List<AccountingRow> result = new ArrayList<AccountingRow>();
-		for (AccountingRow accountingRow : getMainAccount().getFilteredEntriesSorted()) {
+		for (AccountingRow accountingRow : getMainAccount().getAllEntriesSorted()) {
 			if (accountingRow.getCategory().equals(category)) {
 				result.add(accountingRow);
 			}
