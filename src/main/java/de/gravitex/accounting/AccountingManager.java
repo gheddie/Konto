@@ -216,16 +216,6 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		return result;
 	}
 
-	public List<AccountingRow> getAllEntriesForPartner(String partner) {
-		List<AccountingRow> result = new ArrayList<AccountingRow>();
-		for (AccountingRow accountingRow : getMainAccount().getFilteredEntriesSorted()) {
-			if (accountingRow.getPartner() != null && accountingRow.getPartner().equals(partner)) {
-				result.add(accountingRow);
-			}
-		}
-		return result;
-	}
-
 	public PaymentModality initPaymentModality(MonthKey monthKey, String category) {
 		PaymentModality paymentModality = getPaymentModality(category);
 		paymentModality.reset();
@@ -368,6 +358,9 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	public List<AccountingRow> getSubEntries(String categoryKey, Integer mainRunningIndex) {
 		
 		AccountingData subAccount = getSubAccount(categoryKey);
+		if (subAccount == null) {
+			return new ArrayList<AccountingRow>();
+		}
 		subAccount.acceptFilter(AccountingData.ATTR_MAIN_ACCOUNT, getMainAccount().getAccountKey())
 				.acceptFilter(AccountingData.ATTR_MAIN_ACCOUNT_REFERENCE, mainRunningIndex);
 		return subAccount.getFilteredEntriesSorted();
@@ -401,5 +394,9 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 			check = SubAccountReferenceCheck.INVALID;
 		}
 		return SubAccountValidation.fromValues(check, mainAccountingRow.getAmount(), subEntriesSum);
+	}
+
+	public String getSubAccountName(String category) {
+		return getMainAccount().getSubAccountName(category);
 	}
 }

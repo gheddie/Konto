@@ -145,4 +145,8 @@ public class AccountingData {
 			break;
 		}
 	}
+
+	public String getSubAccountName(String category) {
+		return subAccountReferences.get(category);
+	}
 }

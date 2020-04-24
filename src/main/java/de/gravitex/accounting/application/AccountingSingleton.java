@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.gravitex.accounting.AccountingData;
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingMonth;
 import de.gravitex.accounting.AccountingRow;
@@ -104,18 +103,6 @@ public class AccountingSingleton {
 			categorySums.put(category, categorySum);
 		}
 		return categorySums;
-	}
-
-	public List<AccountingRow> getAllEntriesForCategory(String category, AccountingData accountingData) {
-		return accountingManager.getAllEntriesForCategory(category);
-	}
-
-	public List<AccountingRow> getAllEntriesForPartner(String partner, AccountingData accountingData) {
-		return accountingManager.getAllEntriesForPartner(partner);
-	}
-
-	public List<AccountingRow> getAllEntries() {
-		return accountingManager.getMainAccount().getFilteredEntriesSorted();
 	}
 
 	public List<AccountingRow> getFilteredEntries() {

@@ -1,6 +1,8 @@
 package de.gravitex.accounting.gui.component.table;
 
 import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -27,6 +29,38 @@ public class FilterTableImpl<T> extends JTable {
 		        c.setBackground(filterTableListener.getRowColor(row));
 		        return c;
 		    }
+		});
+		addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+	            if (e.getClickCount() == 2) {
+	                int selectedRow = ((FilterTableImpl<T>) e.getSource()).getSelectedRow();
+	                filterTableListener.rowDoubleClicked(selectedRow);
+	            } else {
+	            	// ...
+	            }
+			}
 		});
 	}
 	

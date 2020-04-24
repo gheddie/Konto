@@ -9,4 +9,6 @@ public interface FilteredComponentListener {
 	void itemSelected(Object object);
 
 	Color getRowColor(Object object);
+
+	void itemDoubleClicked(Object object);
 }

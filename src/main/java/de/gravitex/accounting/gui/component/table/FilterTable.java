@@ -57,7 +57,9 @@ public class FilterTable<T> extends JPanel implements FilteredValuesHolder, Filt
 	            if (anchorSelectionIndex < 0) {
 	            	return;	            	
 	            }
-				filteredComponentListener.itemSelected(data.get(anchorSelectionIndex));
+	            if (filteredComponentListener != null) {
+	            	filteredComponentListener.itemSelected(data.get(anchorSelectionIndex));	            	
+	            }
 			}
 		});
 		table.acceptFilterTableListener(this);
@@ -101,6 +103,17 @@ public class FilterTable<T> extends JPanel implements FilteredValuesHolder, Filt
 
 	@Override
 	public Color getRowColor(int row) {
+		if (filteredComponentListener == null) {
+			return null;
+		}
 		return filteredComponentListener.getRowColor(data.get(row));
+	}
+
+	@Override
+	public void rowDoubleClicked(int row) {
+		if (filteredComponentListener == null) {
+			return;
+		}
+		filteredComponentListener.itemDoubleClicked(data.get(row));
 	}
 }

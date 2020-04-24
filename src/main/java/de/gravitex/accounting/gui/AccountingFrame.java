@@ -53,10 +53,12 @@ import de.gravitex.accounting.filter.interfacing.FilteredComponentListener;
 import de.gravitex.accounting.gui.component.FilterComboBox;
 import de.gravitex.accounting.gui.component.FromToDateFilter;
 import de.gravitex.accounting.gui.component.table.FilterTable;
+import de.gravitex.accounting.gui.dialog.SubRowDialog;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
+import de.gravitex.accounting.provider.AccoutingDataProvider;
 import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.validation.SubAccountValidation;
 import de.gravitex.accounting.wrapper.Category;
@@ -454,13 +456,13 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.
-				swing.border.EmptyBorder(0,0,0,0), "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn",javax.swing.border
-				.TitledBorder.CENTER,javax.swing.border.TitledBorder.BOTTOM,new java.awt.Font("Dia\u006cog"
-				,java.awt.Font.BOLD,12),java.awt.Color.red),pnlData. getBorder
-				()));pnlData. addPropertyChangeListener(new java.beans.PropertyChangeListener(){@Override public void propertyChange(java
-				.beans.PropertyChangeEvent e){if("\u0062ord\u0065r".equals(e.getPropertyName()))throw new RuntimeException
-				();}});
+				pnlData.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax.
+				swing. border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDes\u0069gner \u0045valua\u0074ion", javax. swing. border
+				. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM, new java .awt .Font ("D\u0069alog"
+				,java .awt .Font .BOLD ,12 ), java. awt. Color. red) ,pnlData. getBorder
+				( )) ); pnlData. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java
+				.beans .PropertyChangeEvent e) {if ("\u0062order" .equals (e .getPropertyName () )) throw new RuntimeException
+				( ); }} );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -884,5 +886,18 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		default:
 			return Color.WHITE;
 		}
+	}
+
+	@Override
+	public void itemDoubleClicked(Object object) {
+		logger.debug("row double clicked: " + object);
+		AccountingRow row = (AccountingRow) object;
+		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
+		List<AccountingRow> subEntries = accountingManager.getSubEntries(row.getCategory(), row.getRunningIndex());
+		if (subEntries.size() == 0) {
+			return;
+		}
+		new SubRowDialog(AccountingFrame.this).withRows(subEntries)
+				.withSubAccount(accountingManager.getSubAccountName(row.getCategory())).setVisible(true);
 	}
 }
