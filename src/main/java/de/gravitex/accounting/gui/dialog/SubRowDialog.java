@@ -26,6 +26,7 @@ public class SubRowDialog extends JDialog {
 	public SubRowDialog(Window owner) {
 		super(owner);
 		initComponents();
+		setSize(800, 600);
 		btnClose.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

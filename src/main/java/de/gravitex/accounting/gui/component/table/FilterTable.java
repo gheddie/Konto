@@ -2,6 +2,9 @@ package de.gravitex.accounting.gui.component.table;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.List;
 
 import javax.swing.DefaultListSelectionModel;
@@ -38,14 +41,20 @@ public class FilterTable<T> extends JPanel implements FilteredValuesHolder, Filt
 	public FilterTable() {
 		
 		super();
-		setLayout(new BorderLayout());
+		setLayout(new GridBagLayout());
 		table = new FilterTableImpl();
-		tableScroller = new JScrollPane();
-		// tableScroller.setLayout(new ScrollPaneLayout());
-		add(tableScroller, BorderLayout.NORTH);
-		tableScroller.setViewportView(table);
 		entrySumLabel = new JLabel();
-		add(entrySumLabel, BorderLayout.SOUTH);
+		tableScroller = new JScrollPane();
+		setLayout(new GridBagLayout());
+		((GridBagLayout) getLayout()).columnWidths = new int[] { 0, 0 };
+		((GridBagLayout) getLayout()).rowHeights = new int[] { 0, 0, 0 };
+		((GridBagLayout) getLayout()).columnWeights = new double[] { 1.0, 1.0E-4 };
+		((GridBagLayout) getLayout()).rowWeights = new double[] { 1.0, 0.0, 1.0E-4 };
+		add(tableScroller, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 0, 5, 0), 0, 0));
+		add(entrySumLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		tableScroller.setViewportView(table);
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
