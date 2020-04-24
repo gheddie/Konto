@@ -6,7 +6,9 @@ public class FilterUtil {
 
 	public static Object getAttributeValue(String attributeName, Object item) {
 		try {
-			return item.getClass().getMethod(constructGetterName(attributeName), null).invoke(item, null);
+			String getterName = constructGetterName(attributeName);
+			Object attributeValue = item.getClass().getMethod(getterName, null).invoke(item, null);
+			return attributeValue;
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 			// TODO Auto-generated catch block

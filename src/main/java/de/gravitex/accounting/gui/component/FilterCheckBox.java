@@ -2,15 +2,13 @@ package de.gravitex.accounting.gui.component;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.Set;
 
 import javax.swing.JCheckBox;
 
 import de.gravitex.accounting.filter.FilterValue;
 import de.gravitex.accounting.filter.interfacing.FilterValueProvider;
-import de.gravitex.accounting.filter.interfacing.IFilteredValueReceiver;
 import de.gravitex.accounting.filter.interfacing.FilteredValuesHolder;
+import de.gravitex.accounting.filter.interfacing.IFilteredValueReceiver;
 
 public class FilterCheckBox extends JCheckBox implements FilterValueProvider<Boolean> {
 
@@ -27,7 +25,7 @@ public class FilterCheckBox extends JCheckBox implements FilterValueProvider<Boo
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(null, getSelectedFilterValue()));
+				filteredValueReceiver.receiveFilterValue(FilterValue.fromValues(attributeName, getSelectedFilterValue()));
 				filteredValuesHolder.loadData();
 			}
 		});

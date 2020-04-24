@@ -12,9 +12,9 @@ import de.gravitex.accounting.application.AccountingLoader;
 import de.gravitex.accounting.enumeration.AccountingType;
 import de.gravitex.accounting.filter.EntityFilter;
 import de.gravitex.accounting.filter.FilterDefinition;
+import de.gravitex.accounting.filter.impl.BooleanFilter;
 import de.gravitex.accounting.filter.impl.DateRangeFilter;
 import de.gravitex.accounting.filter.impl.EqualFilter;
-import de.gravitex.accounting.filter.impl.base.AbstractItemFilter;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.wrapper.Category;
@@ -39,8 +39,8 @@ public class AccountingData {
 	
 	public static final String ATTR_PARTNER = "partner";
 	public static final String ATTR_CATEGORY = "category";
-	public static final String ATTR_ALARM = "alarm";
 	public static final String ATTR_DATE = "date";
+	public static final String ATTR_ALARM = "alarm";
 	
 	public static final String ATTR_MAIN_ACCOUNT = "mainAccount";
 	public static final String ATTR_MAIN_ACCOUNT_REFERENCE = "mainAccountReference";
@@ -52,6 +52,7 @@ public class AccountingData {
 		mainAccountFilters.add(FilterDefinition.fromValues(ATTR_CATEGORY, EqualFilter.class));
 		mainAccountFilters.add(FilterDefinition.fromValues(ATTR_PARTNER, EqualFilter.class));
 		mainAccountFilters.add(FilterDefinition.fromValues(ATTR_DATE, DateRangeFilter.class));
+		mainAccountFilters.add(FilterDefinition.fromValues(ATTR_ALARM, BooleanFilter.class));
 	}
 	
 	private static final List<FilterDefinition> subAccountFilters = new ArrayList<FilterDefinition>();
