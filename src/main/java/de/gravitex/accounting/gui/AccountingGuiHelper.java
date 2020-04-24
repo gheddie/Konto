@@ -44,7 +44,7 @@ public class AccountingGuiHelper {
 
 		accountingFrame.getPnlChart().removeAll();
 		
-		JFreeChart chart = ChartFactory.createBarChart(title, "Kategorie", "Aufwand", createDataset(monthKeys, manager),
+		JFreeChart chart = ChartFactory.createBarChart(title, "Kategorie", "Aufwand", createDataset(monthKeys, manager, accountingFrame),
 				PlotOrientation.HORIZONTAL, true, true, false);
 		
 		chart.setRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
@@ -102,11 +102,12 @@ public class AccountingGuiHelper {
 		percentageBar.setStringPainted(true);
 	}
 
-	private static CategoryDataset createDataset(List<MonthKey> monthKeys, AccountingManager manager) {
+	private static CategoryDataset createDataset(List<MonthKey> monthKeys, AccountingManager manager, AccountingFrame accountingFrame) {
 		
 		HashMap<String, BigDecimal> categorySums = null;
 		if (monthKeys.size() == 1) {
-			categorySums = AccountingSingleton.getInstance().getCategorySums(monthKeys.get(0));			
+			categorySums = AccountingSingleton.getInstance().getCategorySums(monthKeys.get(0));		
+			warnMissingCategories(categorySums, manager.getBudgetPlannings().get(monthKeys.get(0)).getProperties(), accountingFrame);
 		}
 
 		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -114,6 +115,22 @@ public class AccountingGuiHelper {
 			addMonthData(monthKey, dataset, categorySums, manager);
 		}
 		return dataset;
+	}
+
+	private static void warnMissingCategories(HashMap<String, BigDecimal> categorySums, Properties budgetPlanning, AccountingFrame accountingFrame) {
+		// pretty much logic for a gui...
+		if (categorySums == null) {
+			return;
+		}
+		AlertMessagesBuilder builder = new AlertMessagesBuilder();
+		for (String categoryKey : categorySums.keySet()) {
+			if (!budgetPlanning.containsKey(categoryKey)) {
+				builder.withMessage(AlertMessageType.WARNING,
+						"Kategorie " + categoryKey + " nicht in Budgetplanung enthalten!!");
+			}
+		}
+		// TODO alerting does not work
+		accountingFrame.pushMessages(builder.getAlertMessages());
 	}
 
 	private static void addMonthData(MonthKey monthKey, DefaultCategoryDataset dataset, HashMap<String, BigDecimal> categorySums, AccountingManager mananger) {
