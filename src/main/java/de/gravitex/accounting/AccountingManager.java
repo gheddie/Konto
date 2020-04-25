@@ -22,6 +22,8 @@ import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.filter.FilterValue;
 import de.gravitex.accounting.filter.FilteredValueReceiver;
 import de.gravitex.accounting.gui.AlertMessagesBuilder;
+import de.gravitex.accounting.logic.BudgetModel;
+import de.gravitex.accounting.logic.MonthlyBudgetCategoryResult;
 import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
@@ -37,7 +39,7 @@ import lombok.Data;
 
 @Data
 public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
-	
+
 	private static final Logger logger = Logger.getLogger(AccountingManager.class);
 
 	public static final String UNDEFINED_CATEGORY = "Undefiniert";
@@ -54,14 +56,14 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		this.accountManagerSettings = accountManagerSettings;
 		return this;
 	}
-	
+
 	public AccountingManager withIncome(Income aIncome) {
 		this.income = aIncome;
 		return this;
 	}
-	
+
 	private boolean budgetPlanningAvailableFor(MonthKey monthKey, String category) {
-		
+
 		HashMap<MonthKey, BudgetPlanning> budgetPlannings = getMainAccount().getBudgetPlannings();
 		if (budgetPlannings == null) {
 			return false;
@@ -72,7 +74,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		}
 		return (budgetPlanningForMonth.getProperties().keySet().contains(category));
 	}
-	
+
 	public List<BudgetEvaluation> evaluateBudgetProjection(Category category, LocalDate startingDate) {
 
 		if (!category.getPaymentModality().isProjectable()) {
@@ -121,25 +123,25 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		}
 		return evaluationResult;
 	}
-	
+
 	public AccountingRow getLastAppearanceOfCategory(String category) {
-		
+
 		List<AccountingRow> allEntries = getAllEntriesForCategory(category);
 		if (allEntries == null || allEntries.size() == 0) {
 			return null;
 		}
 		return allEntries.get(allEntries.size() - 1);
 	}
-	
+
 	public PaymentModality getPaymentModality(String categoryKey) {
 		PaymentModality paymentModality = getMainAccount().getPaymentModalitys().get(categoryKey);
 		if (paymentModality == null) {
-			throw new GenericAccountingException("no payment modality found for category '" + categoryKey + "'!!",
-					null, AccountingError.NO_PM_FOR_CATEGORY);
+			throw new GenericAccountingException("no payment modality found for category '" + categoryKey + "'!!", null,
+					AccountingError.NO_PM_FOR_CATEGORY);
 		}
 		return paymentModality;
 	}
-	
+
 	public HashMap<MonthKey, Properties> prepareBudgets(LocalDate startingDate, boolean complete) {
 
 		HashMap<MonthKey, Properties> extendedProperties = new HashMap<MonthKey, Properties>();
@@ -164,26 +166,28 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		for (MonthKey monthKey : monthKeyList) {
 			additionalBudgetEvaluations = failuresPerMonth.get(monthKey);
 			if (additionalBudgetEvaluations.size() > 0) {
-				extendedProperties.put(monthKey, completeBudgetPlanning(monthKey, additionalBudgetEvaluations, complete));
+				extendedProperties.put(monthKey,
+						completeBudgetPlanning(monthKey, additionalBudgetEvaluations, complete));
 			}
 		}
 
 		return extendedProperties;
 	}
 
-	private Properties completeBudgetPlanning(MonthKey monthKey, Set<BudgetEvaluation> additionalBudgetEvaluations, boolean complete) {
-		
+	private Properties completeBudgetPlanning(MonthKey monthKey, Set<BudgetEvaluation> additionalBudgetEvaluations,
+			boolean complete) {
+
 		Properties existingBudgetPlannings = null;
 		if (complete) {
 			BudgetPlanning budgetPlanningForMonth = getMainAccount().getBudgetPlannings().get(monthKey);
 			existingBudgetPlannings = budgetPlanningForMonth.getProperties();
 			if (existingBudgetPlannings == null) {
 				// not existing
-				existingBudgetPlannings = new Properties();	
+				existingBudgetPlannings = new Properties();
 			}
 		} else {
 			// only the missing!!
-			existingBudgetPlannings = new Properties();	
+			existingBudgetPlannings = new Properties();
 		}
 		for (BudgetEvaluation budgetEvaluation : additionalBudgetEvaluations) {
 			BigDecimal amount = getLastAppearanceOfCategory(budgetEvaluation.getCategory()).getAmount();
@@ -191,7 +195,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		}
 		return existingBudgetPlannings;
 	}
-	
+
 	private MonthKey getInitialAppeareanceOfCategory(String category) {
 		List<AccountingRow> allEntries = getAllEntriesForCategory(category);
 		if (allEntries == null || allEntries.size() == 0) {
@@ -223,9 +227,9 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		paymentModality.setCategory(category);
 		return paymentModality;
 	}
-	
+
 	public AccountingResultMonthModel getAccountingResultMonthModel(MonthKey monthKey) {
-		AccountingMonth accountingMonth = getMainAccount().get(monthKey);
+		AccountingMonth accountingMonth = getMainAccount().getAccountingMonth(monthKey);
 		AccountingResultMonthModel result = new AccountingResultMonthModel();
 		result.setMonthKey(monthKey);
 		for (String category : accountingMonth.getDistinctCategories()) {
@@ -233,10 +237,10 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		}
 		return result;
 	}
-	
+
 	public AccountingResultCategoryModel getAccountingResultCategoryModel(MonthKey monthKey, String category) {
-		
-		AccountingMonth accountingMonth = getMainAccount().get(monthKey);
+
+		AccountingMonth accountingMonth = getMainAccount().getAccountingMonth(monthKey);
 		List<AccountingRow> rowsByCategory = accountingMonth.getRowObjectsByCategory(category);
 		AccountingResultCategoryModel categoryModel = new AccountingResultCategoryModel();
 		categoryModel.setMonthKey(monthKey);
@@ -254,11 +258,12 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		categoryModel.setBudget(limit != null ? new BigDecimal(limit) : null);
 		return categoryModel;
 	}
-	
+
 	public Integer requestLimit(MonthKey monthKey, String category) {
-		
+
 		if (monthKey == null || category == null) {
-			throw new GenericAccountingException("request limit --> both month key and category must be set!!", null, null);
+			throw new GenericAccountingException("request limit --> both month key and category must be set!!", null,
+					null);
 		}
 		Properties properties = getMainAccount().getBudgetPlannings().get(monthKey).getProperties();
 		if (properties == null) {
@@ -276,8 +281,8 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		}
 		String value = String.valueOf(properties.get(category));
 		if (value == null || value.length() == 0) {
-			throw new GenericAccountingException("request limit --> no value set for budget planning for month [" + monthKey
-					+ "] available and category [" + category + "]!!", null, null);
+			throw new GenericAccountingException("request limit --> no value set for budget planning for month ["
+					+ monthKey + "] available and category [" + category + "]!!", null, null);
 		}
 		int limit = 0;
 		try {
@@ -317,7 +322,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 						"Zeiträumen-Lücken von insgesamt " + checker.getRemainingDays().size() + " Tagen entdeckt!!");
 			}
 			throw new GenericAccountingException("check validity error!!", null, builder.getAlertMessages(),
-					AccountingError.NO_VALID_PERIOD);			
+					AccountingError.NO_VALID_PERIOD);
 		}
 	}
 
@@ -347,16 +352,16 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		return getMainAccount().getFilteredEntriesSorted();
 	}
 
-	public AccountManagerSettings getAccountManagerSettings() {
+	public AccountManagerSettings getSettings() {
 		return accountManagerSettings;
 	}
-	
+
 	public HashMap<MonthKey, BudgetPlanning> getBudgetPlannings() {
 		return getMainAccount().getBudgetPlannings();
 	}
 
 	public List<AccountingRow> getSubEntries(String categoryKey, Integer mainRunningIndex) {
-		
+
 		AccountingData subAccount = getSubAccount(categoryKey);
 		if (subAccount == null) {
 			return new ArrayList<AccountingRow>();
@@ -371,7 +376,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 	}
 
 	public SubAccountValidation checkSubEntries(AccountingRow mainAccountingRow) {
-		
+
 		if (mainAccountingRow == null) {
 			throw new AccountingManagerException("can not check sub entries for a NULL main accouting row!!");
 		}
@@ -381,7 +386,7 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 		if (!mainAccount.getSubAccountReferences().containsKey(mainAccountingRow.getCategory())) {
 			return SubAccountValidation.fromValues(SubAccountReferenceCheck.NONE, null, null);
 		}
-		SubAccountReferenceCheck check = null; 
+		SubAccountReferenceCheck check = null;
 		List<AccountingRow> subEntries = getSubEntries(mainAccountingRow.getCategory(),
 				mainAccountingRow.getRunningIndex());
 		BigDecimal subEntriesSum = new BigDecimal(0);
@@ -398,5 +403,38 @@ public class AccountingManager extends FilteredValueReceiver<AccountingRow> {
 
 	public String getSubAccountName(String category) {
 		return getMainAccount().getSubAccountName(category);
+	}
+
+	public BudgetModel getBudgetModel(MonthKey aMonthKey, boolean aFixedBudgetEntriesOnly,
+			boolean aShowUnbudgetedtEntries, boolean aShowRealBudgetEntries) {
+
+		HashMap<String, BigDecimal> categorySumsInMonth = getCategorySums(aMonthKey);
+		HashMap<String, MonthlyBudgetCategoryResult> budgetValuesForMonth = new HashMap<String, MonthlyBudgetCategoryResult>();
+		BudgetPlanning budgetPlanningForMonth = getBudgetPlannings().get(aMonthKey);
+		BigDecimal spentAmount = new BigDecimal(0);
+		for (String categoryKey : categorySumsInMonth.keySet()) {
+			if (getPaymentModality(categoryKey).isOutgoing()) {
+				budgetValuesForMonth.put(categoryKey, MonthlyBudgetCategoryResult.fromValues(categoryKey,
+						budgetPlanningForMonth.getAmountForCategory(categoryKey), categorySumsInMonth.get(categoryKey)));
+				spentAmount = spentAmount.add(categorySumsInMonth.get(categoryKey).abs());
+			}
+		}
+		return BudgetModel.fromValues(aMonthKey, budgetValuesForMonth, getAvailableIncome(aMonthKey), spentAmount);
+	}
+
+	public HashMap<String, BigDecimal> getCategorySums(MonthKey monthKey) {
+		AccountingMonth monthData = getMainAccount().getAccountingMonth(monthKey);
+		if (monthData == null) {
+			return null;
+		}
+		HashMap<String, BigDecimal> categorySums = new HashMap<String, BigDecimal>();
+		for (String category : monthData.getDistinctCategories()) {
+			BigDecimal categorySum = new BigDecimal(0);
+			for (AccountingRow accountingRow : monthData.getRowObjectsByCategory(category)) {
+				categorySum = categorySum.add(accountingRow.getAmount());
+			}
+			categorySums.put(category, categorySum);
+		}
+		return categorySums;
 	}
 }

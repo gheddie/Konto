@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
@@ -38,19 +39,27 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import de.gravitex.accounting.gui.component.*;
 
 import org.apache.log4j.Logger;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import de.gravitex.accounting.AccountingData;
 import de.gravitex.accounting.AccountingManager;
 import de.gravitex.accounting.AccountingRow;
+import de.gravitex.accounting.AccountingUtil;
 import de.gravitex.accounting.BudgetEvaluation;
+import de.gravitex.accounting.BudgetPlanning;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
 import de.gravitex.accounting.enumeration.SubAccountReferenceCheck;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.filter.interfacing.FilteredComponentListener;
+import de.gravitex.accounting.gui.component.FilterCheckBox;
 import de.gravitex.accounting.gui.component.FilterComboBox;
 import de.gravitex.accounting.gui.component.FromToDateFilter;
 import de.gravitex.accounting.gui.component.table.FilterTable;
@@ -59,7 +68,7 @@ import de.gravitex.accounting.modality.PaymentModality;
 import de.gravitex.accounting.model.AccountingResultCategoryModel;
 import de.gravitex.accounting.model.AccountingResultModelRow;
 import de.gravitex.accounting.model.AccountingResultMonthModel;
-import de.gravitex.accounting.provider.AccoutingDataProvider;
+import de.gravitex.accounting.setting.AccountManagerSettings;
 import de.gravitex.accounting.util.MonthKey;
 import de.gravitex.accounting.validation.SubAccountValidation;
 import de.gravitex.accounting.wrapper.Category;
@@ -75,8 +84,7 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 	private static final int TAB_INDEX_DATA = 0;
 	private static final int TAB_INDEX_BUDGET = 1;
 	private static final int TAB_INDEX_FILTER = 2;
-	private static final int TAB_INDEX_SETTINGS = 3;
-	private static final int TAB_INDEX_OUTPUT = 4;
+	private static final int TAB_INDEX_OUTPUT = 3;
 
 	private AccountingSingleton singleton;
 
@@ -165,8 +173,8 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 			fillAccountingMonths();
 			cbFilterAllPartners.initData();
 			cbFilterAllCategories.initData();
-			fillBudgetPlannings();
 			initSettings();
+			fillBudgetPlannings();
 			filterTable.loadData();
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 		} catch (Exception e) {
@@ -177,6 +185,13 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		}
 	}
 	
+	private void initSettings() {
+		AccountManagerSettings settings = AccountingSingleton.getInstance().getAccountingManager().getSettings();
+		cbFixedBudgetEntriesOnly.setSelected(settings.isFixedBudgetEntriesOnly());
+		cbShowRealBudgetEntries.setSelected(settings.isShowRealBudgetEntries());
+		cbShowUnbudgetedtEntries.setSelected(settings.isShowUnbudgetedtEntries());
+	}
+
 	private void initFilters() {
 		
 		AccountingManager accountingManager = AccountingSingleton.getInstance().getAccountingManager();
@@ -187,19 +202,6 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		fromToDateFilter.setMvcData(accountingManager, filterTable, AccountingData.ATTR_DATE);
 		
 		filterTable.acceptFilteredComponentListener(this);
-	}
-
-	private void initSettings() {
-		
-		chkRealValuesInBudgets.setSelected(
-				AccountingSingleton.getInstance().getAccountingManager().getAccountManagerSettings().isShowActualValuesInBidgetPlanning());
-		chkRealValuesInBudgets.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				AccountingSingleton.getInstance().getAccountingManager().getAccountManagerSettings()
-						.setShowActualValuesInBidgetPlanning(chkRealValuesInBudgets.isSelected());
-			}
-		});
 	}
 
 	private void handleSumType(String category, MonthKey monthKey) {
@@ -229,9 +231,133 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 				for (Object value : selectedValues) {
 					selectedValueList.add((MonthKey) value);
 				}
-				AccountingGuiHelper.displayBudgetChart(AccountingFrame.this, selectedValueList, AccountingSingleton.getInstance().getAccountingManager());
+				displayBudgetChart(selectedValueList, AccountingSingleton.getInstance().getAccountingManager());
 			}
 		});
+	}
+	
+	public void displayBudgetChart(List<MonthKey> monthKeys, AccountingManager manager) {
+
+		logger.info("displayBudgetChart: " + monthKeys);
+
+		String title = "";
+		if (monthKeys.size() == 1) {
+			displayBudgetPercentage(monthKeys.get(0), manager);
+			title = "Budgetplanung (verfügbar: " + manager.getAvailableIncome(monthKeys.get(0))
+					+ " Euro)";
+		} else {
+			title = "Budgetplanung";
+			resetPercentages();
+		}
+
+		pnlChart.removeAll();
+		
+		JFreeChart chart = ChartFactory.createBarChart(title, "Kategorie", "Aufwand", createDataset(monthKeys, manager),
+				PlotOrientation.HORIZONTAL, true, true, false);
+		
+		chart.setRenderingHints(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON));
+		
+		pnlChart.add(new ChartPanel(chart), BorderLayout.CENTER);
+		pnlChart.validate();
+	}
+
+	private void resetPercentages() {
+		percentageBar.setValue(0);
+	}
+
+	private void displayBudgetPercentage(MonthKey monthKey, AccountingManager manager) {
+
+		BigDecimal availableIncome = manager.getAvailableIncome(monthKey);
+		BudgetPlanning budgetPlanningForMonth = manager.getBudgetPlannings().get(monthKey);
+		// Properties budgetPlanningForMonth = budgetPlanning.getProperties();
+		BigDecimal totalyPlanned = new BigDecimal(0);
+		for (String categoryBudget : budgetPlanningForMonth.getCategoryKeys()) {
+			totalyPlanned = totalyPlanned.add(budgetPlanningForMonth.getAmountForCategory(categoryBudget));
+		}
+		
+		// TODO
+		if (totalyPlanned.intValue() > availableIncome.intValue()) {
+			/*
+			JOptionPane.showMessageDialog(accountingFrame,
+					"Budget überplant (" + availableIncome.intValue() + " verfügbar, " + totalyPlanned + " verplant)",
+					"Achtung", JOptionPane.INFORMATION_MESSAGE);
+					*/
+			updateBudgetState("Budget überplant (" + availableIncome.intValue() + " verfügbar, " + totalyPlanned + " verplant)");
+		} else {
+			/*
+			JOptionPane.showMessageDialog(accountingFrame,
+					"Noch "+(availableIncome.intValue()-totalyPlanned)+" Euro verfügbar!!",
+					"Info", JOptionPane.INFORMATION_MESSAGE);
+					*/
+			updateBudgetState("Noch "+(availableIncome.subtract(totalyPlanned))+" Euro verfügbar!!");
+		}
+		
+		int percentage = (int) AccountingUtil.getPercentage(totalyPlanned.doubleValue(), availableIncome.doubleValue());
+		
+		// TODO alerting does not work
+		if (percentage <= 100) {
+			pushMessages(
+					new AlertMessagesBuilder().withMessage(AlertMessageType.OK, "Budgetplanung: "+percentage+"%").getAlertMessages());
+			percentageBar.setForeground(Color.GREEN);
+		} else {
+			pushMessages(
+					new AlertMessagesBuilder().withMessage(AlertMessageType.ERROR, "Budgetplanung (überschritten): "+percentage+"%").getAlertMessages());
+			percentageBar.setForeground(Color.RED);
+		}
+		
+		percentageBar.setValue(percentage);
+		percentageBar.setStringPainted(true);
+	}
+
+	private CategoryDataset createDataset(List<MonthKey> monthKeys, AccountingManager manager) {
+		
+		HashMap<String, BigDecimal> categorySums = null;
+		if (monthKeys.size() == 1) {
+			categorySums = AccountingSingleton.getInstance().getAccountingManager().getCategorySums(monthKeys.get(0));		
+			warnMissingCategories(categorySums, manager.getBudgetPlannings().get(monthKeys.get(0)).getProperties());
+		}
+
+		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		for (MonthKey monthKey : monthKeys) {
+			addMonthData(monthKey, dataset, categorySums, manager);
+		}
+		return dataset;
+	}
+
+	private void warnMissingCategories(HashMap<String, BigDecimal> categorySums, Properties budgetPlanning) {
+		// pretty much logic for a gui...
+		if (categorySums == null) {
+			return;
+		}
+		AlertMessagesBuilder builder = new AlertMessagesBuilder();
+		for (String categoryKey : categorySums.keySet()) {
+			if (!budgetPlanning.containsKey(categoryKey)) {
+				builder.withMessage(AlertMessageType.WARNING,
+						"Kategorie " + categoryKey + " nicht in Budgetplanung enthalten!!");
+			}
+		}
+		// TODO no incoming categories here!!
+		pushMessages(builder.getAlertMessages());
+	}
+
+	private static void addMonthData(MonthKey monthKey, DefaultCategoryDataset dataset, HashMap<String, BigDecimal> categorySums, AccountingManager mananger) {
+		
+		Properties budgetPlanningForMonth = mananger.getBudgetPlannings().get(monthKey).getProperties();
+
+		int categoryBudget = 0;
+		for (Object categoryBudgetKey : budgetPlanningForMonth.keySet()) {
+			categoryBudget = Integer.parseInt(String.valueOf(budgetPlanningForMonth.get(categoryBudgetKey)));
+			dataset.addValue(categoryBudget, monthKey.toString(), (String) categoryBudgetKey);
+			if (categorySums != null) {
+				BigDecimal categorySum = categorySums.get((String) categoryBudgetKey);
+				if (categorySum != null) {
+					if (AccountingSingleton.getInstance().getAccountingManager().getSettings().isShowRealBudgetEntries()) {
+						dataset.addValue(Math.abs(categorySum.intValue()), monthKey + " (aktuell)",
+								(String) categoryBudgetKey);						
+					}
+				}
+			}
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -283,18 +409,16 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 							.getCategoryModel(categoryWrapper.getCategory());
 					fillCategoryEntries(categoryModel);
 					updatePaymentModality(categoryWrapper.getPaymentModality());
-					if (singleton.getAccountingManager().getAccountManagerSettings().isBudgetProjectionsEnabled()) {
-						List<BudgetEvaluation> evaluationResult = AccountingSingleton.getInstance()
-								.getAccountingManager().evaluateBudgetProjection(categoryWrapper, LocalDate.now());
-						if (evaluationResult.size() > 0) {
-							AlertMessagesBuilder builder = new AlertMessagesBuilder();
-							for (BudgetEvaluation budgetEvaluation : evaluationResult) {
-								builder.withMessage(AlertMessageType.WARNING, budgetEvaluation.generateMessage());
-							}
-							pushMessages(builder.getAlertMessages());
-						} else {
-							clearMessages();
+					List<BudgetEvaluation> evaluationResult = AccountingSingleton.getInstance()
+							.getAccountingManager().evaluateBudgetProjection(categoryWrapper, LocalDate.now());
+					if (evaluationResult.size() > 0) {
+						AlertMessagesBuilder builder = new AlertMessagesBuilder();
+						for (BudgetEvaluation budgetEvaluation : evaluationResult) {
+							builder.withMessage(AlertMessageType.WARNING, budgetEvaluation.generateMessage());
 						}
+						pushMessages(builder.getAlertMessages());
+					} else {
+						clearMessages();
 					}
 				}
 			});			
@@ -397,6 +521,10 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		btnPrepareBudgets = new JButton();
 		checkBox2 = new JCheckBox();
 		panel3 = new JPanel();
+		toolBar1 = new JToolBar();
+		cbFixedBudgetEntriesOnly = new JCheckBox();
+		cbShowRealBudgetEntries = new JCheckBox();
+		cbShowUnbudgetedtEntries = new JCheckBox();
 		pnlChart = new JPanel();
 		lblBudgetState = new JLabel();
 		percentageBar = new JProgressBar();
@@ -412,8 +540,6 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		cbFilterAlarm = new FilterCheckBox();
 		label6 = new JLabel();
 		tfFilterSum = new JTextField();
-		pnlSettings = new JPanel();
-		chkRealValuesInBudgets = new JCheckBox();
 		pnlOutput = new JPanel();
 		scrollPane6 = new JScrollPane();
 		taOutput = new JTextArea();
@@ -459,12 +585,13 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 
 			//======== pnlData ========
 			{
-				pnlData.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.
-				border.EmptyBorder(0,0,0,0), "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn",javax.swing.border.TitledBorder.CENTER
-				,javax.swing.border.TitledBorder.BOTTOM,new java.awt.Font("Dia\u006cog",java.awt.Font
-				.BOLD,12),java.awt.Color.red),pnlData. getBorder()));pnlData. addPropertyChangeListener(
-				new java.beans.PropertyChangeListener(){@Override public void propertyChange(java.beans.PropertyChangeEvent e){if("\u0062ord\u0065r"
-				.equals(e.getPropertyName()))throw new RuntimeException();}});
+				pnlData.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new
+				javax . swing. border .EmptyBorder ( 0, 0 ,0 , 0) ,  "JFor\u006dDesi\u0067ner \u0045valu\u0061tion" , javax
+				. swing .border . TitledBorder. CENTER ,javax . swing. border .TitledBorder . BOTTOM, new java
+				. awt .Font ( "Dia\u006cog", java .awt . Font. BOLD ,12 ) ,java . awt
+				. Color .red ) ,pnlData. getBorder () ) ); pnlData. addPropertyChangeListener( new java. beans .
+				PropertyChangeListener ( ){ @Override public void propertyChange (java . beans. PropertyChangeEvent e) { if( "bord\u0065r" .
+				equals ( e. getPropertyName () ) )throw new RuntimeException( ) ;} } );
 				pnlData.setLayout(new GridBagLayout());
 				((GridBagLayout)pnlData.getLayout()).columnWidths = new int[] {0, 254, 651, 114, 0};
 				((GridBagLayout)pnlData.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 106, 0, 0, 0, 0};
@@ -630,21 +757,41 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 					panel3.setBorder(new TitledBorder("Grafische Darstellung"));
 					panel3.setLayout(new GridBagLayout());
 					((GridBagLayout)panel3.getLayout()).columnWidths = new int[] {0, 0};
-					((GridBagLayout)panel3.getLayout()).rowHeights = new int[] {0, 0, 0};
+					((GridBagLayout)panel3.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
 					((GridBagLayout)panel3.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
-					((GridBagLayout)panel3.getLayout()).rowWeights = new double[] {1.0, 0.0, 1.0E-4};
+					((GridBagLayout)panel3.getLayout()).rowWeights = new double[] {0.0, 1.0, 0.0, 1.0E-4};
+
+					//======== toolBar1 ========
+					{
+						toolBar1.setFloatable(false);
+
+						//---- cbFixedBudgetEntriesOnly ----
+						cbFixedBudgetEntriesOnly.setText("Nur feste Ausg\u00e4nge");
+						toolBar1.add(cbFixedBudgetEntriesOnly);
+
+						//---- cbShowRealBudgetEntries ----
+						cbShowRealBudgetEntries.setText("Realwerte");
+						toolBar1.add(cbShowRealBudgetEntries);
+
+						//---- cbShowUnbudgetedtEntries ----
+						cbShowUnbudgetedtEntries.setText("Ausg\u00e4nge ohne Budget");
+						toolBar1.add(cbShowUnbudgetedtEntries);
+					}
+					panel3.add(toolBar1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(0, 0, 0, 0), 0, 0));
 
 					//======== pnlChart ========
 					{
 						pnlChart.setLayout(new BorderLayout());
 					}
-					panel3.add(pnlChart, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+					panel3.add(pnlChart, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 
 					//---- lblBudgetState ----
 					lblBudgetState.setText("123");
-					panel3.add(lblBudgetState, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+					panel3.add(lblBudgetState, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 				}
@@ -717,22 +864,6 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 					new Insets(0, 0, 0, 0), 0, 0));
 			}
 			tbpMain.addTab("Filter", pnlFilter);
-
-			//======== pnlSettings ========
-			{
-				pnlSettings.setLayout(new GridBagLayout());
-				((GridBagLayout)pnlSettings.getLayout()).columnWidths = new int[] {74, 0};
-				((GridBagLayout)pnlSettings.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
-				((GridBagLayout)pnlSettings.getLayout()).columnWeights = new double[] {1.0, 1.0E-4};
-				((GridBagLayout)pnlSettings.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
-
-				//---- chkRealValuesInBudgets ----
-				chkRealValuesInBudgets.setText("Realwerte in Budgetplanung");
-				pnlSettings.add(chkRealValuesInBudgets, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 5, 0), 0, 0));
-			}
-			tbpMain.addTab("Einstellungen", pnlSettings);
 
 			//======== pnlOutput ========
 			{
@@ -816,6 +947,10 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 	private JButton btnPrepareBudgets;
 	private JCheckBox checkBox2;
 	private JPanel panel3;
+	private JToolBar toolBar1;
+	private JCheckBox cbFixedBudgetEntriesOnly;
+	private JCheckBox cbShowRealBudgetEntries;
+	private JCheckBox cbShowUnbudgetedtEntries;
 	private JPanel pnlChart;
 	private JLabel lblBudgetState;
 	private JProgressBar percentageBar;
@@ -831,8 +966,6 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 	private FilterCheckBox cbFilterAlarm;
 	private JLabel label6;
 	private JTextField tfFilterSum;
-	private JPanel pnlSettings;
-	private JCheckBox chkRealValuesInBudgets;
 	private JPanel pnlOutput;
 	private JScrollPane scrollPane6;
 	private JTextArea taOutput;

@@ -89,22 +89,6 @@ public class AccountingSingleton {
 		logger.info("saldo check ok...");
 	}
 
-	public HashMap<String, BigDecimal> getCategorySums(MonthKey monthKey) {
-		AccountingMonth monthData = accountingManager.getMainAccount().get(monthKey);
-		if (monthData == null) {
-			return null;
-		}
-		HashMap<String, BigDecimal> categorySums = new HashMap<String, BigDecimal>();
-		for (String category : monthData.getDistinctCategories()) {
-			BigDecimal categorySum = new BigDecimal(0);
-			for (AccountingRow accountingRow : monthData.getRowObjectsByCategory(category)) {
-				categorySum = categorySum.add(accountingRow.getAmount());
-			}
-			categorySums.put(category, categorySum);
-		}
-		return categorySums;
-	}
-
 	public List<AccountingRow> getFilteredEntries() {
 		return accountingManager.getFilteredEntries();
 	}

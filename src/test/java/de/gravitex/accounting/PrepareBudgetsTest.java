@@ -39,7 +39,7 @@ public class PrepareBudgetsTest extends AccountingManagerDataTest {
 		// ---
 
 		AccountingManager accountingManager = new AccountingManager()
-				.withSettings(AccountManagerSettings.fromValues(true, 12, true, true));
+				.withSettings(AccountManagerSettings.fromValues(false, false, false, 24));
 		accountingManager.setMainAccount(createAccountingData());
 		HashMap<MonthKey, Properties> preparedBudgets = accountingManager.prepareBudgets(LocalDate.of(2020, 1, 1),
 				false);

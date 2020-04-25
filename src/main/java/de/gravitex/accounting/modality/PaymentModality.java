@@ -59,4 +59,8 @@ public abstract class PaymentModality {
 		}
 		return result ;
 	}
+
+	public boolean isOutgoing() {
+		return (paymentType.equals(PaymentType.OUTGOING) || paymentType.equals(PaymentType.IN_OUT));
+	}
 }

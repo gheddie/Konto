@@ -67,7 +67,7 @@ public class AccountingData {
 		return data.keySet();
 	}
 
-	public AccountingMonth get(MonthKey key) {
+	public AccountingMonth getAccountingMonth(MonthKey key) {
 		return data.get(key);
 	}
 

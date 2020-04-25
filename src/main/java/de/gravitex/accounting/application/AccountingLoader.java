@@ -27,7 +27,7 @@ public class AccountingLoader {
 		Income income = readIncome();
 		AccountingManager accountingManager = new AccountingManager();
 		accountingManager.setMainAccount(loadAccountingData(mainAccountingKey, AccountingType.MAIN_ACCOUNT));
-		accountingManager.withSettings(AccountManagerSettings.fromValues(true, 24, true, true)).withIncome(income);
+		accountingManager.withSettings(AccountManagerSettings.fromValues(true, true, true, 12)).withIncome(income);
 		return accountingManager;
 	}
 

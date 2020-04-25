@@ -211,20 +211,38 @@ new FormModel {
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 						"$columnSpecs": "0:1.0"
-						"$rowSpecs": "0:1.0, 0"
+						"$rowSpecs": "0, 0:1.0, 0"
 						"$alignTop": true
 						"$alignLeft": true
 					} ) {
 						name: "panel3"
 						"border": new javax.swing.border.TitledBorder( "Grafische Darstellung" )
+						add( new FormContainer( "javax.swing.JToolBar", new FormLayoutManager( class javax.swing.JToolBar ) ) {
+							name: "toolBar1"
+							"floatable": false
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "cbFixedBudgetEntriesOnly"
+								"text": "Nur feste Ausgänge"
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "cbShowRealBudgetEntries"
+								"text": "Realwerte"
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "cbShowUnbudgetedtEntries"
+								"text": "Ausgänge ohne Budget"
+							} )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 							name: "pnlChart"
-						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+						} )
 						add( new FormComponent( "javax.swing.JLabel" ) {
 							name: "lblBudgetState"
 							"text": "123"
 						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-							"gridy": 1
+							"gridy": 2
 						} )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
@@ -316,22 +334,6 @@ new FormModel {
 					} )
 				}, new FormLayoutConstraints( null ) {
 					"title": "Filter"
-				} )
-				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "74:1.0"
-					"$rowSpecs": "0, 0, 0"
-					"$hGap": 5
-					"$vGap": 5
-					"$alignLeft": true
-					"$alignTop": true
-				} ) {
-					name: "pnlSettings"
-					add( new FormComponent( "javax.swing.JCheckBox" ) {
-						name: "chkRealValuesInBudgets"
-						"text": "Realwerte in Budgetplanung"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
-				}, new FormLayoutConstraints( null ) {
-					"title": "Einstellungen"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 					name: "pnlOutput"
