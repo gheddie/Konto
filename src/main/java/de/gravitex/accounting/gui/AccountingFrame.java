@@ -56,6 +56,7 @@ import de.gravitex.accounting.BudgetEvaluation;
 import de.gravitex.accounting.BudgetPlanning;
 import de.gravitex.accounting.application.AccountingSingleton;
 import de.gravitex.accounting.enumeration.AlertMessageType;
+import de.gravitex.accounting.enumeration.PaymentType;
 import de.gravitex.accounting.enumeration.SubAccountReferenceCheck;
 import de.gravitex.accounting.exception.GenericAccountingException;
 import de.gravitex.accounting.filter.interfacing.FilteredComponentListener;
@@ -332,11 +333,16 @@ public class AccountingFrame extends JFrame implements FilteredComponentListener
 		AlertMessagesBuilder builder = new AlertMessagesBuilder();
 		for (String categoryKey : categorySums.keySet()) {
 			if (!budgetPlanning.containsKey(categoryKey)) {
-				builder.withMessage(AlertMessageType.WARNING,
-						"Kategorie " + categoryKey + " nicht in Budgetplanung enthalten!!");
+				PaymentType paymentType = AccountingSingleton.getInstance().getAccountingManager()
+						.getPaymentModality(categoryKey).getPaymentType();
+				if (!paymentType.equals(PaymentType.INCOMING)) {
+					builder.withMessage(AlertMessageType.WARNING,
+							"Kategorie " + categoryKey + " [" + categorySums.get(categoryKey) + ", "
+									+ paymentType.getTranslation()
+									+ "] nicht in Budgetplanung enthalten!!");	
+				}
 			}
 		}
-		// TODO no incoming categories here!!
 		pushMessages(builder.getAlertMessages());
 	}
 
