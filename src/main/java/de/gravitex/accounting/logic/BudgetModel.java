@@ -76,31 +76,17 @@ public class BudgetModel {
 
 		StringBuffer buffer = new StringBuffer();
 		MonthlyBudgetCategoryResult monthlyBudgetCategoryResult = null;
-		
 		buffer.append(" --------- BUDGET ["+monthKey.toString()+"] --------- \n");
-		
 		buffer.append(" ---> MIT BUDGET\n");
-		
 		for (MonthlyBudgetCategoryResult budgeted : getBudgetedResults()) {
 			appendResult(buffer, budgeted);
 			buffer.append("\n");
 		}
-		
 		buffer.append(" ---> OHNE BUDGET\n");
-		
 		for (MonthlyBudgetCategoryResult unbudgeted : getUnbudgetedResults()) {
 			appendResult(buffer, unbudgeted);
 			buffer.append("\n");
 		}
-		
-		/*
-		for (String categoryKey : budgetValuesForMonth.keySet()) {
-			monthlyBudgetCategoryResult = budgetValuesForMonth.get(categoryKey);
-			appendResult(buffer, monthlyBudgetCategoryResult);
-			buffer.append("\n");
-		}
-		*/
-		
 		buffer.append(" ---> available: " + availableAmount + "\n");
 		buffer.append(" ---> spent: " + spentAmount + "\n");
 		buffer.append(" ---> remaining: " + getRemainingAmount() + "\n");
